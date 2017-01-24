@@ -58,6 +58,7 @@ set(CPP_HEADERS
   ${CPP_HEADER_DIR}/Ray.h
   ${CPP_HEADER_DIR}/Scene.h
   ${CPP_HEADER_DIR}/Transform.h
+  ${CPP_HEADER_DIR}/Transformable.h
 )
 
 # define c++ sources
@@ -71,6 +72,7 @@ set(CPP_SOURCES
   ${CPP_SOURCE_DIR}/Node.cpp
   ${CPP_SOURCE_DIR}/Scene.cpp
   ${CPP_SOURCE_DIR}/Transform.cpp
+  ${CPP_SOURCE_DIR}/Transformable.cpp
 )
 
 # define cuda headers

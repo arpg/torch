@@ -12,6 +12,8 @@ int main(int argc, char** argv)
   camera->SetImageSize(640, 480);
   camera->SetFocalLength(320, 320);
   camera->SetCenterPoint(320, 240);
+  camera->SetOrientation(0, 0, 0);
+  camera->SetPosition(0, 0, 0);
   camera->Capture();
 
   std::cout << "Success" << std::endl;

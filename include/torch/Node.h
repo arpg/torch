@@ -2,11 +2,12 @@
 
 #include <vector>
 #include <torch/Object.h>
+#include <torch/Transformable.h>
 
 namespace torch
 {
 
-class Node : public Object
+class Node : public Object, public Transformable
 {
   public:
 
@@ -29,6 +30,8 @@ class Node : public Object
   protected:
 
     bool CanAddChild(std::shared_ptr<const Node> child) const;
+
+    void UpdateTransform() override;
 
   protected:
 

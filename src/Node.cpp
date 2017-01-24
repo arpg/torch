@@ -65,4 +65,9 @@ bool Node::CanAddChild(std::shared_ptr<const Node> child) const
   return child && child.get() != this && !HasChild(child);
 }
 
+void Node::UpdateTransform()
+{
+  m_context->MarkDirty();
+}
+
 } // namespace torch
