@@ -34,6 +34,7 @@ set(TEST_CPP_HEADERS
 set(TEST_CPP_SOURCE_DIR .)
 
 set(TEST_CPP_SOURCES
+  ${TEST_CPP_SOURCE_DIR}/TransformTest.cpp
   ${TEST_CPP_SOURCE_DIR}/NodeTest.cpp
 )
 
