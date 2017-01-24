@@ -1,0 +1,22 @@
+#pragma once
+
+#include <string>
+
+#cmakedefine TEST_PTX_FOLDER "@TEST_PTX_FOLDER@"
+#cmakedefine TEST_PTX_PREFIX "@TEST_PTX_PREFIX@"
+#cmakedefine TEST_PTX_SUFFIX "@TEST_PTX_SUFFIX@"
+
+namespace torch
+{
+
+class TestPtxUtil
+{
+  public:
+
+    static inline std::string GetFile(const std::string& name)
+    {
+      return TEST_PTX_FOLDER + (TEST_PTX_PREFIX + name + TEST_PTX_SUFFIX);
+    }
+};
+
+} // namespace torch
