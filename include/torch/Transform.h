@@ -39,6 +39,10 @@ class Transform
 
     void SetScale(float scale);
 
+    optix::Matrix4x4 GetMatrix() const;
+
+    optix::Matrix3x4 GetMatrix3x4() const;
+
     Transform Inverse() const;
 
     Transform operator*(const Transform& transform) const;

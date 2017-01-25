@@ -125,6 +125,16 @@ void Transform::SetScale(float scale)
   SetScale(scale, scale, scale);
 }
 
+optix::Matrix4x4 Transform::GetMatrix() const
+{
+  return m_matrix;
+}
+
+optix::Matrix3x4 Transform::GetMatrix3x4() const
+{
+  return optix::Matrix3x4(m_matrix.getData());
+}
+
 Transform Transform::Inverse() const
 {
   Transform result;

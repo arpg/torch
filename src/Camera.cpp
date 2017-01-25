@@ -59,7 +59,7 @@ void Camera::BuildScene(Link& link)
 
 void Camera::PostBuildScene()
 {
-  UploadCamera(m_transform);
+  if (m_detached) UploadCamera(m_transform);
 }
 
 void Camera::CopyBuffer(Image& image)
@@ -73,6 +73,17 @@ void Camera::CopyBuffer(Image& image)
 
 void Camera::UploadCamera(const Transform& transform)
 {
+  const optix::Matrix3x4 matrix = m_transform.GetMatrix3x4();
+  const float3 u = (m_imageSize.x / m_focalLength.x) * matrix.getCol(0);
+  const float3 v = (m_imageSize.y / m_focalLength.y) * matrix.getCol(1);
+  const float3 w = matrix.getCol(2);
+  const float3 p = matrix.getCol(3);
+
+  m_program["position"]->setFloat(p);
+  m_program["center"]->setFloat(m_centerPoint);
+  m_program["u"]->setFloat(u);
+  m_program["v"]->setFloat(v);
+  m_program["w"]->setFloat(w);
 }
 
 void Camera::Initialize()
