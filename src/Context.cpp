@@ -90,6 +90,11 @@ optix::Material Context::CreateMaterial()
   return m_context->createMaterial();
 }
 
+optix::Transform Context::CreateTransform()
+{
+  return m_context->createTransform();
+}
+
 optix::Program Context::GetProgram(const std::string& file,
     const std::string& name)
 {

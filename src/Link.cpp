@@ -31,10 +31,16 @@ void Link::Attach(optix::GeometryInstance instance)
   m_geomGroup->addChild(instance);
 }
 
+void Link::Write(optix::Transform transform) const
+{
+  (m_group->getChildCount() == 0) ?
+        transform->setChild(m_geomGroup) : transform->setChild(m_group);
+}
+
 void Link::Write(optix::Variable variable) const
 {
-  (m_group->getChildCount() > 1) ?
-      variable->set(m_group) : variable->set(m_geomGroup);
+  (m_group->getChildCount() == 0) ?
+        variable->set(m_geomGroup) : variable->set(m_group);
 }
 
 Link Link::Branch(const Transform& transform) const

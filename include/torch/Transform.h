@@ -48,6 +48,8 @@ class Transform
 
     Transform operator*(const Transform& transform) const;
 
+    void Write(optix::Transform transform) const;
+
     void Write(optix::Variable variable) const;
 
   protected:

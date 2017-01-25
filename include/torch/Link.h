@@ -23,6 +23,8 @@ class Link
 
     void Attach(optix::GeometryInstance instance);
 
+    void Write(optix::Transform transform) const;
+
     void Write(optix::Variable variable) const;
 
     Link Branch(const Transform& transform) const;

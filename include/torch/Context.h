@@ -46,6 +46,8 @@ class Context : public std::enable_shared_from_this<Context>
 
     optix::Material CreateMaterial();
 
+    optix::Transform CreateTransform();
+
     optix::Program GetProgram(const std::string& file, const std::string& name);
 
     optix::Program CreateProgram(const std::string& file,

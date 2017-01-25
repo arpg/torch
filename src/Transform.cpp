@@ -149,6 +149,11 @@ Transform Transform::operator*(const Transform& transform) const
   return result;
 }
 
+void Transform::Write(optix::Transform transform) const
+{
+  transform->setMatrix(false, m_matrix.getData(), nullptr);
+}
+
 void Transform::Write(optix::Variable variable) const
 {
   variable->setMatrix4x4fv(false, m_matrix.getData());
