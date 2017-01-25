@@ -13,6 +13,12 @@ class Transformable
 
     ~Transformable();
 
+    Transform GetTransform() const;
+
+    void SetTransform(const Transform& transform);
+
+    float3 GetOrientation() const;
+
     void SetOrientation(float x, float y, float z);
 
     float3 GetPosition() const;

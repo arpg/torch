@@ -11,6 +11,22 @@ Transformable::~Transformable()
 {
 }
 
+Transform Transformable::GetTransform() const
+{
+  return m_transform;
+}
+
+void Transformable::SetTransform(const Transform& transform)
+{
+  m_transform = transform;
+  UpdateTransform();
+}
+
+float3 Transformable::GetOrientation() const
+{
+  return m_transform.GetEulerAngles();
+}
+
 void Transformable::SetOrientation(float x, float y, float z)
 {
   m_transform.SetRotation(x, y, z);
