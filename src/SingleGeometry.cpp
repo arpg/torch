@@ -33,6 +33,8 @@ void SingleGeometry::BuildScene(Link& link)
   const Transform transform = link.GetTransform() * m_transform;
   transform.Write(instance["T_wl"]);
   transform.Inverse().Write(instance["T_lw"]);
+
+  link.Attach(instance);
 }
 
 void SingleGeometry::Initialize()

@@ -48,6 +48,8 @@ class Context : public std::enable_shared_from_this<Context>
 
     optix::Transform CreateTransform();
 
+    optix::Variable GetVariable(const std::string& name);
+
     optix::Program GetProgram(const std::string& file, const std::string& name);
 
     optix::Program CreateProgram(const std::string& file,

@@ -28,7 +28,7 @@ class Primitive : public Node
 
   protected:
 
-    void Validate();
+    void ValidateChildren();
 
   protected:
 

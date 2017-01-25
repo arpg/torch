@@ -19,6 +19,20 @@ Scene::~Scene()
 {
 }
 
+float Scene::GetEpsilon() const
+{
+  optix::Variable variable;
+  variable = m_context->GetVariable("sceneEpsilon");
+  return variable->getFloat();
+}
+
+void Scene::SetEpsilon(float epsilon)
+{
+  optix::Variable variable;
+  variable = m_context->GetVariable("sceneEpsilon");
+  variable->setFloat(epsilon);
+}
+
 void Scene::Add(std::shared_ptr<Node> node)
 {
   std::shared_ptr<Node> sceneRoot;

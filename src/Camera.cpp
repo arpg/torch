@@ -29,7 +29,7 @@ void Camera::SetImageSize(unsigned int w, unsigned int h)
 
 void Camera::SetFocalLength(float fx, float fy)
 {
-  m_centerPoint = make_float2(fx, fy);
+  m_focalLength = make_float2(fx, fy);
   m_context->MarkDirty();
 }
 
@@ -73,6 +73,9 @@ void Camera::CopyBuffer(Image& image)
 
 void Camera::UploadCamera(const Transform& transform)
 {
+  const float cx = 1 - m_centerPoint.x / m_imageSize.x;
+  const float cy = 1 - m_centerPoint.y / m_imageSize.y;
+
   const optix::Matrix3x4 matrix = transform.GetMatrix3x4();
   const float3 u = (m_imageSize.x / m_focalLength.x) * matrix.getCol(0);
   const float3 v = (m_imageSize.y / m_focalLength.y) * matrix.getCol(1);
@@ -80,7 +83,7 @@ void Camera::UploadCamera(const Transform& transform)
   const float3 p = matrix.getCol(3);
 
   m_program["position"]->setFloat(p);
-  m_program["center"]->setFloat(m_centerPoint);
+  m_program["center"]->setFloat(cx, cy);
   m_program["u"]->setFloat(u);
   m_program["v"]->setFloat(v);
   m_program["w"]->setFloat(w);

@@ -22,6 +22,10 @@ class Scene
 
     ~Scene();
 
+    float GetEpsilon() const;
+
+    void SetEpsilon(float epsilon);
+
     void Add(std::shared_ptr<Node> node);
 
     std::shared_ptr<Camera> CreateCamera();

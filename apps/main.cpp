@@ -6,11 +6,13 @@ using namespace torch;
 int main(int argc, char** argv)
 {
   Scene scene;
+  scene.SetEpsilon(1E-4);
 
   std::shared_ptr<Sphere> geometry;
   geometry = scene.CreateSphere();
   geometry->SetOrientation(0, 0, 0);
   geometry->SetPosition(0, 0, 0);
+  geometry->SetScale(5, 3, 3);
 
   std::shared_ptr<MatteMaterial> material;
   material = scene.CreateMatteMaterial();
@@ -21,7 +23,7 @@ int main(int argc, char** argv)
   primitive->SetGeometry(geometry);
   primitive->SetMaterial(material);
   primitive->SetOrientation(0, 0, 0);
-  primitive->SetPosition(0, 0, 0);
+  primitive->SetPosition(0, 0, 5);
   scene.Add(primitive);
 
   std::shared_ptr<Camera> camera;

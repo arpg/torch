@@ -95,6 +95,11 @@ optix::Transform Context::CreateTransform()
   return m_context->createTransform();
 }
 
+optix::Variable Context::GetVariable(const std::__cxx11::string& name)
+{
+  return m_context[name];
+}
+
 optix::Program Context::GetProgram(const std::string& file,
     const std::string& name)
 {

@@ -40,13 +40,14 @@ void Primitive::SetMaterial(std::shared_ptr<Material> material)
 
 void Primitive::BuildScene(Link& link)
 {
-  Validate();
+  ValidateChildren();
+  Link childLink = link.Branch(m_transform);
+  m_material->BuildScene(childLink);
+  m_geometry->BuildScene(childLink);
   Node::BuildScene(link);
-  m_material->BuildScene(link);
-  m_geometry->BuildScene(link);
 }
 
-void Primitive::Validate()
+void Primitive::ValidateChildren()
 {
   if (!m_geometry) throw Exception("null geometry assigned to primitive");
   if (!m_material) throw Exception("null material assigned to primitive");
