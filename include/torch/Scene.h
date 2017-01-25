@@ -7,6 +7,8 @@ namespace torch
 
 class Context;
 class Camera;
+class Group;
+class Node;
 
 class Scene
 {
@@ -16,9 +18,16 @@ class Scene
 
     ~Scene();
 
+    void Add(std::shared_ptr<Node> node);
+
     std::shared_ptr<Camera> CreateCamera();
 
+    std::shared_ptr<Group> CreateGroup();
+
   private:
+
+    template <typename T>
+    std::shared_ptr<T> CreateObject();
 
     void Initialize();
 

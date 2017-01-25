@@ -10,7 +10,8 @@ Camera::Camera(std::shared_ptr<Context> context) :
   Node(context),
   m_imageSize(make_uint2(1, 1)),
   m_focalLength(make_float2(0.5, 0.5)),
-  m_centerPoint(make_float2(0.5, 0.5))
+  m_centerPoint(make_float2(0.5, 0.5)),
+  m_detached(true)
 {
   Initialize();
 }
@@ -41,6 +42,27 @@ void Camera::SetCenterPoint(float cx, float cy)
 void Camera::Capture()
 {
   m_context->Launch(m_programId, m_imageSize);
+}
+
+void Camera::PreBuildScene()
+{
+  m_detached = true;
+}
+
+void Camera::BuildScene(Link& link)
+{
+  Node::BuildScene(link);
+  UploadCamera(link.GetTransform() * m_transform);
+  m_detached = false;
+}
+
+void Camera::PostBuildScene()
+{
+  UploadCamera(m_transform);
+}
+
+void Camera::UploadCamera(const Transform& transform)
+{
 }
 
 void Camera::Initialize()

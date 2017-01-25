@@ -22,6 +22,16 @@ class Camera : public Node
 
     void Capture();
 
+    void PreBuildScene() override;
+
+    void BuildScene(Link& link) override;
+
+    void PostBuildScene() override;
+
+  protected:
+
+    void UploadCamera(const Transform& transform);
+
   private:
 
     void Initialize();
@@ -43,6 +53,8 @@ class Camera : public Node
     optix::Program m_program;
 
     unsigned int m_programId;
+
+    bool m_detached;
 };
 
 } // namespace torch

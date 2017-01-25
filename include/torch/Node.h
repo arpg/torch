@@ -1,6 +1,8 @@
 #pragma once
 
 #include <vector>
+#include <optixu/optixpp.h>
+#include <torch/Link.h>
 #include <torch/Object.h>
 #include <torch/Transformable.h>
 
@@ -27,7 +29,17 @@ class Node : public Object, public Transformable
 
     void RemoveChildren();
 
+    virtual void BuildScene(optix::Variable variable);
+
+    void PreBuildScene() override;
+
+    void BuildScene(Link& link) override;
+
+    void PostBuildScene() override;
+
   protected:
+
+    void BuildChildScene(Link& link);
 
     bool CanAddChild(std::shared_ptr<const Node> child) const;
 

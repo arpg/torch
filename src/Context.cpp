@@ -1,4 +1,5 @@
 #include <torch/Context.h>
+#include <torch/Group.h>
 #include <torch/Ray.h>
 
 namespace torch
@@ -54,9 +55,34 @@ std::shared_ptr<Context> Context::Create()
   return context;
 }
 
+optix::Acceleration Context::CreateAcceleration()
+{
+  return m_context->createAcceleration("NoAccel", "NoAccel");
+}
+
 optix::Buffer Context::CreateBuffer(unsigned int type)
 {
   return m_context->createBuffer(type);
+}
+
+optix::Group Context::CreateGroup()
+{
+  return m_context->createGroup();
+}
+
+optix::Geometry Context::CreateGeometry()
+{
+  return m_context->createGeometry();
+}
+
+optix::GeometryGroup Context::CreateGeometryGroup()
+{
+  return m_context->createGeometryGroup();
+}
+
+optix::GeometryInstance Context::CreateGeometryInstance()
+{
+  return m_context->createGeometryInstance();
 }
 
 optix::Program Context::CreateProgram(const std::string& file,
@@ -73,10 +99,24 @@ unsigned int Context::RegisterLaunchProgram(optix::Program program)
   return id;
 }
 
+void Context::RegisterObject(std::shared_ptr<Object> object)
+{
+  m_objects.push_back(object);
+}
+
+std::shared_ptr<Node> Context::GetSceneRoot() const
+{
+  return m_sceneRoot;
+}
+
 void Context::PrepareLaunch()
 {
   if (m_dirty)
   {
+    DropOrphans();
+    PreBuildScene();
+    BuildScene();
+    PostBuildScene();
     m_dirty = true;
 
 #ifdef DEBUG_BUILD
@@ -86,9 +126,45 @@ void Context::PrepareLaunch()
   }
 }
 
+void Context::DropOrphans()
+{
+  size_t index = 0;
+
+  for (const std::shared_ptr<Object>& object : m_objects)
+  {
+    if (object.use_count() > 1) m_objects[index++] = object;
+  }
+
+  m_objects.resize(index);
+}
+
+void Context::PreBuildScene()
+{
+  for (std::shared_ptr<Object> object : m_objects)
+  {
+    object->PreBuildScene();
+  }
+}
+
+void Context::BuildScene()
+{
+  optix::Variable variable;
+  variable = m_context["sceneRoot"];
+  m_sceneRoot->BuildScene(variable);
+}
+
+void Context::PostBuildScene()
+{
+  for (std::shared_ptr<Object> object : m_objects)
+  {
+    object->PostBuildScene();
+  }
+}
+
 void Context::Initialize()
 {
   CreateContext();
+  CreateSceneRoot();
 }
 
 void Context::CreateContext()
@@ -101,6 +177,11 @@ void Context::CreateContext()
   m_context->setPrintBufferSize(512);
   m_context->setExceptionEnabled(RT_EXCEPTION_ALL, true);
 #endif
+}
+
+void Context::CreateSceneRoot()
+{
+  m_sceneRoot = std::make_shared<Group>(shared_from_this());
 }
 
 } // namespace torch

@@ -60,6 +60,36 @@ void Node::RemoveChildren()
   }
 }
 
+void Node::BuildScene(optix::Variable variable)
+{
+  Link link(m_context);
+  BuildScene(link);
+  link.Write(variable);
+}
+
+void Node::PreBuildScene()
+{
+}
+
+void Node::BuildScene(Link& link)
+{
+  BuildChildScene(link);
+}
+
+void Node::PostBuildScene()
+{
+}
+
+void Node::BuildChildScene(Link& link)
+{
+  Link sublink = link.Branch(m_transform);
+
+  for (std::shared_ptr<Node> child : m_children)
+  {
+    child->BuildScene(sublink);
+  }
+}
+
 bool Node::CanAddChild(std::shared_ptr<const Node> child) const
 {
   return child && child.get() != this && !HasChild(child);

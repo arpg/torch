@@ -53,6 +53,8 @@ set(CPP_HEADER_DIR include/${LIBRARY_NAME})
 set(CPP_HEADERS
   ${CPP_HEADER_DIR}/Camera.h
   ${CPP_HEADER_DIR}/Context.h
+  ${CPP_HEADER_DIR}/Group.h
+  ${CPP_HEADER_DIR}/Link.h
   ${CPP_HEADER_DIR}/Object.h
   ${CPP_HEADER_DIR}/Node.h
   ${CPP_HEADER_DIR}/Ray.h
@@ -68,6 +70,8 @@ set(CPP_SOURCE_DIR src)
 set(CPP_SOURCES
   ${CPP_SOURCE_DIR}/Camera.cpp
   ${CPP_SOURCE_DIR}/Context.cpp
+  ${CPP_SOURCE_DIR}/Group.cpp
+  ${CPP_SOURCE_DIR}/Link.cpp
   ${CPP_SOURCE_DIR}/Object.cpp
   ${CPP_SOURCE_DIR}/Node.cpp
   ${CPP_SOURCE_DIR}/Scene.cpp
