@@ -3,6 +3,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <unordered_map>
 #include <optixu/optixpp.h>
 
 namespace torch
@@ -42,6 +43,10 @@ class Context : public std::enable_shared_from_this<Context>
     optix::GeometryGroup CreateGeometryGroup();
 
     optix::GeometryInstance CreateGeometryInstance();
+
+    optix::Material CreateMaterial();
+
+    optix::Program GetProgram(const std::string& file, const std::string& name);
 
     optix::Program CreateProgram(const std::string& file,
         const std::string& name);
@@ -83,6 +88,8 @@ class Context : public std::enable_shared_from_this<Context>
     std::shared_ptr<Node> m_sceneRoot;
 
     std::vector<std::shared_ptr<Object>> m_objects;
+
+    std::unordered_map<std::string, optix::Program> m_programs;
 };
 
 } // namespace torch

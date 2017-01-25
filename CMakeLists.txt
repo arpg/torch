@@ -53,13 +53,21 @@ set(CPP_HEADER_DIR include/${LIBRARY_NAME})
 set(CPP_HEADERS
   ${CPP_HEADER_DIR}/Camera.h
   ${CPP_HEADER_DIR}/Context.h
+  ${CPP_HEADER_DIR}/Exception.h
+  ${CPP_HEADER_DIR}/Geometry.h
+  ${CPP_HEADER_DIR}/GeometryGroup.h
   ${CPP_HEADER_DIR}/Group.h
   ${CPP_HEADER_DIR}/Image.h
   ${CPP_HEADER_DIR}/Link.h
   ${CPP_HEADER_DIR}/Object.h
+  ${CPP_HEADER_DIR}/Primitive.h
+  ${CPP_HEADER_DIR}/Material.h
+  ${CPP_HEADER_DIR}/MatteMaterial.h
   ${CPP_HEADER_DIR}/Node.h
   ${CPP_HEADER_DIR}/Ray.h
   ${CPP_HEADER_DIR}/Scene.h
+  ${CPP_HEADER_DIR}/Spectrum.h
+  ${CPP_HEADER_DIR}/Sphere.h
   ${CPP_HEADER_DIR}/Transform.h
   ${CPP_HEADER_DIR}/Transformable.h
 )
@@ -71,12 +79,19 @@ set(CPP_SOURCE_DIR src)
 set(CPP_SOURCES
   ${CPP_SOURCE_DIR}/Camera.cpp
   ${CPP_SOURCE_DIR}/Context.cpp
+  ${CPP_SOURCE_DIR}/Geometry.cpp
+  ${CPP_SOURCE_DIR}/GeometryGroup.cpp
   ${CPP_SOURCE_DIR}/Group.cpp
   ${CPP_SOURCE_DIR}/Image.cpp
   ${CPP_SOURCE_DIR}/Link.cpp
   ${CPP_SOURCE_DIR}/Object.cpp
+  ${CPP_SOURCE_DIR}/Primitive.cpp
+  ${CPP_SOURCE_DIR}/Material.cpp
+  ${CPP_SOURCE_DIR}/MatteMaterial.cpp
   ${CPP_SOURCE_DIR}/Node.cpp
   ${CPP_SOURCE_DIR}/Scene.cpp
+  ${CPP_SOURCE_DIR}/Spectrum.cpp
+  ${CPP_SOURCE_DIR}/Sphere.cpp
   ${CPP_SOURCE_DIR}/Transform.cpp
   ${CPP_SOURCE_DIR}/Transformable.cpp
 )
@@ -94,6 +109,8 @@ set(CUDA_SOURCE_DIR src)
 
 set(CUDA_SOURCES
   ${CUDA_SOURCE_DIR}/Camera.cu
+  ${CUDA_SOURCE_DIR}/MatteMaterial.cu
+  ${CUDA_SOURCE_DIR}/Sphere.cu
 )
 
 # set project definitions

@@ -7,8 +7,12 @@ namespace torch
 
 class Context;
 class Camera;
+class GeometryGroup;
 class Group;
+class MatteMaterial;
 class Node;
+class Primitive;
+class Sphere;
 
 class Scene
 {
@@ -23,6 +27,14 @@ class Scene
     std::shared_ptr<Camera> CreateCamera();
 
     std::shared_ptr<Group> CreateGroup();
+
+    std::shared_ptr<Primitive> CreatePrimitive();
+
+    std::shared_ptr<GeometryGroup> CreateGeometryGroup();
+
+    std::shared_ptr<Sphere> CreateSphere();
+
+    std::shared_ptr<MatteMaterial> CreateMatteMaterial();
 
   private:
 

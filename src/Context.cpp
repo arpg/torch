@@ -85,6 +85,26 @@ optix::GeometryInstance Context::CreateGeometryInstance()
   return m_context->createGeometryInstance();
 }
 
+optix::Material Context::CreateMaterial()
+{
+  return m_context->createMaterial();
+}
+
+optix::Program Context::GetProgram(const std::string& file,
+    const std::string& name)
+{
+  const std::string key = file + "::" + name;
+  optix::Program program = m_programs[key];
+
+  if (!program)
+  {
+    program = CreateProgram(file, name);
+    m_programs[key] = program;
+  }
+
+  return program;
+}
+
 optix::Program Context::CreateProgram(const std::string& file,
     const std::string& name)
 {

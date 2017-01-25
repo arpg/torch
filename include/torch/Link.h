@@ -17,13 +17,11 @@ class Link
 
     ~Link();
 
-    void Attach(optix::Group group);
-
-    void Attach(optix::GeometryGroup group);
-
-    void Attach(optix::GeometryInstance instance);
+    void Paint(optix::Material material);
 
     void Attach(optix::Transform transform);
+
+    void Attach(optix::GeometryInstance instance);
 
     void Write(optix::Variable variable) const;
 
@@ -50,6 +48,8 @@ class Link
     optix::Group m_group;
 
     optix::GeometryGroup m_geomGroup;
+
+    optix::Material m_material;
 };
 
 } // namespace torch

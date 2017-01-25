@@ -14,24 +14,21 @@ Link::~Link()
 {
 }
 
-void Link::Attach(optix::Group group)
+void Link::Paint(optix::Material material)
 {
-  m_group->addChild(group);
-}
-
-void Link::Attach(optix::GeometryGroup group)
-{
-  m_group->addChild(group);
-}
-
-void Link::Attach(optix::GeometryInstance instance)
-{
-  m_geomGroup->addChild(instance);
+  m_material = material;
 }
 
 void Link::Attach(optix::Transform transform)
 {
   m_group->addChild(transform);
+}
+
+void Link::Attach(optix::GeometryInstance instance)
+{
+  instance->setMaterialCount(0);
+  instance->addMaterial(m_material);
+  m_geomGroup->addChild(instance);
 }
 
 void Link::Write(optix::Variable variable) const

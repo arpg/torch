@@ -82,11 +82,11 @@ void Node::PostBuildScene()
 
 void Node::BuildChildScene(Link& link)
 {
-  Link sublink = link.Branch(m_transform);
+  Link childLink = link.Branch(m_transform);
 
   for (std::shared_ptr<Node> child : m_children)
   {
-    child->BuildScene(sublink);
+    child->BuildScene(childLink);
   }
 }
 

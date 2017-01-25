@@ -1,5 +1,6 @@
 #pragma once
 
+#include <optixu/optixpp.h>
 #include <optixu/optixu_matrix.h>
 
 namespace torch
@@ -46,6 +47,8 @@ class Transform
     Transform Inverse() const;
 
     Transform operator*(const Transform& transform) const;
+
+    void Write(optix::Variable variable) const;
 
   protected:
 

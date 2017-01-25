@@ -149,6 +149,11 @@ Transform Transform::operator*(const Transform& transform) const
   return result;
 }
 
+void Transform::Write(optix::Variable variable) const
+{
+  variable->setMatrix4x4fv(false, m_matrix.getData());
+}
+
 float Transform::GetNorm(const optix::Matrix4x4& a, const optix::Matrix4x4& b)
 {
   float norm = 0;
