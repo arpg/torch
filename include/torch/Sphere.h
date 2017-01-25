@@ -1,6 +1,6 @@
 #pragma once
 
-#include <torch/Geometry.h>
+#include <torch/SingleGeometry.h>
 
 namespace torch
 {

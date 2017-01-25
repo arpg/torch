@@ -66,6 +66,7 @@ set(CPP_HEADERS
   ${CPP_HEADER_DIR}/Node.h
   ${CPP_HEADER_DIR}/Ray.h
   ${CPP_HEADER_DIR}/Scene.h
+  ${CPP_HEADER_DIR}/SingleGeometry.h
   ${CPP_HEADER_DIR}/Spectrum.h
   ${CPP_HEADER_DIR}/Sphere.h
   ${CPP_HEADER_DIR}/Transform.h
@@ -90,6 +91,7 @@ set(CPP_SOURCES
   ${CPP_SOURCE_DIR}/MatteMaterial.cpp
   ${CPP_SOURCE_DIR}/Node.cpp
   ${CPP_SOURCE_DIR}/Scene.cpp
+  ${CPP_SOURCE_DIR}/SingleGeometry.cpp
   ${CPP_SOURCE_DIR}/Spectrum.cpp
   ${CPP_SOURCE_DIR}/Sphere.cpp
   ${CPP_SOURCE_DIR}/Transform.cpp
@@ -101,6 +103,7 @@ set(CPP_SOURCES
 set(CUDA_HEADER_DIR include/${LIBRARY_NAME})
 
 set(CUDA_HEADERS
+  ${CUDA_HEADER_DIR}/Geometry.cuh
 )
 
 # define cuda sources

@@ -59,17 +59,10 @@ void GeometryGroup::RemoveChildren()
   }
 }
 
-void GeometryGroup::PreBuildScene()
-{
-}
-
 void GeometryGroup::BuildScene(Link& link)
 {
+  Geometry::BuildScene(link);
   BuildChildScene(link);
-}
-
-void GeometryGroup::PostBuildScene()
-{
 }
 
 void GeometryGroup::BuildChildScene(Link& link)

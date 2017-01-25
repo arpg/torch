@@ -26,11 +26,7 @@ class GeometryGroup : public Geometry
 
     void RemoveChildren();
 
-    void PreBuildScene() override;
-
     void BuildScene(Link& link) override;
-
-    void PostBuildScene() override;
 
   protected:
 
