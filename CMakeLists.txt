@@ -58,8 +58,10 @@ set(CPP_HEADERS
   ${CPP_HEADER_DIR}/GeometryGroup.h
   ${CPP_HEADER_DIR}/Group.h
   ${CPP_HEADER_DIR}/Image.h
+  ${CPP_HEADER_DIR}/Light.h
   ${CPP_HEADER_DIR}/Link.h
   ${CPP_HEADER_DIR}/Object.h
+  ${CPP_HEADER_DIR}/PointLight.h
   ${CPP_HEADER_DIR}/Primitive.h
   ${CPP_HEADER_DIR}/Material.h
   ${CPP_HEADER_DIR}/MatteMaterial.h
@@ -84,8 +86,10 @@ set(CPP_SOURCES
   ${CPP_SOURCE_DIR}/GeometryGroup.cpp
   ${CPP_SOURCE_DIR}/Group.cpp
   ${CPP_SOURCE_DIR}/Image.cpp
+  ${CPP_SOURCE_DIR}/Light.cpp
   ${CPP_SOURCE_DIR}/Link.cpp
   ${CPP_SOURCE_DIR}/Object.cpp
+  ${CPP_SOURCE_DIR}/PointLight.cpp
   ${CPP_SOURCE_DIR}/Primitive.cpp
   ${CPP_SOURCE_DIR}/Material.cpp
   ${CPP_SOURCE_DIR}/MatteMaterial.cpp

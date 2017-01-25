@@ -11,6 +11,7 @@ class GeometryGroup;
 class Group;
 class MatteMaterial;
 class Node;
+class PointLight;
 class Primitive;
 class Sphere;
 
@@ -31,6 +32,8 @@ class Scene
     std::shared_ptr<Camera> CreateCamera();
 
     std::shared_ptr<Group> CreateGroup();
+
+    std::shared_ptr<PointLight> CreatePointLight();
 
     std::shared_ptr<Primitive> CreatePrimitive();
 

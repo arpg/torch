@@ -8,6 +8,12 @@ int main(int argc, char** argv)
   Scene scene;
   scene.SetEpsilon(1E-4);
 
+  std::shared_ptr<PointLight> light;
+  light = scene.CreatePointLight();
+  light->SetIntensity(10, 10, 10);
+  light->SetPosition(3, -5, 0);
+  scene.Add(light);
+
   std::shared_ptr<Sphere> geometry;
   geometry = scene.CreateSphere();
   geometry->SetOrientation(0, 0, 0);
@@ -38,6 +44,5 @@ int main(int argc, char** argv)
   camera->Capture(image);
   image.Save("image.png");
   std::cout << "Success" << std::endl;
-
   return 0;
 }
