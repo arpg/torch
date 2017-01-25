@@ -14,8 +14,11 @@ int main(int argc, char** argv)
   camera->SetCenterPoint(320, 240);
   camera->SetOrientation(0, 0, 0);
   camera->SetPosition(0, 0, 0);
-  camera->Capture();
 
+  Image image;
+  camera->Capture(image);
+  image.Save("image.png");
   std::cout << "Success" << std::endl;
+
   return 0;
 }

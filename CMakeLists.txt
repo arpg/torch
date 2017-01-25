@@ -54,6 +54,7 @@ set(CPP_HEADERS
   ${CPP_HEADER_DIR}/Camera.h
   ${CPP_HEADER_DIR}/Context.h
   ${CPP_HEADER_DIR}/Group.h
+  ${CPP_HEADER_DIR}/Image.h
   ${CPP_HEADER_DIR}/Link.h
   ${CPP_HEADER_DIR}/Object.h
   ${CPP_HEADER_DIR}/Node.h
@@ -71,6 +72,7 @@ set(CPP_SOURCES
   ${CPP_SOURCE_DIR}/Camera.cpp
   ${CPP_SOURCE_DIR}/Context.cpp
   ${CPP_SOURCE_DIR}/Group.cpp
+  ${CPP_SOURCE_DIR}/Image.cpp
   ${CPP_SOURCE_DIR}/Link.cpp
   ${CPP_SOURCE_DIR}/Object.cpp
   ${CPP_SOURCE_DIR}/Node.cpp

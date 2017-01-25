@@ -39,9 +39,10 @@ void Camera::SetCenterPoint(float cx, float cy)
   m_context->MarkDirty();
 }
 
-void Camera::Capture()
+void Camera::Capture(Image& image)
 {
   m_context->Launch(m_programId, m_imageSize);
+  CopyBuffer(image);
 }
 
 void Camera::PreBuildScene()
@@ -59,6 +60,15 @@ void Camera::BuildScene(Link& link)
 void Camera::PostBuildScene()
 {
   UploadCamera(m_transform);
+}
+
+void Camera::CopyBuffer(Image& image)
+{
+  image.Resize(m_imageSize.x, m_imageSize.y);
+  unsigned char* host = image.GetData();
+  unsigned char* device = reinterpret_cast<unsigned char*>(m_buffer->map());
+  std::copy(device, device + image.GetByteCount(), host);
+  m_buffer->unmap();
 }
 
 void Camera::UploadCamera(const Transform& transform)

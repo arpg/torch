@@ -1,6 +1,7 @@
 #pragma once
 
 #include <optixu/optixpp.h>
+#include <torch/Image.h>
 #include <torch/Node.h>
 
 namespace torch
@@ -20,7 +21,7 @@ class Camera : public Node
 
     void SetCenterPoint(float cx, float cy);
 
-    void Capture();
+    void Capture(Image& image);
 
     void PreBuildScene() override;
 
@@ -29,6 +30,8 @@ class Camera : public Node
     void PostBuildScene() override;
 
   protected:
+
+    void CopyBuffer(Image& image);
 
     void UploadCamera(const Transform& transform);
 
