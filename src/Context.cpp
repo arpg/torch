@@ -1,6 +1,7 @@
 #include <torch/Context.h>
 #include <torch/Group.h>
 #include <torch/Ray.h>
+#include <torch/SceneLightSampler.h>
 
 namespace torch
 {
@@ -139,14 +140,21 @@ std::shared_ptr<Node> Context::GetSceneRoot() const
   return m_sceneRoot;
 }
 
+std::shared_ptr<SceneLightSampler> Context::GetLightSampler() const
+{
+  return m_lightSampler;
+}
+
 void Context::PrepareLaunch()
 {
   if (m_dirty)
   {
+    m_lightSampler->Clear();
     DropOrphans();
     PreBuildScene();
     BuildScene();
     PostBuildScene();
+    m_lightSampler->Update();
     m_dirty = true;
 
 #ifdef DEBUG_BUILD
@@ -195,6 +203,7 @@ void Context::Initialize()
 {
   CreateContext();
   CreateSceneRoot();
+  CreateLightSampler();
 }
 
 void Context::CreateContext()
@@ -212,6 +221,11 @@ void Context::CreateContext()
 void Context::CreateSceneRoot()
 {
   m_sceneRoot = std::make_shared<Group>(shared_from_this());
+}
+
+void Context::CreateLightSampler()
+{
+  m_lightSampler = std::make_shared<SceneLightSampler>(shared_from_this());
 }
 
 } // namespace torch

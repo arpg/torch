@@ -53,21 +53,26 @@ set(CPP_HEADER_DIR include/${LIBRARY_NAME})
 set(CPP_HEADERS
   ${CPP_HEADER_DIR}/Camera.h
   ${CPP_HEADER_DIR}/Context.h
+  ${CPP_HEADER_DIR}/Distribution.h
   ${CPP_HEADER_DIR}/Exception.h
   ${CPP_HEADER_DIR}/Geometry.h
   ${CPP_HEADER_DIR}/GeometryGroup.h
   ${CPP_HEADER_DIR}/Group.h
   ${CPP_HEADER_DIR}/Image.h
   ${CPP_HEADER_DIR}/Light.h
+  ${CPP_HEADER_DIR}/LightData.h
+  ${CPP_HEADER_DIR}/LightSampler.h
   ${CPP_HEADER_DIR}/Link.h
   ${CPP_HEADER_DIR}/Object.h
   ${CPP_HEADER_DIR}/PointLight.h
+  ${CPP_HEADER_DIR}/PointLightSampler.h
   ${CPP_HEADER_DIR}/Primitive.h
   ${CPP_HEADER_DIR}/Material.h
   ${CPP_HEADER_DIR}/MatteMaterial.h
   ${CPP_HEADER_DIR}/Node.h
   ${CPP_HEADER_DIR}/Ray.h
   ${CPP_HEADER_DIR}/Scene.h
+  ${CPP_HEADER_DIR}/SceneLightSampler.h
   ${CPP_HEADER_DIR}/SingleGeometry.h
   ${CPP_HEADER_DIR}/Spectrum.h
   ${CPP_HEADER_DIR}/Sphere.h
@@ -82,19 +87,23 @@ set(CPP_SOURCE_DIR src)
 set(CPP_SOURCES
   ${CPP_SOURCE_DIR}/Camera.cpp
   ${CPP_SOURCE_DIR}/Context.cpp
+  ${CPP_SOURCE_DIR}/Distribution.cpp
   ${CPP_SOURCE_DIR}/Geometry.cpp
   ${CPP_SOURCE_DIR}/GeometryGroup.cpp
   ${CPP_SOURCE_DIR}/Group.cpp
   ${CPP_SOURCE_DIR}/Image.cpp
   ${CPP_SOURCE_DIR}/Light.cpp
+  ${CPP_SOURCE_DIR}/LightSampler.cpp
   ${CPP_SOURCE_DIR}/Link.cpp
   ${CPP_SOURCE_DIR}/Object.cpp
   ${CPP_SOURCE_DIR}/PointLight.cpp
+  ${CPP_SOURCE_DIR}/PointLightSampler.cpp
   ${CPP_SOURCE_DIR}/Primitive.cpp
   ${CPP_SOURCE_DIR}/Material.cpp
   ${CPP_SOURCE_DIR}/MatteMaterial.cpp
   ${CPP_SOURCE_DIR}/Node.cpp
   ${CPP_SOURCE_DIR}/Scene.cpp
+  ${CPP_SOURCE_DIR}/SceneLightSampler.cpp
   ${CPP_SOURCE_DIR}/SingleGeometry.cpp
   ${CPP_SOURCE_DIR}/Spectrum.cpp
   ${CPP_SOURCE_DIR}/Sphere.cpp
@@ -116,7 +125,10 @@ set(CUDA_SOURCE_DIR src)
 
 set(CUDA_SOURCES
   ${CUDA_SOURCE_DIR}/Camera.cu
+  ${CUDA_SOURCE_DIR}/Distribution.cu
   ${CUDA_SOURCE_DIR}/MatteMaterial.cu
+  ${CUDA_SOURCE_DIR}/PointLightSampler.cu
+  ${CUDA_SOURCE_DIR}/SceneLightSampler.cu
   ${CUDA_SOURCE_DIR}/Sphere.cu
 )
 

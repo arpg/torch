@@ -11,6 +11,7 @@ namespace torch
 
 class Node;
 class Object;
+class SceneLightSampler;
 
 class Context : public std::enable_shared_from_this<Context>
 {
@@ -61,6 +62,8 @@ class Context : public std::enable_shared_from_this<Context>
 
     std::shared_ptr<Node> GetSceneRoot() const;
 
+    std::shared_ptr<SceneLightSampler> GetLightSampler() const;
+
   protected:
 
     void PrepareLaunch();
@@ -83,6 +86,8 @@ class Context : public std::enable_shared_from_this<Context>
 
     void CreateSceneRoot();
 
+    void CreateLightSampler();
+
   protected:
 
     bool m_dirty;
@@ -90,6 +95,8 @@ class Context : public std::enable_shared_from_this<Context>
     optix::Context m_context;
 
     std::shared_ptr<Node> m_sceneRoot;
+
+    std::shared_ptr<SceneLightSampler> m_lightSampler;
 
     std::vector<std::shared_ptr<Object>> m_objects;
 
