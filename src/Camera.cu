@@ -2,6 +2,15 @@
 #include <torch/Random.h>
 #include <torch/Ray.h>
 
+struct Camera
+{
+  float2 center;
+  float3 position;
+  float3 u;
+  float3 v;
+  float3 w;
+};
+
 rtDeclareVariable(uint2, pixelIndex, rtLaunchIndex, );
 rtDeclareVariable(uint2, imageSize, rtLaunchDim, );
 
@@ -9,11 +18,7 @@ rtDeclareVariable(rtObject, sceneRoot, , );
 rtDeclareVariable(float, sceneEpsilon, , );
 
 rtDeclareVariable(unsigned int, sampleCount, , );
-rtDeclareVariable(float3, position, , );
-rtDeclareVariable(float2, center, , );
-rtDeclareVariable(float3, u, , );
-rtDeclareVariable(float3, v, , );
-rtDeclareVariable(float3, w, , );
+rtDeclareVariable(Camera, camera, , );
 rtBuffer<float3, 2> buffer;
 
 #define TORCH_DEVICE static __device__ __inline__
@@ -21,19 +26,16 @@ rtBuffer<float3, 2> buffer;
 static __inline__ __device__
 void GetDirection(float3& direction, unsigned int& seed)
 {
-  float2 pixel = make_float2(pixelIndex);
-  pixel.x += torch::randf(seed);
-  pixel.y += torch::randf(seed);
-
   const float2 size = make_float2(imageSize);
-  const float2 ratio = (pixel / size) - center;
-  direction = ratio.x * u + ratio.y * v + w;
+  const float2 pixel = make_float2(pixelIndex) + torch::randf2(seed);
+  const float2 ratio = (pixel / size) - camera.center;
+  direction = ratio.x * camera.u + ratio.y * camera.v + camera.w;
   direction = normalize(direction);
 }
 
 TORCH_DEVICE void InitializeRay(optix::Ray& ray, torch::RadianceData& data)
 {
-  ray.origin = position;
+  ray.origin = camera.position;
   ray.tmin = sceneEpsilon;
   ray.tmax = RT_DEFAULT_MAX;
   ray.ray_type = torch::RAY_TYPE_RADIANCE;
@@ -55,6 +57,7 @@ RT_PROGRAM void Capture()
   seed = InitializeSeed();
   InitializeRay(ray, data);
   data.radiance = make_float3(0, 0, 0);
+  data.seed = seed;
 
   for (unsigned int i = 0; i < sampleCount; ++i)
   {

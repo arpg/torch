@@ -12,6 +12,8 @@ class Transform
 
     Transform();
 
+    Transform(optix::Transform transform);
+
     optix::Matrix4x4 GetRotationMatrix() const;
 
     float3 GetEulerAngles() const;

@@ -15,11 +15,6 @@ void Link::Apply(optix::Material material)
   m_material = material;
 }
 
-void Link::Attach(optix::Transform transform)
-{
-  m_group->addChild(transform);
-}
-
 void Link::Attach(optix::GeometryInstance instance)
 {
   instance->setMaterialCount(0);
@@ -27,19 +22,12 @@ void Link::Attach(optix::GeometryInstance instance)
   m_geomGroup->addChild(instance);
 }
 
-void Link::Write(optix::Transform transform) const
+void Link::Write(optix::Variable variable)
 {
-  (m_group->getChildCount() == 0) ?
-        transform->setChild(m_geomGroup) : transform->setChild(m_group);
+  variable->set(m_group);
 }
 
-void Link::Write(optix::Variable variable) const
-{
-  (m_group->getChildCount() == 0) ?
-        variable->set(m_geomGroup) : variable->set(m_group);
-}
-
-Link Link::Branch(const Transform& transform) const
+Link Link::Branch(const Transform& transform)
 {
   Link link(*this);
   link.m_transform = link.m_transform * transform;

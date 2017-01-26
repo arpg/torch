@@ -1,6 +1,6 @@
 #pragma once
 
-#include <host_defines.h>
+#include <optix_math.h>
 
 #define TORCH_BOTH static __device__ __host__ __inline__
 
@@ -31,6 +31,16 @@ TORCH_BOTH unsigned int next_seed(unsigned int& seed)
 TORCH_BOTH float randf(unsigned int& seed)
 {
   return float(next_seed(seed)) / 0x01000000;
+}
+
+TORCH_BOTH float2 randf2(unsigned int& seed)
+{
+  return make_float2(randf(seed), randf(seed));
+}
+
+TORCH_BOTH float3 randf3(unsigned int& seed)
+{
+  return make_float3(randf(seed), randf(seed), randf(seed));
 }
 
 TORCH_BOTH float rand(unsigned int& seed, unsigned int max)

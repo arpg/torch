@@ -8,10 +8,16 @@ Transform::Transform() :
 {
 }
 
+Transform::Transform(optix::Transform transform)
+{
+  transform->getMatrix(false, m_matrix.getData(), nullptr);
+}
+
 optix::Matrix4x4 Transform::GetRotationMatrix() const
 {
   unsigned int count = 0;
   optix::Matrix4x4 R = m_matrix;
+  R.setCol(3, make_float4(0, 0, 0, 1));
   optix::Matrix4x4 Rnext;
   float norm = 0.0f;
 
@@ -91,7 +97,7 @@ void Transform::SetTranslation(const float3& translation)
 optix::Matrix4x4 Transform::GetScaleMatrix() const
 {
   const optix::Matrix4x4 R = GetRotationMatrix();
-  return R.inverse() * m_matrix;
+  return R.transpose() * m_matrix;
 }
 
 float3 Transform::GetScale() const

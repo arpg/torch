@@ -5,6 +5,8 @@
 #include <torch/PointLightSampler.h>
 #include <torch/PtxUtil.h>
 
+#include <iostream>
+
 namespace torch
 {
 
@@ -62,14 +64,21 @@ void SceneLightSampler::UpdateDistribution()
 
 void SceneLightSampler::Initialize()
 {
+  CreateProgram();
   CreateDistribution();
   CreateLightSamplers();
-  CreateProgram();
+}
+
+void SceneLightSampler::CreateProgram()
+{
+  const std::string file = PtxUtil::GetFile("SceneLightSampler");
+  m_program = m_context->CreateProgram(file, "Sample");
 }
 
 void SceneLightSampler::CreateDistribution()
 {
   m_distribution = std::make_unique<Distribution>(m_context);
+  m_program["GetLightType"]->set(m_distribution->GetProgram());
 }
 
 void SceneLightSampler::CreateLightSamplers()
@@ -78,13 +87,8 @@ void SceneLightSampler::CreateLightSamplers()
   std::unique_ptr<LightSampler> sampler;
 
   sampler = std::make_unique<PointLightSampler>(m_context);
+  m_program["SamplePointLights"]->set(sampler.get()->GetProgram());
   m_samplers[LIGHT_TYPE_POINT] = std::move(sampler);
-}
-
-void SceneLightSampler::CreateProgram()
-{
-  const std::string file = PtxUtil::GetFile("SceneLightSampler");
-  m_program = m_context->CreateProgram(file, "Sample");
 }
 
 } // namespace torch

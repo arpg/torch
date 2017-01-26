@@ -11,11 +11,22 @@ enum LightType
   LIGHT_TYPE_COUNT
 };
 
+struct LightSample
+{
+  unsigned int seed;
+  float3 origin;
+  float3 radiance;
+  float3 direction;
+  float tmin;
+  float tmax;
+  float pdf;
+};
+
 struct PointLightData
 {
-  float luminance;
   float3 position;
   float3 intensity;
+  float luminance;
 };
 
 } // namespace torch

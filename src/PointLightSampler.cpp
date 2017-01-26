@@ -69,29 +69,30 @@ void PointLightSampler::UpdateLightBuffer()
 
 void PointLightSampler::Initialize()
 {
+  CreateProgram();
   CreateDistribution();
   CreateLightBuffer();
-  CreateProgram();
-}
-
-void PointLightSampler::CreateDistribution()
-{
-  m_distribution = std::make_unique<Distribution>(m_context);
-}
-
-void PointLightSampler::CreateLightBuffer()
-{
-  m_buffer = m_context->CreateBuffer(RT_BUFFER_INPUT);
-  m_buffer->setFormat(RT_FORMAT_USER);
-  m_buffer->setElementSize(sizeof(PointLightData));
-  m_buffer->setSize(1);
 }
 
 void PointLightSampler::CreateProgram()
 {
   const std::string file = PtxUtil::GetFile("PointLightSampler");
   m_program = m_context->CreateProgram(file, "Sample");
+}
+
+void PointLightSampler::CreateDistribution()
+{
+  m_distribution = std::make_unique<Distribution>(m_context);
+  m_program["GetLightIndex"]->set(m_distribution->GetProgram());
+}
+
+void PointLightSampler::CreateLightBuffer()
+{
+  m_buffer = m_context->CreateBuffer(RT_BUFFER_INPUT);
   m_program["lights"]->setBuffer(m_buffer);
+  m_buffer->setFormat(RT_FORMAT_USER);
+  m_buffer->setElementSize(sizeof(PointLightData));
+  m_buffer->setSize(1);
 }
 
 } // namespace torch

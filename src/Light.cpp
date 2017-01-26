@@ -8,4 +8,9 @@ Light::Light(std::shared_ptr<Context> context) :
 {
 }
 
+float Light::GetLuminance() const
+{
+  return GetPower().GetY();
+}
+
 } // namespace torch

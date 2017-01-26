@@ -251,6 +251,7 @@ void Context::CreateSceneRoot()
 void Context::CreateLightSampler()
 {
   m_lightSampler = std::make_shared<SceneLightSampler>(shared_from_this());
+  m_context["SampleLights"]->set(m_lightSampler->GetProgram());
 }
 
 } // namespace torch

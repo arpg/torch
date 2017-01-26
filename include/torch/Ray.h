@@ -16,6 +16,7 @@ struct RadianceData
 {
   float3 radiance;
   float3 throughput;
+  unsigned int seed;
 };
 
 } // namespace torch

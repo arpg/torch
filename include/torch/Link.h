@@ -17,15 +17,11 @@ class Link
 
     void Apply(optix::Material material);
 
-    void Attach(optix::Transform transform);
-
     void Attach(optix::GeometryInstance instance);
 
-    void Write(optix::Transform transform) const;
+    void Write(optix::Variable variable);
 
-    void Write(optix::Variable variable) const;
-
-    Link Branch(const Transform& transform) const;
+    Link Branch(const Transform& transform);
 
     Transform GetTransform() const;
 

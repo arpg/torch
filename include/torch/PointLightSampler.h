@@ -34,11 +34,11 @@ class PointLightSampler : public LightSampler
 
     void Initialize();
 
+    void CreateProgram();
+
     void CreateDistribution();
 
     void CreateLightBuffer();
-
-    void CreateProgram();
 
   protected:
 

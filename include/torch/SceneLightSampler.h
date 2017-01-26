@@ -38,11 +38,11 @@ class SceneLightSampler
 
     void Initialize();
 
+    void CreateProgram();
+
     void CreateDistribution();
 
     void CreateLightSamplers();
-
-    void CreateProgram();
 
   protected:
 
