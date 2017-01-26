@@ -7,10 +7,6 @@ Transformable::Transformable()
 {
 }
 
-Transformable::~Transformable()
-{
-}
-
 Transform Transformable::GetTransform() const
 {
   return m_transform;

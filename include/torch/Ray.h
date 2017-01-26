@@ -15,6 +15,7 @@ enum RayType
 struct RadianceData
 {
   float3 radiance;
+  float3 throughput;
 };
 
 } // namespace torch

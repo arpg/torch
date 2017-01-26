@@ -17,8 +17,6 @@ class Context : public std::enable_shared_from_this<Context>
 {
   public:
 
-    ~Context();
-
     void MarkDirty();
 
     void Launch(unsigned int id, RTsize w);
@@ -76,6 +74,8 @@ class Context : public std::enable_shared_from_this<Context>
 
     void PostBuildScene();
 
+    void FinishLaunch();
+
   private:
 
     Context();
@@ -101,6 +101,10 @@ class Context : public std::enable_shared_from_this<Context>
     std::vector<std::shared_ptr<Object>> m_objects;
 
     std::unordered_map<std::string, optix::Program> m_programs;
+
+    optix::Program m_errorProgram;
+
+    optix::Buffer m_errorBuffer;
 };
 
 } // namespace torch

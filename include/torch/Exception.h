@@ -15,10 +15,6 @@ class Exception : public std::exception
     {
     }
 
-    ~Exception()
-    {
-    }
-
     const char* what() const throw() override
     {
       return m_message.c_str();

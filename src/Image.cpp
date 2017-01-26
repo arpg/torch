@@ -7,10 +7,6 @@ Image::Image()
 {
 }
 
-Image::~Image()
-{
-}
-
 void Image::Resize(unsigned int w, unsigned int h)
 {
   m_image = cv::Mat(h, w, CV_32FC3);

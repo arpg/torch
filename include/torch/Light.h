@@ -12,12 +12,6 @@ class Light : public Node
   public:
 
     Light(std::shared_ptr<Context> context);
-
-    ~Light();
-
-    float GetLuminance() const;
-
-    virtual Spectrum GetPower() const = 0;
 };
 
 } // namespace torch

@@ -15,7 +15,7 @@ class PtxUtil
 
     static inline std::string GetFile(const std::string& name)
     {
-      return PTX_FOLDER + (PTX_PREFIX + name + PTX_SUFFIX);
+      return PTX_FOLDER PTX_PREFIX + name + PTX_SUFFIX;
     }
 };
 

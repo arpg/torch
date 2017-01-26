@@ -8,8 +8,4 @@ LightSampler::LightSampler(std::shared_ptr<Context> context) :
 {
 }
 
-LightSampler::~LightSampler()
-{
-}
-
 } // namespace torch

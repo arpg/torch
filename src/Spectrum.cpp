@@ -8,10 +8,6 @@ Spectrum::Spectrum() :
 {
 }
 
-Spectrum::~Spectrum()
-{
-}
-
 float Spectrum::GetY() const
 {
   return 0.212671f * m_rgb.x + 0.715160f * m_rgb.y + 0.072169f * m_rgb.z;
@@ -29,6 +25,39 @@ float3 Spectrum::GetXYZ() const
 float3 Spectrum::GetRGB() const
 {
   return m_rgb;
+}
+
+Spectrum Spectrum::operator+(float a) const
+{
+  Spectrum result(*this);
+  result += a;
+  return result;
+}
+
+Spectrum Spectrum::operator+(const Spectrum& a) const
+{
+  Spectrum result(*this);
+  result += a;
+  return result;
+}
+
+Spectrum& Spectrum::operator+=(float a)
+{
+  m_rgb = m_rgb + a;
+  return *this;
+}
+
+Spectrum& Spectrum::operator+=(const Spectrum& a)
+{
+  m_rgb = m_rgb + a.m_rgb;
+  return *this;
+}
+
+Spectrum operator+(float a, const Spectrum& b)
+{
+  Spectrum result(b);
+  result += a;
+  return result;
 }
 
 Spectrum Spectrum::operator*(float a) const

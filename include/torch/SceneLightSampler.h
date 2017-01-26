@@ -3,7 +3,9 @@
 #include <memory>
 #include <vector>
 #include <optixu/optixpp.h>
+#include <torch/Distribution.h>
 #include <torch/LightData.h>
+#include <torch/LightSampler.h>
 
 namespace torch
 {
@@ -17,8 +19,6 @@ class SceneLightSampler
   public:
 
     SceneLightSampler(std::shared_ptr<Context> context);
-
-    ~SceneLightSampler();
 
     optix::Program GetProgram() const;
 

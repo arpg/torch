@@ -12,8 +12,6 @@ class Image
 
     Image();
 
-    ~Image();
-
     void Resize(unsigned int w, unsigned int h);
 
     unsigned int GetWidth() const;

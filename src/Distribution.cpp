@@ -11,10 +11,6 @@ Distribution::Distribution(std::shared_ptr<Context> context) :
   Initialize();
 }
 
-Distribution::~Distribution()
-{
-}
-
 optix::Program Distribution::GetProgram() const
 {
   return m_program;

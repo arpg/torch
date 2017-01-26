@@ -14,10 +14,6 @@ SceneLightSampler::SceneLightSampler(std::shared_ptr<Context> context) :
   Initialize();
 }
 
-SceneLightSampler::~SceneLightSampler()
-{
-}
-
 optix::Program SceneLightSampler::GetProgram() const
 {
   return m_program;

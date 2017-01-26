@@ -8,8 +8,4 @@ Object::Object(std::shared_ptr<Context> context) :
 {
 }
 
-Object::~Object()
-{
-}
-
 } // namespace torch

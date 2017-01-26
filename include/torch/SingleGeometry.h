@@ -12,8 +12,6 @@ class SingleGeometry : public Geometry
 
     SingleGeometry(std::shared_ptr<Context> context, const std::string& name);
 
-    ~SingleGeometry();
-
     std::string GetName() const;
 
     void BuildScene(Link& link) override;

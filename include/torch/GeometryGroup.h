@@ -12,8 +12,6 @@ class GeometryGroup : public Geometry
 
     GeometryGroup(std::shared_ptr<Context> context);
 
-    ~GeometryGroup();
-
     size_t GetChildCount() const;
 
     std::shared_ptr<Geometry> GetChild(size_t index) const;

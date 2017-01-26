@@ -11,10 +11,6 @@ Node::Node(std::shared_ptr<Context> context) :
 {
 }
 
-Node::~Node()
-{
-}
-
 size_t Node::GetChildCount() const
 {
   return m_children.size();
@@ -60,13 +56,6 @@ void Node::RemoveChildren()
   }
 }
 
-void Node::BuildScene(optix::Variable variable)
-{
-  Link link(m_context);
-  BuildScene(link);
-  link.Write(variable);
-}
-
 void Node::PreBuildScene()
 {
 }
@@ -78,6 +67,13 @@ void Node::BuildScene(Link& link)
 
 void Node::PostBuildScene()
 {
+}
+
+void Node::BuildScene(optix::Variable variable)
+{
+  Link link(m_context);
+  BuildScene(link);
+  link.Write(variable);
 }
 
 void Node::BuildChildScene(Link& link)

@@ -12,8 +12,6 @@ class MatteMaterial : public Material
 
     MatteMaterial(std::shared_ptr<Context> context);
 
-    ~MatteMaterial();
-
     Spectrum GetAlbedo() const;
 
     void SetAlbedo(const Spectrum& albedo);

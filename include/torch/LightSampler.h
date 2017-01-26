@@ -14,8 +14,6 @@ class LightSampler
 
     LightSampler(std::shared_ptr<Context> context);
 
-    ~LightSampler();
-
     virtual optix::Program GetProgram() const = 0;
 
     virtual float GetLuminance() const = 0;

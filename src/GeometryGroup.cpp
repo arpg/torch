@@ -10,10 +10,6 @@ GeometryGroup::GeometryGroup(std::shared_ptr<Context> context) :
 {
 }
 
-GeometryGroup::~GeometryGroup()
-{
-}
-
 size_t GeometryGroup::GetChildCount() const
 {
   return m_children.size();

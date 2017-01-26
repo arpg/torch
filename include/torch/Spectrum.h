@@ -11,13 +11,19 @@ class Spectrum
 
     Spectrum();
 
-    ~Spectrum();
-
     float GetY() const;
 
     float3 GetXYZ() const;
 
     float3 GetRGB() const;
+
+    Spectrum operator+(float a) const;
+
+    Spectrum operator+(const Spectrum& a) const;
+
+    Spectrum& operator+=(float a);
+
+    Spectrum& operator+=(const Spectrum& a);
 
     Spectrum operator*(float a) const;
 
@@ -39,6 +45,8 @@ class Spectrum
 
     float3 m_rgb;
 };
+
+Spectrum operator+(float a, const Spectrum& b);
 
 Spectrum operator*(float a, const Spectrum& b);
 

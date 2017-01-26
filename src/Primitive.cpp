@@ -12,10 +12,6 @@ Primitive::Primitive(std::shared_ptr<Context> context) :
 {
 }
 
-Primitive::~Primitive()
-{
-}
-
 std::shared_ptr<Geometry> Primitive::GetGeometry() const
 {
   return m_geometry;

@@ -15,8 +15,6 @@ class Node : public Object, public Transformable
 
     Node(std::shared_ptr<Context> context);
 
-    ~Node();
-
     size_t GetChildCount() const;
 
     std::shared_ptr<Node> GetChild(size_t index) const;
@@ -29,13 +27,13 @@ class Node : public Object, public Transformable
 
     void RemoveChildren();
 
-    virtual void BuildScene(optix::Variable variable);
-
     void PreBuildScene() override;
 
     void BuildScene(Link& link) override;
 
     void PostBuildScene() override;
+
+    virtual void BuildScene(optix::Variable variable);
 
   protected:
 

@@ -9,10 +9,6 @@ MatteMaterial::MatteMaterial(std::shared_ptr<Context> context) :
   Initialize();
 }
 
-MatteMaterial::~MatteMaterial()
-{
-}
-
 Spectrum MatteMaterial::GetAlbedo() const
 {
   return m_albedo;

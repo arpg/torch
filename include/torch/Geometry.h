@@ -13,8 +13,6 @@ class Geometry : public Object, public Transformable
 
     Geometry(std::shared_ptr<Context> context);
 
-    ~Geometry();
-
     void PreBuildScene() override;
 
     void BuildScene(Link& link) override;

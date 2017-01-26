@@ -3,15 +3,8 @@
 namespace torch
 {
 
-const unsigned int decompIters = 100;
-const float decompEpsilon = 1E-4;
-
 Transform::Transform() :
   m_matrix(optix::Matrix4x4::identity())
-{
-}
-
-Transform::~Transform()
 {
 }
 
@@ -28,7 +21,7 @@ optix::Matrix4x4 Transform::GetRotationMatrix() const
     norm = GetNorm(R, Rnext);
     R = Rnext;
   }
-  while (++count < decompIters && norm > decompEpsilon);
+  while (++count < 100 && norm > 1E-4);
 
   return R;
 }

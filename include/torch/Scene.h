@@ -21,8 +21,6 @@ class Scene
 
     Scene();
 
-    ~Scene();
-
     float GetEpsilon() const;
 
     void SetEpsilon(float epsilon);

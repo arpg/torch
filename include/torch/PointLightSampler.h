@@ -1,21 +1,18 @@
 #pragma once
 
 #include <vector>
+#include <torch/Distribution.h>
 #include <torch/LightData.h>
 #include <torch/LightSampler.h>
 
 namespace torch
 {
 
-class Distribution;
-
 class PointLightSampler : public LightSampler
 {
   public:
 
     PointLightSampler(std::shared_ptr<Context> context);
-
-    ~PointLightSampler();
 
     optix::Program GetProgram() const override;
 

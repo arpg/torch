@@ -9,10 +9,6 @@ Group::Group(std::shared_ptr<Context> context) :
 {
 }
 
-Group::~Group()
-{
-}
-
 void Group::PreBuildScene()
 {
   m_childLink.reset();

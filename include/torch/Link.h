@@ -15,9 +15,7 @@ class Link
 
     Link(std::shared_ptr<Context> context);
 
-    ~Link();
-
-    void Paint(optix::Material material);
+    void Apply(optix::Material material);
 
     void Attach(optix::Transform transform);
 
@@ -47,11 +45,11 @@ class Link
 
     Transform m_transform;
 
+    optix::Material m_material;
+
     optix::Group m_group;
 
     optix::GeometryGroup m_geomGroup;
-
-    optix::Material m_material;
 };
 
 } // namespace torch

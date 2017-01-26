@@ -12,10 +12,6 @@ PointLightSampler::PointLightSampler(std::shared_ptr<Context> context) :
   Initialize();
 }
 
-PointLightSampler::~PointLightSampler()
-{
-}
-
 optix::Program PointLightSampler::GetProgram() const
 {
   return m_program;

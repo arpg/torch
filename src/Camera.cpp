@@ -11,13 +11,10 @@ Camera::Camera(std::shared_ptr<Context> context) :
   m_imageSize(make_uint2(1, 1)),
   m_focalLength(make_float2(0.5, 0.5)),
   m_centerPoint(make_float2(0.5, 0.5)),
+  m_sampleCount(1),
   m_detached(true)
 {
   Initialize();
-}
-
-Camera::~Camera()
-{
 }
 
 void Camera::SetImageSize(unsigned int w, unsigned int h)
@@ -37,6 +34,12 @@ void Camera::SetCenterPoint(float cx, float cy)
 {
   m_centerPoint = make_float2(cx, cy);
   m_context->MarkDirty();
+}
+
+void Camera::SetSampleCount(unsigned int count)
+{
+  m_sampleCount = count;
+  m_program["sampleCount"]->setUint(m_sampleCount);
 }
 
 void Camera::Capture(Image& image)
@@ -107,6 +110,7 @@ void Camera::CreateProgram()
   const std::string file = PtxUtil::GetFile("Camera");
   m_program = m_context->CreateProgram(file, "Capture");
   m_programId = m_context->RegisterLaunchProgram(m_program);
+  m_program["sampleCount"]->setUint(m_sampleCount);
   m_program["buffer"]->setBuffer(m_buffer);
 }
 

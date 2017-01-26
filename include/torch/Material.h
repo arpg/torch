@@ -12,8 +12,6 @@ class Material : public Object
 
     Material(std::shared_ptr<Context> context, const std::string& name);
 
-    ~Material();
-
     std::string GetName() const;
 
     void PreBuildScene() override;

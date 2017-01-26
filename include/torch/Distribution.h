@@ -14,8 +14,6 @@ class Distribution
 
     Distribution(std::shared_ptr<Context> context);
 
-    ~Distribution();
-
     optix::Program GetProgram() const;
 
     void SetValues(const std::vector<float>& values);

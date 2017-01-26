@@ -14,8 +14,6 @@ class Primitive : public Node
 
     Primitive(std::shared_ptr<Context> context);
 
-    ~Primitive();
-
     std::shared_ptr<Geometry> GetGeometry() const;
 
     void SetGeometry(std::shared_ptr<Geometry> geometry);

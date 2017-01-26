@@ -70,6 +70,7 @@ set(CPP_HEADERS
   ${CPP_HEADER_DIR}/Material.h
   ${CPP_HEADER_DIR}/MatteMaterial.h
   ${CPP_HEADER_DIR}/Node.h
+  ${CPP_HEADER_DIR}/Random.h
   ${CPP_HEADER_DIR}/Ray.h
   ${CPP_HEADER_DIR}/Scene.h
   ${CPP_HEADER_DIR}/SceneLightSampler.h
@@ -126,6 +127,7 @@ set(CUDA_SOURCE_DIR src)
 set(CUDA_SOURCES
   ${CUDA_SOURCE_DIR}/Camera.cu
   ${CUDA_SOURCE_DIR}/Distribution.cu
+  ${CUDA_SOURCE_DIR}/Exception.cu
   ${CUDA_SOURCE_DIR}/MatteMaterial.cu
   ${CUDA_SOURCE_DIR}/PointLightSampler.cu
   ${CUDA_SOURCE_DIR}/SceneLightSampler.cu

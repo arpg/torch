@@ -11,8 +11,6 @@ class Group : public Node
 
     Group(std::shared_ptr<Context> context);
 
-    ~Group();
-
     void PreBuildScene() override;
 
     void BuildScene(Link& link) override;

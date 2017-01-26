@@ -6,5 +6,5 @@ rtDeclareVariable(torch::RadianceData, rayData, rtPayload, );
 
 RT_PROGRAM void ClosestHit()
 {
-  rayData.radiance = albedo;
+  rayData.radiance += rayData.throughput * albedo;
 }

@@ -3,15 +3,14 @@
 #include <torch/Ray.h>
 #include <torch/SceneLightSampler.h>
 
+#include <iostream>
+#include <torch/PtxUtil.h>
+
 namespace torch
 {
 
 Context::Context() :
   m_dirty(true)
-{
-}
-
-Context::~Context()
 {
 }
 
@@ -24,18 +23,21 @@ void Context::Launch(unsigned int id, RTsize w)
 {
   PrepareLaunch();
   m_context->launch(id, w);
+  FinishLaunch();
 }
 
 void Context::Launch(unsigned int id, RTsize w, RTsize h)
 {
   PrepareLaunch();
   m_context->launch(id, w, h);
+  FinishLaunch();
 }
 
 void Context::Launch(unsigned int id, RTsize w, RTsize h, RTsize d)
 {
   PrepareLaunch();
   m_context->launch(id, w, h, d);
+  FinishLaunch();
 }
 
 void Context::Launch(unsigned int id, const uint2& size)
@@ -127,6 +129,11 @@ unsigned int Context::RegisterLaunchProgram(optix::Program program)
   const unsigned int id = m_context->getEntryPointCount();
   m_context->setEntryPointCount(id + 1);
   m_context->setRayGenerationProgram(id, program);
+
+#ifdef DEBUG_BUILD
+  m_context->setExceptionProgram(id, m_errorProgram);
+#endif
+
   return id;
 }
 
@@ -199,6 +206,17 @@ void Context::PostBuildScene()
   }
 }
 
+void Context::FinishLaunch()
+{
+#ifdef DEBUG_BUILD
+  unsigned char host[128];
+  unsigned char* device = reinterpret_cast<unsigned char*>(m_errorBuffer->map());
+  std::copy(device, device + 128, host);
+  std::cout << "Message: " << host << std::endl;
+  m_errorBuffer->unmap();
+#endif
+}
+
 void Context::Initialize()
 {
   CreateContext();
@@ -215,6 +233,13 @@ void Context::CreateContext()
   m_context->setPrintEnabled(true);
   m_context->setPrintBufferSize(512);
   m_context->setExceptionEnabled(RT_EXCEPTION_ALL, true);
+
+  const std::string file = PtxUtil::GetFile("Exception");
+  m_errorProgram = m_context->createProgramFromPTXFile(file, "HandleError");
+  m_errorBuffer = m_context->createBuffer(RT_BUFFER_OUTPUT);
+  m_errorBuffer->setFormat(RT_FORMAT_UNSIGNED_BYTE);
+  m_errorBuffer->setSize(128);
+  m_errorProgram["buffer"]->setBuffer(m_errorBuffer);
 #endif
 }
 

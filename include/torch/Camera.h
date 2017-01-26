@@ -13,13 +13,13 @@ class Camera : public Node
 
     Camera(std::shared_ptr<Context> context);
 
-    ~Camera();
-
     void SetImageSize(unsigned int w, unsigned int h);
 
     void SetFocalLength(float fx, float fy);
 
     void SetCenterPoint(float cx, float cy);
+
+    void SetSampleCount(unsigned int count);
 
     void Capture(Image& image);
 
@@ -50,6 +50,8 @@ class Camera : public Node
     float2 m_focalLength;
 
     float2 m_centerPoint;
+
+    unsigned int m_sampleCount;
 
     optix::Buffer m_buffer;
 

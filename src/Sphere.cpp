@@ -8,8 +8,4 @@ Sphere::Sphere(std::shared_ptr<Context> context) :
 {
 }
 
-Sphere::~Sphere()
-{
-}
-
 } // namespace torch

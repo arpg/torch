@@ -5,6 +5,8 @@ using namespace torch;
 
 int main(int argc, char** argv)
 {
+  std::cout << "Starting..." << std::endl;
+
   Scene scene;
   scene.SetEpsilon(1E-4);
 
@@ -39,10 +41,12 @@ int main(int argc, char** argv)
   camera->SetCenterPoint(320, 240);
   camera->SetOrientation(0, 0, 0);
   camera->SetPosition(0, 0, 0);
+  camera->SetSampleCount(32);
 
   Image image;
   camera->Capture(image);
   image.Save("image.png");
-  std::cout << "Success" << std::endl;
+
+  std::cout << "Finished." << std::endl;
   return 0;
 }

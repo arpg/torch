@@ -11,8 +11,6 @@ class Transformable
 
     Transformable();
 
-    ~Transformable();
-
     Transform GetTransform() const;
 
     void SetTransform(const Transform& transform);

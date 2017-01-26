@@ -11,15 +11,6 @@ PointLight::PointLight(std::shared_ptr<Context> context) :
 {
 }
 
-PointLight::~PointLight()
-{
-}
-
-Spectrum PointLight::GetPower() const
-{
-  return 4 * M_PIf * m_intensity;
-}
-
 Spectrum PointLight::GetIntensity() const
 {
  return m_intensity;

@@ -16,10 +16,6 @@ Scene::Scene()
   Initialize();
 }
 
-Scene::~Scene()
-{
-}
-
 float Scene::GetEpsilon() const
 {
   optix::Variable variable;

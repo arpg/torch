@@ -10,11 +10,7 @@ Link::Link(std::shared_ptr<Context> context) :
   Initialize();
 }
 
-Link::~Link()
-{
-}
-
-void Link::Paint(optix::Material material)
+void Link::Apply(optix::Material material)
 {
   m_material = material;
 }

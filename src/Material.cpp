@@ -13,10 +13,6 @@ Material::Material(std::shared_ptr<Context> context, const std::string& name) :
   Initialize();
 }
 
-Material::~Material()
-{
-}
-
 std::string Material::GetName() const
 {
   return m_name;
@@ -28,7 +24,7 @@ void Material::PreBuildScene()
 
 void Material::BuildScene(Link& link)
 {
-  link.Paint(m_material);
+  link.Apply(m_material);
 }
 
 void Material::PostBuildScene()

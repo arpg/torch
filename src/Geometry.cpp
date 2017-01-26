@@ -10,10 +10,6 @@ Geometry::Geometry(std::shared_ptr<Context> context) :
 {
 }
 
-Geometry::~Geometry()
-{
-}
-
 void Geometry::PreBuildScene()
 {
 }

@@ -13,10 +13,6 @@ SingleGeometry::SingleGeometry(std::shared_ptr<Context> context,
   Initialize();
 }
 
-SingleGeometry::~SingleGeometry()
-{
-}
-
 std::string SingleGeometry::GetName() const
 {
   return m_name;
