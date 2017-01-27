@@ -12,6 +12,9 @@ rtDeclareVariable(float, hitDist, rtIntersectionDistance, );
 rtDeclareVariable(float3, geometricNormal, attribute geometricNormal, );
 rtDeclareVariable(float3, shadingNormal, attribute shadingNormal, );
 
+rtDeclareVariable(optix::Ray, sray, rtCurrentRay, );
+rtDeclareVariable(torch::ShadowData, srayData, rtPayload, );
+
 typedef rtCallableProgramX<void(torch::LightSample&)> SampleLightFunction;
 rtDeclareVariable(SampleLightFunction, SampleLights, , );
 
@@ -29,9 +32,29 @@ RT_PROGRAM void ClosestHit()
 
   if (theta > 0)
   {
-    // TODO: trace shadow ray
-    float3 brdf = albedo / M_PIf;
-    theta = dot(shadingNormal, sample.direction);
-    rayData.radiance += rayData.throughput * brdf * sample.radiance * theta / sample.pdf;
+    optix::Ray shadowRay;
+    shadowRay.origin = sample.origin;
+    shadowRay.direction = sample.direction;
+    shadowRay.ray_type = torch::RAY_TYPE_SHADOW;
+    shadowRay.tmin = sample.tmin;
+    shadowRay.tmax = sample.tmax;
+
+    torch::ShadowData shadowData;
+    shadowData.occluded = false;
+
+    rtTrace(sceneRoot, shadowRay, shadowData);
+
+    if (!shadowData.occluded)
+    {
+      float3 brdf = albedo / M_PIf;
+      theta = dot(shadingNormal, sample.direction);
+      rayData.radiance += rayData.throughput * brdf * sample.radiance * theta / sample.pdf;
+    }
   }
+}
+
+RT_PROGRAM void AnyHit()
+{
+  srayData.occluded = true;
+  rtTerminateRay();
 }

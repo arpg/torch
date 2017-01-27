@@ -35,8 +35,12 @@ void Material::Initialize()
 {
   m_material = m_context->CreateMaterial();
   const std::string file = PtxUtil::GetFile(m_name);
+
   optix::Program closestHitProgram = m_context->GetProgram(file, "ClosestHit");
   m_material->setClosestHitProgram(RAY_TYPE_RADIANCE, closestHitProgram);
+
+  optix::Program anyHitProgram = m_context->GetProgram(file, "AnyHit");
+  m_material->setAnyHitProgram(RAY_TYPE_SHADOW, anyHitProgram);
 }
 
 } // namespace torch

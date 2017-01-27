@@ -19,4 +19,9 @@ struct RadianceData
   unsigned int seed;
 };
 
+struct ShadowData
+{
+  bool occluded;
+};
+
 } // namespace torch
