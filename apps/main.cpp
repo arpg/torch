@@ -16,11 +16,23 @@ int main(int argc, char** argv)
   group->SetPosition(0, 0, 0);
   scene.Add(group);
 
-  std::shared_ptr<PointLight> light;
-  light = scene.CreatePointLight();
-  light->SetIntensity(20, 20, 20);
-  light->SetPosition(4, -2, -1);
-  scene.Add(light);
+  std::shared_ptr<PointLight> light1;
+  light1 = scene.CreatePointLight();
+  light1->SetIntensity(50, 50, 50);
+  light1->SetPosition(4, -2, -1);
+  scene.Add(light1);
+
+  std::shared_ptr<PointLight> light2;
+  light2 = scene.CreatePointLight();
+  light2->SetIntensity(10, 10, 106);
+  light2->SetPosition(-4, -2, -1);
+  scene.Add(light2);
+
+  std::shared_ptr<PointLight> light3;
+  light3 = scene.CreatePointLight();
+  light3->SetIntensity(10, 60, 10);
+  light3->SetPosition(0, 2, 0);
+  scene.Add(light3);
 
   std::shared_ptr<Sphere> geometry;
   geometry = scene.CreateSphere();
@@ -30,7 +42,7 @@ int main(int argc, char** argv)
 
   std::shared_ptr<MatteMaterial> material;
   material = scene.CreateMatteMaterial();
-  material->SetAlbedo(1, 0, 0);
+  material->SetAlbedo(1.0, 0.1, 0.1);
 
   std::shared_ptr<Primitive> primitive;
   primitive = scene.CreatePrimitive();
@@ -38,7 +50,6 @@ int main(int argc, char** argv)
   primitive->SetMaterial(material);
   primitive->SetOrientation(0, 0, 0);
   primitive->SetPosition(0, 0, 5);
-  primitive->SetScale(1.5, 1, 1);
   group->AddChild(primitive);
 
   std::shared_ptr<Camera> camera;
@@ -48,7 +59,7 @@ int main(int argc, char** argv)
   camera->SetCenterPoint(320, 240);
   camera->SetOrientation(0, 0, 0);
   camera->SetPosition(0, 0, 0);
-  camera->SetSampleCount(128);
+  camera->SetSampleCount(512);
 
   Image image;
   camera->Capture(image);

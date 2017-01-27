@@ -29,24 +29,14 @@ TORCH_DEVICE float3 VectorToWorld(const float3& v)
   return make_float3(T_wl * make_float4(v, 0));
 }
 
-TORCH_DEVICE float3 DirectionToLocal(const float3& d)
-{
-  return normalize(VectorToLocal(d));
-}
-
-TORCH_DEVICE float3 DirectionToWorld(const float3& d)
-{
-  return normalize(VectorToWorld(d));
-}
-
 TORCH_DEVICE float3 NormalToLocal(const float3& n)
 {
-  return DirectionToWorld(n);
+  return normalize(VectorToLocal(n));
 }
 
 TORCH_DEVICE float3 NormalToWorld(const float3& n)
 {
-  return DirectionToLocal(n);
+  return normalize(VectorToWorld(n));
 }
 
 TORCH_DEVICE void BoundsToWorld(const float3& bmin, const float3& bmax,

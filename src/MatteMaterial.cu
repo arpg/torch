@@ -23,13 +23,15 @@ RT_PROGRAM void ClosestHit()
   sample.seed = rayData.seed;
 
   SampleLights(sample);
+  rayData.seed = sample.seed;
 
   float theta = dot(geometricNormal, sample.direction);
 
   if (theta > 0)
   {
     // TODO: trace shadow ray
+    float3 brdf = albedo / M_PIf;
     theta = dot(shadingNormal, sample.direction);
-    rayData.radiance += rayData.throughput * albedo * sample.radiance * theta;
+    rayData.radiance += rayData.throughput * brdf * sample.radiance * theta / sample.pdf;
   }
 }

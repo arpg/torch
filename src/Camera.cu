@@ -57,14 +57,15 @@ RT_PROGRAM void Capture()
   seed = InitializeSeed();
   InitializeRay(ray, data);
   data.radiance = make_float3(0, 0, 0);
-  data.seed = seed;
 
   for (unsigned int i = 0; i < sampleCount; ++i)
   {
     GetDirection(ray.direction, seed);
+    data.seed = seed;
     data.throughput = make_float3(1.0 / sampleCount);
     rtTrace(sceneRoot, ray, data);
     InitializeRay(ray, data);
+    seed = data.seed;
   }
 
   buffer[pixelIndex] = data.radiance;
