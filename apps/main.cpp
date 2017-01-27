@@ -25,7 +25,7 @@ int main(int argc, char** argv)
   std::shared_ptr<AreaLight> areaLight;
   areaLight = scene.CreateAreaLight();
   areaLight->SetGeometry(lightGeom);
-  areaLight->SetRadiance(50, 50, 50);
+  areaLight->SetRadiance(0.5, 0.5, 0.5);
   areaLight->SetPosition(4, -1, -1);
   scene.Add(areaLight);
 
@@ -33,13 +33,13 @@ int main(int argc, char** argv)
   light1 = scene.CreatePointLight();
   light1->SetIntensity(50, 50, 50);
   light1->SetPosition(4, -1, -1);
-  scene.Add(light1);
+  // scene.Add(light1);
 
   std::shared_ptr<PointLight> light2;
   light2 = scene.CreatePointLight();
   light2->SetIntensity(10, 10, 106);
   light2->SetPosition(-4, -2, -1);
-  scene.Add(light2);
+  // scene.Add(light2);
 
   std::shared_ptr<Sphere> geometry;
   geometry = scene.CreateSphere();
@@ -84,7 +84,7 @@ int main(int argc, char** argv)
   camera->SetCenterPoint(320, 240);
   camera->SetOrientation(0, 0, 0);
   camera->SetPosition(0, 0, 0);
-  camera->SetSampleCount(512);
+  camera->SetSampleCount(2048);
 
   Image image;
   camera->Capture(image);

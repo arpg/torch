@@ -12,6 +12,7 @@ namespace torch
 class Node;
 class Object;
 class SceneLightSampler;
+class SceneGeometrySampler;
 
 class Context : public std::enable_shared_from_this<Context>
 {
@@ -62,6 +63,8 @@ class Context : public std::enable_shared_from_this<Context>
 
     std::shared_ptr<SceneLightSampler> GetLightSampler() const;
 
+    std::shared_ptr<SceneGeometrySampler> GetGeometrySampler() const;
+
   protected:
 
     void PrepareLaunch();
@@ -88,6 +91,8 @@ class Context : public std::enable_shared_from_this<Context>
 
     void CreateLightSampler();
 
+    void CreateGeometrySampler();
+
   protected:
 
     bool m_dirty;
@@ -97,6 +102,8 @@ class Context : public std::enable_shared_from_this<Context>
     std::shared_ptr<Node> m_sceneRoot;
 
     std::shared_ptr<SceneLightSampler> m_lightSampler;
+
+    std::shared_ptr<SceneGeometrySampler> m_geometrySampler;
 
     std::vector<std::shared_ptr<Object>> m_objects;
 

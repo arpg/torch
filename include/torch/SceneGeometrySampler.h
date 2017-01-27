@@ -20,7 +20,7 @@ class SceneGeometrySampler
 
     optix::Program GetProgram() const;
 
-    void Add(const SphereData& sphere);
+    unsigned int Add(const SphereData& sphere);
 
     void Clear();
 

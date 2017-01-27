@@ -1,6 +1,8 @@
 #include <torch/AreaLight.h>
 #include <torch/Context.h>
 #include <torch/Geometry.h>
+#include <torch/LightData.h>
+#include <torch/SceneLightSampler.h>
 
 namespace torch
 {
@@ -13,7 +15,8 @@ AreaLight::AreaLight(std::shared_ptr<Context> context) :
 Spectrum AreaLight::GetPower() const
 {
   // TODO: use area
-  return M_PIf * m_radiance; // * m_geometry->GetArea();
+  // return M_PIf * m_radiance * m_geometry->GetArea();
+  return 2 * M_PIf * m_radiance * (4 * M_PIf * 0.5 * 0.5);
 }
 
 Spectrum AreaLight::GetRadiance() const
@@ -45,7 +48,18 @@ void AreaLight::SetGeometry(std::shared_ptr<Geometry> geometry)
 
 void AreaLight::BuildScene(Link& link)
 {
-  // TODO: add to area light sampler
+  Light::BuildScene(link);
+
+  AreaLightData data;
+  data.geometry = 0;
+  data.radiance = m_radiance.GetRGB();
+  data.luminance = GetLuminance();
+  // data.area = GetArea();
+  data.area = 1;
+
+  std::shared_ptr<SceneLightSampler> sampler;
+  sampler = m_context->GetLightSampler();
+  sampler->Add(data);
 }
 
 } // namespace torch

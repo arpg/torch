@@ -19,7 +19,7 @@ class SphereSampler : public GeometrySampler
 
     void Update() override;
 
-    void Add(const SphereData& sphere);
+    unsigned int Add(const SphereData& sphere);
 
   private:
 

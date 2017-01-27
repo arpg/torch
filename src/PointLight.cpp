@@ -35,12 +35,14 @@ void PointLight::SetIntensity(float r, float g, float b)
 
 void PointLight::BuildScene(Link& link)
 {
+  Light::BuildScene(link);
+
   PointLightData data;
   const Transform transform = link.GetTransform() * m_transform;
   data.position = transform.GetTranslation();
   data.intensity = m_intensity.GetRGB();
+  data.luminance = GetLuminance();
 
-  Light::BuildScene(link);
   std::shared_ptr<SceneLightSampler> sampler;
   sampler = m_context->GetLightSampler();
   sampler->Add(data);

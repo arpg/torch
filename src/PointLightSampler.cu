@@ -16,6 +16,7 @@ RT_CALLABLE_PROGRAM void Sample(torch::LightSample& sample)
   const float3 difference = light.position - sample.origin;
   const float distanceSquared = dot(difference, difference);
 
+
   sample.radiance = light.intensity / distanceSquared;
   sample.direction = normalize(difference);
   sample.tmax = sqrt(distanceSquared);

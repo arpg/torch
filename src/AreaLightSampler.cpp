@@ -72,7 +72,6 @@ void AreaLightSampler::Initialize()
   CreateProgram();
   CreateDistribution();
   CreateLightBuffer();
-  CreateGeometrySampler();
 }
 
 void AreaLightSampler::CreateProgram()
@@ -94,12 +93,6 @@ void AreaLightSampler::CreateLightBuffer()
   m_buffer->setFormat(RT_FORMAT_USER);
   m_buffer->setElementSize(sizeof(AreaLightData));
   m_buffer->setSize(1);
-}
-
-void AreaLightSampler::CreateGeometrySampler()
-{
-  m_geometrySampler = std::make_unique<SceneGeometrySampler>(m_context);
-  m_program["SampleGeometry"]->set(m_geometrySampler->GetProgram());
 }
 
 } // namespace torch

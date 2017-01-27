@@ -17,8 +17,7 @@ RT_CALLABLE_PROGRAM void Sample(torch::LightSample& sample)
   const torch::AreaLightData& light = lights[index];
 
   torch::GeometrySample geomSample;
-  geomSample.type = light.type;
-  geomSample.index = light.index;
+  geomSample.id = light.geometry;
   geomSample.origin = sample.origin;
   geomSample.tmin = sample.tmin;
   SampleGeometry(geomSample);

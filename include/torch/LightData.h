@@ -32,8 +32,7 @@ struct PointLightData
 
 struct AreaLightData
 {
-  unsigned int type;
-  unsigned int index;
+  unsigned int geometry;
   float3 radiance;
   float area;
   float luminance;

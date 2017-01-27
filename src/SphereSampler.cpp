@@ -31,7 +31,7 @@ void SphereSampler::Update()
   m_buffer->unmap();
 }
 
-void SphereSampler::Add(const SphereData& sphere)
+unsigned int SphereSampler::Add(const SphereData& sphere)
 {
   m_spheres.push_back(sphere);
 }

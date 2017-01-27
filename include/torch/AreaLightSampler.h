@@ -4,7 +4,6 @@
 #include <torch/Distribution.h>
 #include <torch/LightData.h>
 #include <torch/LightSampler.h>
-#include <torch/SceneGeometrySampler.h>
 
 namespace torch
 {
@@ -41,8 +40,6 @@ class AreaLightSampler : public LightSampler
 
     void CreateLightBuffer();
 
-    void CreateGeometrySampler();
-
   protected:
 
     optix::Buffer m_buffer;
@@ -52,8 +49,6 @@ class AreaLightSampler : public LightSampler
     std::vector<AreaLightData> m_lights;
 
     std::unique_ptr<Distribution> m_distribution;
-
-    std::unique_ptr<SceneGeometrySampler> m_geometrySampler;
 };
 
 } // namespace torch

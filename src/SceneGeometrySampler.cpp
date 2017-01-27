@@ -19,10 +19,11 @@ optix::Program SceneGeometrySampler::GetProgram() const
   return m_program;
 }
 
-void SceneGeometrySampler::Add(const SphereData& light)
+unsigned int SceneGeometrySampler::Add(const SphereData& light)
 {
   GeometrySampler* sampler = m_samplers[GEOM_TYPE_SPHERE].get();
-  static_cast<SphereSampler*>(sampler)->Add(light);
+  unsigned int count = static_cast<SphereSampler*>(sampler)->Add(light);
+  return GetGeometryId(GEOM_TYPE_SPHERE, count);
 }
 
 void SceneGeometrySampler::Clear()

@@ -1,6 +1,7 @@
 #include <torch/Context.h>
 #include <torch/Group.h>
 #include <torch/Ray.h>
+#include <torch/SceneGeometrySampler.h>
 #include <torch/SceneLightSampler.h>
 
 #include <iostream>
@@ -152,6 +153,11 @@ std::shared_ptr<SceneLightSampler> Context::GetLightSampler() const
   return m_lightSampler;
 }
 
+std::shared_ptr<SceneGeometrySampler> Context::GetGeometrySampler() const
+{
+  return m_geometrySampler;
+}
+
 void Context::PrepareLaunch()
 {
   if (m_dirty)
@@ -222,6 +228,7 @@ void Context::Initialize()
   CreateContext();
   CreateSceneRoot();
   CreateLightSampler();
+  CreateGeometrySampler();
 }
 
 void Context::CreateContext()
@@ -252,6 +259,13 @@ void Context::CreateLightSampler()
 {
   m_lightSampler = std::make_shared<SceneLightSampler>(shared_from_this());
   m_context["SampleLights"]->set(m_lightSampler->GetProgram());
+}
+
+void Context::CreateGeometrySampler()
+{
+  std::shared_ptr<Context> sharedThis = shared_from_this();
+  m_geometrySampler = std::make_shared<SceneGeometrySampler>(sharedThis);
+  m_context["SampleGeometry"]->set(m_geometrySampler->GetProgram());
 }
 
 } // namespace torch
