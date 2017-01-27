@@ -1,4 +1,5 @@
 #include <torch/Scene.h>
+#include <torch/AreaLight.h>
 #include <torch/Camera.h>
 #include <torch/Context.h>
 #include <torch/GeometryGroup.h>
@@ -45,6 +46,11 @@ std::shared_ptr<Camera> Scene::CreateCamera()
 std::shared_ptr<Group> Scene::CreateGroup()
 {
   return CreateObject<Group>();
+}
+
+std::shared_ptr<AreaLight> Scene::CreateAreaLight()
+{
+  return CreateObject<AreaLight>();
 }
 
 std::shared_ptr<PointLight> Scene::CreatePointLight()

@@ -16,6 +16,19 @@ int main(int argc, char** argv)
   group->SetPosition(0, 0, 0);
   scene.Add(group);
 
+  std::shared_ptr<Sphere> lightGeom;
+  lightGeom = scene.CreateSphere();
+  lightGeom->SetOrientation(0, 0, 0);
+  lightGeom->SetPosition(0, 0, 0);
+  lightGeom->SetScale(1);
+
+  std::shared_ptr<AreaLight> areaLight;
+  areaLight = scene.CreateAreaLight();
+  areaLight->SetGeometry(lightGeom);
+  areaLight->SetRadiance(50, 50, 50);
+  areaLight->SetPosition(4, -1, -1);
+  scene.Add(areaLight);
+
   std::shared_ptr<PointLight> light1;
   light1 = scene.CreatePointLight();
   light1->SetIntensity(50, 50, 50);
@@ -42,7 +55,7 @@ int main(int argc, char** argv)
   primitive = scene.CreatePrimitive();
   primitive->SetGeometry(geometry);
   primitive->SetMaterial(material);
-  primitive->SetOrientation(0, 0, 0);
+  primitive->SetOrientation(0, 0, M_PIf / 8);
   primitive->SetPosition(0, 0, 5);
   group->AddChild(primitive);
 

@@ -7,6 +7,7 @@ namespace torch
 
 enum LightType
 {
+  LIGHT_TYPE_AREA,
   LIGHT_TYPE_POINT,
   LIGHT_TYPE_COUNT
 };
@@ -26,6 +27,15 @@ struct PointLightData
 {
   float3 position;
   float3 intensity;
+  float luminance;
+};
+
+struct AreaLightData
+{
+  unsigned int type;
+  unsigned int index;
+  float3 radiance;
+  float area;
   float luminance;
 };
 

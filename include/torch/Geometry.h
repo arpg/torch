@@ -13,6 +13,8 @@ class Geometry : public Object, public Transformable
 
     Geometry(std::shared_ptr<Context> context);
 
+    // virtual float GetArea() const = 0;
+
     void PreBuildScene() override;
 
     void BuildScene(Link& link) override;

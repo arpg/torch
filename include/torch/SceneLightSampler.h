@@ -22,7 +22,9 @@ class SceneLightSampler
 
     optix::Program GetProgram() const;
 
-    void Add(const PointLightData& data);
+    void Add(const AreaLightData& light);
+
+    void Add(const PointLightData& light);
 
     void Clear();
 
@@ -48,11 +50,11 @@ class SceneLightSampler
 
     std::shared_ptr<Context> m_context;
 
+    optix::Program m_program;
+
     std::unique_ptr<Distribution> m_distribution;
 
     std::vector<std::unique_ptr<LightSampler>> m_samplers;
-
-    optix::Program m_program;
 };
 
 } // namespace torch

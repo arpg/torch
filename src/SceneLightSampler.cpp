@@ -1,11 +1,10 @@
 #include <torch/SceneLightSampler.h>
+#include <torch/AreaLightSampler.h>
 #include <torch/Context.h>
 #include <torch/Distribution.h>
 #include <torch/LightData.h>
 #include <torch/PointLightSampler.h>
 #include <torch/PtxUtil.h>
-
-#include <iostream>
 
 namespace torch
 {
@@ -21,10 +20,16 @@ optix::Program SceneLightSampler::GetProgram() const
   return m_program;
 }
 
-void SceneLightSampler::Add(const PointLightData& data)
+void SceneLightSampler::Add(const AreaLightData& light)
+{
+  LightSampler* sampler = m_samplers[LIGHT_TYPE_AREA].get();
+  static_cast<AreaLightSampler*>(sampler)->Add(light);
+}
+
+void SceneLightSampler::Add(const PointLightData& light)
 {
   LightSampler* sampler = m_samplers[LIGHT_TYPE_POINT].get();
-  static_cast<PointLightSampler*>(sampler)->Add(data);
+  static_cast<PointLightSampler*>(sampler)->Add(light);
 }
 
 void SceneLightSampler::Clear()
@@ -85,6 +90,10 @@ void SceneLightSampler::CreateLightSamplers()
 {
   m_samplers.resize(LIGHT_TYPE_COUNT);
   std::unique_ptr<LightSampler> sampler;
+
+  sampler = std::make_unique<AreaLightSampler>(m_context);
+  m_program["SampleAreaLights"]->set(sampler.get()->GetProgram());
+  m_samplers[LIGHT_TYPE_AREA] = std::move(sampler);
 
   sampler = std::make_unique<PointLightSampler>(m_context);
   m_program["SamplePointLights"]->set(sampler.get()->GetProgram());

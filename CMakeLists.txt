@@ -51,12 +51,16 @@ set(CONFIG_HEADERS
 set(CPP_HEADER_DIR include/${LIBRARY_NAME})
 
 set(CPP_HEADERS
+  ${CPP_HEADER_DIR}/AreaLight.h
+  ${CPP_HEADER_DIR}/AreaLightSampler.h
   ${CPP_HEADER_DIR}/Camera.h
   ${CPP_HEADER_DIR}/Context.h
   ${CPP_HEADER_DIR}/Distribution.h
   ${CPP_HEADER_DIR}/Exception.h
   ${CPP_HEADER_DIR}/Geometry.h
+  ${CPP_HEADER_DIR}/GeometryData.h
   ${CPP_HEADER_DIR}/GeometryGroup.h
+  ${CPP_HEADER_DIR}/GeometrySampler.h
   ${CPP_HEADER_DIR}/Group.h
   ${CPP_HEADER_DIR}/Image.h
   ${CPP_HEADER_DIR}/Light.h
@@ -73,10 +77,12 @@ set(CPP_HEADERS
   ${CPP_HEADER_DIR}/Random.h
   ${CPP_HEADER_DIR}/Ray.h
   ${CPP_HEADER_DIR}/Scene.h
+  ${CPP_HEADER_DIR}/SceneGeometrySampler.h
   ${CPP_HEADER_DIR}/SceneLightSampler.h
   ${CPP_HEADER_DIR}/SingleGeometry.h
   ${CPP_HEADER_DIR}/Spectrum.h
   ${CPP_HEADER_DIR}/Sphere.h
+  ${CPP_HEADER_DIR}/SphereSampler.h
   ${CPP_HEADER_DIR}/Transform.h
   ${CPP_HEADER_DIR}/Transformable.h
 )
@@ -86,11 +92,14 @@ set(CPP_HEADERS
 set(CPP_SOURCE_DIR src)
 
 set(CPP_SOURCES
+  ${CPP_SOURCE_DIR}/AreaLight.cpp
+  ${CPP_SOURCE_DIR}/AreaLightSampler.cpp
   ${CPP_SOURCE_DIR}/Camera.cpp
   ${CPP_SOURCE_DIR}/Context.cpp
   ${CPP_SOURCE_DIR}/Distribution.cpp
   ${CPP_SOURCE_DIR}/Geometry.cpp
   ${CPP_SOURCE_DIR}/GeometryGroup.cpp
+  ${CPP_SOURCE_DIR}/GeometrySampler.cpp
   ${CPP_SOURCE_DIR}/Group.cpp
   ${CPP_SOURCE_DIR}/Image.cpp
   ${CPP_SOURCE_DIR}/Light.cpp
@@ -104,10 +113,12 @@ set(CPP_SOURCES
   ${CPP_SOURCE_DIR}/MatteMaterial.cpp
   ${CPP_SOURCE_DIR}/Node.cpp
   ${CPP_SOURCE_DIR}/Scene.cpp
+  ${CPP_SOURCE_DIR}/SceneGeometrySampler.cpp
   ${CPP_SOURCE_DIR}/SceneLightSampler.cpp
   ${CPP_SOURCE_DIR}/SingleGeometry.cpp
   ${CPP_SOURCE_DIR}/Spectrum.cpp
   ${CPP_SOURCE_DIR}/Sphere.cpp
+  ${CPP_SOURCE_DIR}/SphereSampler.cpp
   ${CPP_SOURCE_DIR}/Transform.cpp
   ${CPP_SOURCE_DIR}/Transformable.cpp
 )
@@ -125,13 +136,16 @@ set(CUDA_HEADERS
 set(CUDA_SOURCE_DIR src)
 
 set(CUDA_SOURCES
+  ${CUDA_SOURCE_DIR}/AreaLightSampler.cu
   ${CUDA_SOURCE_DIR}/Camera.cu
   ${CUDA_SOURCE_DIR}/Distribution.cu
   ${CUDA_SOURCE_DIR}/Exception.cu
   ${CUDA_SOURCE_DIR}/MatteMaterial.cu
   ${CUDA_SOURCE_DIR}/PointLightSampler.cu
+  ${CUDA_SOURCE_DIR}/SceneGeometrySampler.cu
   ${CUDA_SOURCE_DIR}/SceneLightSampler.cu
   ${CUDA_SOURCE_DIR}/Sphere.cu
+  ${CUDA_SOURCE_DIR}/SphereSampler.cu
 )
 
 # set project definitions
