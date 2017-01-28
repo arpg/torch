@@ -2,7 +2,7 @@
 #include <torch/Context.h>
 #include <torch/Distribution.h>
 #include <torch/PtxUtil.h>
-#include <torch/device/GeometryData.h>
+#include <torch/device/Geometry.h>
 
 namespace torch
 {

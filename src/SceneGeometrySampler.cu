@@ -1,5 +1,5 @@
 #include <optix.h>
-#include <torch/device/GeometryData.h>
+#include <torch/device/Geometry.h>
 #include <torch/device/Random.h>
 
 typedef rtCallableProgramX<unsigned int(float, float&)> TypeFunction;

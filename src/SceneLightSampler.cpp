@@ -5,7 +5,7 @@
 #include <torch/Distribution.h>
 #include <torch/PointLightSampler.h>
 #include <torch/PtxUtil.h>
-#include <torch/device/LightData.h>
+#include <torch/device/Light.h>
 
 namespace torch
 {

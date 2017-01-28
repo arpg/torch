@@ -2,7 +2,7 @@
 #include <torch/Context.h>
 #include <torch/Distribution.h>
 #include <torch/PtxUtil.h>
-#include <torch/device/LightData.h>
+#include <torch/device/Light.h>
 
 namespace torch
 {

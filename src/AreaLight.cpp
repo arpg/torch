@@ -2,7 +2,7 @@
 #include <torch/Context.h>
 #include <torch/Geometry.h>
 #include <torch/SceneLightSampler.h>
-#include <torch/device/LightData.h>
+#include <torch/device/Light.h>
 
 namespace torch
 {

@@ -4,7 +4,7 @@
 #include <torch/SceneLightSampler.h>
 #include <torch/Link.h>
 #include <torch/Transform.h>
-#include <torch/device/LightData.h>
+#include <torch/device/Light.h>
 
 namespace torch
 {

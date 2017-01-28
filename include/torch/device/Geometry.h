@@ -1,56 +1,48 @@
 #pragma once
 
-#include <optix_math.h>
-#include <optixu/optixu_aabb.h>
 #include <optixu/optixu_matrix.h>
 
-rtDeclareVariable(optix::Matrix4x4, T_wl, , );
-rtDeclareVariable(optix::Matrix4x4, T_lw, , );
-
-#define TORCH_DEVICE static __device__ __inline__
-
-TORCH_DEVICE float3 PointToLocal(const float3& p)
+namespace torch
 {
-  return make_float3(T_lw * make_float4(p, 1));
-}
 
-TORCH_DEVICE float3 PointToWorld(const float3& p)
+enum GeometryType
 {
-  return make_float3(T_wl * make_float4(p, 1));
-}
+  GEOM_TYPE_MESH,
+  GEOM_TYPE_SPHERE,
+  GEOM_TYPE_COUNT
+};
 
-TORCH_DEVICE float3 VectorToLocal(const float3& v)
+struct GeometrySample
 {
-  return make_float3(T_lw * make_float4(v, 0));
-}
+  unsigned int id;
+  unsigned int seed;
+  float3 origin;
+  float3 position;
+  float tmin;
+  float pdf;
+};
 
-TORCH_DEVICE float3 VectorToWorld(const float3& v)
+struct MeshData
 {
-  return make_float3(T_wl * make_float4(v, 0));
-}
+  // vertices : unsigned int / rtBuffer<float3, 1>
+  // normals : unsigned int / rtBuffer<float3, 1>
+  // faces : unsigned int / rtBuffer<uint3, 1>
+  // T_wl : optix::Matrx4x4
+  // T_lw : optix::Matrx4x4
+  // area : float
+};
 
-TORCH_DEVICE float3 NormalToLocal(const float3& n)
+struct SphereData
 {
-  return make_float3(T_wl.transpose() * make_float4(n, 0));
-}
+  optix::Matrix4x4 T_wl;
+  optix::Matrix4x4 T_lw;
+  float area;
+};
 
-TORCH_DEVICE float3 NormalToWorld(const float3& n)
+struct GeometryGroupData
 {
-  return make_float3(T_lw.transpose() * make_float4(n, 0));
-}
+  // ???
+  // area : float
+};
 
-TORCH_DEVICE void BoundsToWorld(const float3& bmin, const float3& bmax,
-    float bounds[6])
-{
-  optix::Aabb* aabb = (optix::Aabb*)bounds;
-  aabb->invalidate();
-
-  aabb->include(PointToWorld(make_float3(bmin.x, bmin.y, bmin.z)));
-  aabb->include(PointToWorld(make_float3(bmin.x, bmin.y, bmax.z)));
-  aabb->include(PointToWorld(make_float3(bmin.x, bmax.y, bmin.z)));
-  aabb->include(PointToWorld(make_float3(bmin.x, bmax.y, bmax.z)));
-  aabb->include(PointToWorld(make_float3(bmax.x, bmin.y, bmin.z)));
-  aabb->include(PointToWorld(make_float3(bmax.x, bmin.y, bmax.z)));
-  aabb->include(PointToWorld(make_float3(bmax.x, bmax.y, bmin.z)));
-  aabb->include(PointToWorld(make_float3(bmax.x, bmax.y, bmax.z)));
-}
+} // namespace torch

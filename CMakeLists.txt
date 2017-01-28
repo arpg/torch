@@ -140,10 +140,10 @@ set(CUDA_HEADER_DIR include/${LIBRARY_NAME}/device)
 
 set(CUDA_HEADERS
   ${CUDA_HEADER_DIR}/Geometry.h
-  ${CUDA_HEADER_DIR}/GeometryData.h
-  ${CUDA_HEADER_DIR}/LightData.h
+  ${CUDA_HEADER_DIR}/Light.h
   ${CUDA_HEADER_DIR}/Random.h
   ${CUDA_HEADER_DIR}/Ray.h
+  ${CUDA_HEADER_DIR}/Transform.h
 )
 
 # define cuda sources

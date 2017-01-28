@@ -3,7 +3,7 @@
 #include <torch/Link.h>
 #include <torch/Scene.h>
 #include <torch/SceneLightSampler.h>
-#include <torch/device/LightData.h>
+#include <torch/device/Light.h>
 
 namespace torch
 {

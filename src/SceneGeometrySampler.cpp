@@ -3,7 +3,7 @@
 #include <torch/Distribution.h>
 #include <torch/PtxUtil.h>
 #include <torch/SphereSampler.h>
-#include <torch/device/GeometryData.h>
+#include <torch/device/Geometry.h>
 
 namespace torch
 {
