@@ -75,6 +75,7 @@ set(CPP_HEADERS
   ${CPP_HEADER_DIR}/Primitive.h
   ${CPP_HEADER_DIR}/Material.h
   ${CPP_HEADER_DIR}/MatteMaterial.h
+  ${CPP_HEADER_DIR}/Mesh.h
   ${CPP_HEADER_DIR}/Node.h
   ${CPP_HEADER_DIR}/Random.h
   ${CPP_HEADER_DIR}/Ray.h
@@ -115,6 +116,7 @@ set(CPP_SOURCES
   ${CPP_SOURCE_DIR}/Primitive.cpp
   ${CPP_SOURCE_DIR}/Material.cpp
   ${CPP_SOURCE_DIR}/MatteMaterial.cpp
+  ${CPP_SOURCE_DIR}/Mesh.cpp
   ${CPP_SOURCE_DIR}/Node.cpp
   ${CPP_SOURCE_DIR}/Scene.cpp
   ${CPP_SOURCE_DIR}/SceneGeometrySampler.cpp
@@ -146,6 +148,7 @@ set(CUDA_SOURCES
   ${CUDA_SOURCE_DIR}/Distribution.cu
   ${CUDA_SOURCE_DIR}/Exception.cu
   ${CUDA_SOURCE_DIR}/MatteMaterial.cu
+  ${CUDA_SOURCE_DIR}/Mesh.cu
   ${CUDA_SOURCE_DIR}/PointLightSampler.cu
   ${CUDA_SOURCE_DIR}/SceneGeometrySampler.cu
   ${CUDA_SOURCE_DIR}/SceneLightSampler.cu

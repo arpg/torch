@@ -10,7 +10,7 @@ TORCH_DEVICE bool ReportIntersect(float t)
 {
   // transform ray to local space
   const float3 origin = PointToLocal(ray.origin);
-  const float3 direction = NormalToLocal(ray.direction);
+  const float3 direction = normalize(VectorToLocal(ray.direction));
 
   // compute scaled hit point
   const float3 localPoint = origin + t * direction;
@@ -39,7 +39,7 @@ RT_PROGRAM void Intersect(int index)
 {
   // transform ray to local space
   const float3 origin = PointToLocal(ray.origin);
-  const float3 direction = NormalToLocal(ray.direction);
+  const float3 direction = normalize(VectorToLocal(ray.direction));
 
   // compute intermediate intersect results
   const float od = dot(origin, direction);

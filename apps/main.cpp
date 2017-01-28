@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 #include <torch/Torch.h>
 
 using namespace torch;
@@ -16,18 +17,18 @@ int main(int argc, char** argv)
   group->SetPosition(0, 0, 0);
   scene.Add(group);
 
-  // std::shared_ptr<DistantLight> distLight;
-  // distLight = scene.CreateDistantLight();
-  // distLight->SetDirection(-0.2, 0.1, 0.4);
-  // distLight->SetRadiance(2, 2, 2);
-  // scene.Add(distLight);
+  std::shared_ptr<DistantLight> distLight;
+  distLight = scene.CreateDistantLight();
+  distLight->SetDirection(-0.2, 0.1, 0.4);
+  distLight->SetRadiance(2, 2, 2);
+  scene.Add(distLight);
 
-  std::shared_ptr<DistantLight> distLight2;
-  distLight2 = scene.CreateDistantLight();
-  // distLight2->SetDirection(0.3, 0.8, 0.7);
-  distLight2->SetDirection(0, 1, 0);
-  distLight2->SetRadiance(2, 2, 2);
-  scene.Add(distLight2);
+  // std::shared_ptr<DistantLight> distLight2;
+  // distLight2 = scene.CreateDistantLight();
+  // // distLight2->SetDirection(0.3, 0.8, 0.7);
+  // distLight2->SetDirection(0, 0.5, 0.5);
+  // distLight2->SetRadiance(2, 2, 2);
+  // scene.Add(distLight2);
 
   // std::shared_ptr<Sphere> lightGeom;
   // lightGeom = scene.CreateSphere();
@@ -46,13 +47,50 @@ int main(int argc, char** argv)
   // light1 = scene.CreatePointLight();
   // light1->SetIntensity(50, 50, 50);
   // light1->SetPosition(4, -1, -1);
-  // // scene.Add(light1);
+  // scene.Add(light1);
 
   // std::shared_ptr<PointLight> light2;
   // light2 = scene.CreatePointLight();
   // light2->SetIntensity(10, 10, 106);
   // light2->SetPosition(-4, -2, -1);
-  // // scene.Add(light2);
+  // scene.Add(light2);
+
+  std::vector<float3> vertices;
+  vertices.push_back(make_float3(0, 0, 0));
+  vertices.push_back(make_float3(1, 1, 0));
+  vertices.push_back(make_float3(1, 0, 0));
+  vertices.push_back(make_float3(0, 1, 0));
+
+  std::vector<float3> normals;
+  normals.push_back(make_float3(0, 0, -1));
+  normals.push_back(make_float3(0, 0, -1));
+  normals.push_back(make_float3(0, 0, -1));
+  normals.push_back(make_float3(0, 0, -1));
+
+  std::vector<uint3> faces;
+  faces.push_back(make_uint3(0, 1, 2));
+  faces.push_back(make_uint3(0, 3, 1));
+
+  std::shared_ptr<Mesh> mesh;
+  mesh = scene.CreateMesh();
+  mesh->SetOrientation(0, 0, 0);
+  mesh->SetPosition(0, 0, 4);
+  mesh->SetScale(1, 1, 1);
+  mesh->SetVertices(vertices);
+  mesh->SetNormals(normals);
+  mesh->SetFaces(faces);
+
+  std::shared_ptr<MatteMaterial> material3;
+  material3 = scene.CreateMatteMaterial();
+  material3->SetAlbedo(0.1, 0.1, 1.0);
+
+  std::shared_ptr<Primitive> primitive3;
+  primitive3 = scene.CreatePrimitive();
+  primitive3->SetGeometry(mesh);
+  primitive3->SetMaterial(material3);
+  primitive3->SetOrientation(0, 0, 0);
+  primitive3->SetPosition(0, 0, 0);
+  scene.Add(primitive3);
 
   std::shared_ptr<Sphere> geometry;
   geometry = scene.CreateSphere();
@@ -68,10 +106,9 @@ int main(int argc, char** argv)
   primitive = scene.CreatePrimitive();
   primitive->SetGeometry(geometry);
   primitive->SetMaterial(material);
-  // primitive->SetOrientation(0, 0, M_PIf / 8);
-  primitive->SetOrientation(0, 0, 0);
+  primitive->SetOrientation(0, 0, M_PIf / 8);
   primitive->SetPosition(0, 0, 5);
-  group->AddChild(primitive);
+  // group->AddChild(primitive);
 
   std::shared_ptr<Sphere> geometry2;
   geometry2 = scene.CreateSphere();
@@ -89,7 +126,7 @@ int main(int argc, char** argv)
   primitive2->SetMaterial(material2);
   primitive2->SetOrientation(0, 0, 0);
   primitive2->SetPosition(1.5, -0.5, 3.5);
-  group->AddChild(primitive2);
+  // group->AddChild(primitive2);
 
   std::shared_ptr<Camera> camera;
   camera = scene.CreateCamera();

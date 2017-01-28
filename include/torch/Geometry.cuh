@@ -31,12 +31,12 @@ TORCH_DEVICE float3 VectorToWorld(const float3& v)
 
 TORCH_DEVICE float3 NormalToLocal(const float3& n)
 {
-  return normalize(VectorToLocal(n));
+  return make_float3(T_wl.transpose() * make_float4(n, 0));
 }
 
 TORCH_DEVICE float3 NormalToWorld(const float3& n)
 {
-  return normalize(VectorToWorld(n));
+  return make_float3(T_lw.transpose() * make_float4(n, 0));
 }
 
 TORCH_DEVICE void BoundsToWorld(const float3& bmin, const float3& bmax,

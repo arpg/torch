@@ -12,6 +12,7 @@ class DistantLight;
 class GeometryGroup;
 class Group;
 class MatteMaterial;
+class Mesh;
 class Node;
 class PointLight;
 class Primitive;
@@ -42,6 +43,8 @@ class Scene
     std::shared_ptr<Primitive> CreatePrimitive();
 
     std::shared_ptr<GeometryGroup> CreateGeometryGroup();
+
+    std::shared_ptr<Mesh> CreateMesh();
 
     std::shared_ptr<Sphere> CreateSphere();
 

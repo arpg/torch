@@ -6,6 +6,7 @@
 #include <torch/GeometryGroup.h>
 #include <torch/Group.h>
 #include <torch/MatteMaterial.h>
+#include <torch/Mesh.h>
 #include <torch/PointLight.h>
 #include <torch/Primitive.h>
 #include <torch/Sphere.h>
@@ -72,6 +73,11 @@ std::shared_ptr<Primitive> Scene::CreatePrimitive()
 std::shared_ptr<GeometryGroup> Scene::CreateGeometryGroup()
 {
   return CreateObject<GeometryGroup>();
+}
+
+std::shared_ptr<Mesh> Scene::CreateMesh()
+{
+  return CreateObject<Mesh>();
 }
 
 std::shared_ptr<Sphere> Scene::CreateSphere()
