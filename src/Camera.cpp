@@ -1,5 +1,7 @@
 #include <torch/Camera.h>
 #include <torch/Context.h>
+#include <torch/Image.h>
+#include <torch/Link.h>
 #include <torch/Node.h>
 #include <torch/PtxUtil.h>
 

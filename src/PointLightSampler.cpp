@@ -1,6 +1,7 @@
 #include <torch/PointLightSampler.h>
 #include <torch/Context.h>
 #include <torch/Distribution.h>
+#include <torch/LightData.h>
 #include <torch/PtxUtil.h>
 
 namespace torch

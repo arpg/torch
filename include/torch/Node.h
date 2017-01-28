@@ -1,9 +1,5 @@
 #pragma once
 
-#include <vector>
-#include <optixu/optixpp.h>
-#include <torch/BoundingBox.h>
-#include <torch/Link.h>
 #include <torch/Object.h>
 #include <torch/Transformable.h>
 

@@ -5,9 +5,6 @@
 namespace torch
 {
 
-class Geometry;
-class Material;
-
 class Primitive : public Node
 {
   public:

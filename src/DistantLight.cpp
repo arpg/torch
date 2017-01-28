@@ -1,6 +1,7 @@
 #include <torch/DistantLight.h>
 #include <torch/Context.h>
 #include <torch/LightData.h>
+#include <torch/Link.h>
 #include <torch/Scene.h>
 #include <torch/SceneLightSampler.h>
 

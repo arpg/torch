@@ -1,7 +1,5 @@
 #pragma once
 
-#include <vector>
-#include <torch/GeometryData.h>
 #include <torch/GeometrySampler.h>
 
 namespace torch

@@ -1,6 +1,7 @@
 #include <torch/Node.h>
 #include <algorithm>
 #include <torch/Context.h>
+#include <torch/Link.h>
 #include <torch/Object.h>
 
 namespace torch

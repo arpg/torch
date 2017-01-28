@@ -1,12 +1,9 @@
 #pragma once
 
-#include <memory>
-#include <optixu/optixpp.h>
+#include <torch/Core.h>
 
 namespace torch
 {
-
-class Context;
 
 class Distribution
 {

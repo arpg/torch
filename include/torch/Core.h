@@ -1,6 +1,10 @@
 #pragma once
 
 #include <algorithm>
+#include <memory>
+#include <string>
+#include <vector>
+#include <unordered_map>
 #include <optixu/optixpp.h>
 #include <optixu/optixu_matrix.h>
 
@@ -49,5 +53,10 @@ class SphereSampler;
 class Transform;
 class Transformable;
 class Vector;
+
+class SphereData;
+class PointLightData;
+class AreaLightData;
+class DistantLightData;
 
 } // namespace torch

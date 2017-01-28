@@ -5,10 +5,6 @@
 namespace torch
 {
 
-class Normal;
-class Point;
-class Vector;
-
 class Transform
 {
   public:

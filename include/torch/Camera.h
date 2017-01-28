@@ -1,7 +1,5 @@
 #pragma once
 
-#include <optixu/optixpp.h>
-#include <torch/Image.h>
 #include <torch/Node.h>
 
 namespace torch

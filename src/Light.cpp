@@ -1,4 +1,5 @@
 #include <torch/Light.h>
+#include <torch/Spectrum.h>
 
 namespace torch
 {

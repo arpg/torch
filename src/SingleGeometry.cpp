@@ -1,5 +1,6 @@
 #include <torch/SingleGeometry.h>
 #include <torch/Context.h>
+#include <torch/Link.h>
 #include <torch/PtxUtil.h>
 
 namespace torch

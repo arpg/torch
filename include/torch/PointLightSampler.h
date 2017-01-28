@@ -1,8 +1,5 @@
 #pragma once
 
-#include <vector>
-#include <torch/Distribution.h>
-#include <torch/LightData.h>
 #include <torch/LightSampler.h>
 
 namespace torch

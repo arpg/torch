@@ -1,16 +1,9 @@
 #pragma once
 
-#include <memory>
-#include <vector>
-#include <optixu/optixpp.h>
-#include <torch/GeometryData.h>
-#include <torch/GeometrySampler.h>
+#include <torch/Core.h>
 
 namespace torch
 {
-
-class Context;
-class GeometrySampler;
 
 class SceneGeometrySampler
 {

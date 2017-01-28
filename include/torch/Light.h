@@ -1,8 +1,6 @@
 #pragma once
 
-#include <string>
 #include <torch/Node.h>
-#include <torch/Spectrum.h>
 
 namespace torch
 {

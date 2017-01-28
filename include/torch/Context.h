@@ -1,18 +1,9 @@
 #pragma once
 
-#include <memory>
-#include <string>
-#include <vector>
-#include <unordered_map>
-#include <optixu/optixpp.h>
+#include <torch/Core.h>
 
 namespace torch
 {
-
-class Node;
-class Object;
-class SceneLightSampler;
-class SceneGeometrySampler;
 
 class Context : public std::enable_shared_from_this<Context>
 {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <optix_math.h>
+#include <torch/Core.h>
 
 namespace torch
 {

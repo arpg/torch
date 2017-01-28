@@ -2,6 +2,7 @@
 #include <torch/Context.h>
 #include <torch/Exception.h>
 #include <torch/Geometry.h>
+#include <torch/Link.h>
 #include <torch/Material.h>
 
 namespace torch

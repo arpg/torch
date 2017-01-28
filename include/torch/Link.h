@@ -1,13 +1,10 @@
 #pragma once
 
-#include <memory>
-#include <optixu/optixpp.h>
+#include <torch/Core.h>
 #include <torch/Transform.h>
 
 namespace torch
 {
-
-class Context;
 
 class Link
 {

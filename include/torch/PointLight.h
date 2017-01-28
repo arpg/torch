@@ -1,7 +1,7 @@
 #pragma once
 
-#include <string>
 #include <torch/Light.h>
+#include <torch/Spectrum.h>
 
 namespace torch
 {

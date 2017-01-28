@@ -3,6 +3,8 @@
 #include <torch/LightData.h>
 #include <torch/Scene.h>
 #include <torch/SceneLightSampler.h>
+#include <torch/Link.h>
+#include <torch/Transform.h>
 
 namespace torch
 {

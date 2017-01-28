@@ -1,5 +1,8 @@
 #include <torch/Context.h>
+#include <torch/Distribution.h>
+#include <torch/GeometrySampler.h>
 #include <torch/Group.h>
+#include <torch/LightSampler.h>
 #include <torch/Ray.h>
 #include <torch/SceneGeometrySampler.h>
 #include <torch/SceneLightSampler.h>

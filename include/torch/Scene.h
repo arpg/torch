@@ -1,22 +1,9 @@
 #pragma once
 
-#include <memory>
+#include <torch/Core.h>
 
 namespace torch
 {
-
-class AreaLight;
-class Camera;
-class Context;
-class DistantLight;
-class GeometryGroup;
-class Group;
-class MatteMaterial;
-class Mesh;
-class Node;
-class PointLight;
-class Primitive;
-class Sphere;
 
 class Scene
 {

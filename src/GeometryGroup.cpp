@@ -1,6 +1,7 @@
 #include <torch/GeometryGroup.h>
 #include <algorithm>
 #include <torch/Context.h>
+#include <torch/Link.h>
 
 namespace torch
 {

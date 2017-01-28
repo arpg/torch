@@ -1,6 +1,7 @@
 #include <torch/SphereSampler.h>
 #include <torch/Context.h>
 #include <torch/Distribution.h>
+#include <torch/GeometryData.h>
 #include <torch/PtxUtil.h>
 
 namespace torch

@@ -1,9 +1,9 @@
 #pragma once
 
+#include <torch/Core.h>
+
 namespace torch
 {
-
-class Vector;
 
 struct Point
 {

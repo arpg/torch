@@ -1,6 +1,5 @@
 #pragma once
 
-#include <string>
 #include <torch/Object.h>
 #include <torch/Transformable.h>
 

@@ -1,18 +1,9 @@
 #pragma once
 
-#include <memory>
-#include <vector>
-#include <optixu/optixpp.h>
-#include <torch/Distribution.h>
-#include <torch/LightData.h>
-#include <torch/LightSampler.h>
+#include <torch/Core.h>
 
 namespace torch
 {
-
-class Context;
-class Distribution;
-class LightSampler;
 
 class SceneLightSampler
 {

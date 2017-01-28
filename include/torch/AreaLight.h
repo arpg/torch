@@ -1,11 +1,10 @@
 #pragma once
 
 #include <torch/Light.h>
+#include <torch/Spectrum.h>
 
 namespace torch
 {
-
-class Geometry;
 
 class AreaLight : public Light
 {

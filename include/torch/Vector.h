@@ -1,9 +1,9 @@
 #pragma once
 
+#include <torch/Core.h>
+
 namespace torch
 {
-
-class Normal;
 
 struct Vector
 {
