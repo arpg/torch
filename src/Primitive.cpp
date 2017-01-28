@@ -35,6 +35,14 @@ void Primitive::SetMaterial(std::shared_ptr<Material> material)
   m_context->MarkDirty();
 }
 
+BoundingBox Primitive::GetBounds(const Transform& transform)
+{
+  BoundingBox bounds = Node::GetBounds(transform);
+  const Transform geomTransform = transform * m_transform;
+  bounds.Union(m_geometry->GetBounds(geomTransform));
+  return bounds;
+}
+
 void Primitive::BuildScene(Link& link)
 {
   ValidateChildren();

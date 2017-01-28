@@ -46,4 +46,6 @@ struct Vector
   float x, y, z;
 };
 
+Vector operator*(float f, const Vector& v);
+
 } // namespace torch

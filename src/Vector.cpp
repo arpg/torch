@@ -111,4 +111,9 @@ Vector Vector::Normalize() const
   return (*this) / Length();
 }
 
+Vector operator*(float f, const Vector& v)
+{
+  return v * f;
+}
+
 } // namespace torch

@@ -10,11 +10,13 @@ struct BoundingBox
 {
   BoundingBox();
 
-  void Add(const Point& p);
+  void Union(const Point& p);
 
-  void Add(float x, float y, float z);
+  void Union(float x, float y, float z);
 
-  void Add(const BoundingBox& b);
+  void Union(const BoundingBox& b);
+
+  float GetRadius() const;
 
   Point bmin;
 

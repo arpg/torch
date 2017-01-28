@@ -32,11 +32,11 @@ class Node : public Object, public Transformable
 
     virtual void BuildScene(optix::Variable variable);
 
-    virtual void GetBounds(BoundingBox& bounds);
+    virtual BoundingBox GetBounds(const Transform& transform);
 
   protected:
 
-    virtual void GetBounds(const Transform& transform, BoundingBox& bounds);
+    virtual BoundingBox GetChildBounds(const Transform& transform);
 
     void BuildChildScene(Link& link);
 

@@ -193,14 +193,14 @@ Vector Transform::operator*(const Vector& vector) const
 BoundingBox Transform::operator*(const BoundingBox& b) const
 {
   BoundingBox result;
-  result.Add((*this) * Point(b.bmin.x, b.bmin.y, b.bmin.z));
-  result.Add((*this) * Point(b.bmin.x, b.bmin.y, b.bmax.z));
-  result.Add((*this) * Point(b.bmin.x, b.bmax.y, b.bmin.z));
-  result.Add((*this) * Point(b.bmin.x, b.bmax.y, b.bmax.z));
-  result.Add((*this) * Point(b.bmax.x, b.bmin.y, b.bmin.z));
-  result.Add((*this) * Point(b.bmax.x, b.bmin.y, b.bmax.z));
-  result.Add((*this) * Point(b.bmax.x, b.bmax.y, b.bmin.z));
-  result.Add((*this) * Point(b.bmax.x, b.bmax.y, b.bmax.z));
+  result.Union((*this) * Point(b.bmin.x, b.bmin.y, b.bmin.z));
+  result.Union((*this) * Point(b.bmin.x, b.bmin.y, b.bmax.z));
+  result.Union((*this) * Point(b.bmin.x, b.bmax.y, b.bmin.z));
+  result.Union((*this) * Point(b.bmin.x, b.bmax.y, b.bmax.z));
+  result.Union((*this) * Point(b.bmax.x, b.bmin.y, b.bmin.z));
+  result.Union((*this) * Point(b.bmax.x, b.bmin.y, b.bmax.z));
+  result.Union((*this) * Point(b.bmax.x, b.bmax.y, b.bmin.z));
+  result.Union((*this) * Point(b.bmax.x, b.bmax.y, b.bmax.z));
   return result;
 }
 

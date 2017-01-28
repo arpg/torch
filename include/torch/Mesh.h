@@ -1,6 +1,7 @@
 #pragma once
 
 #include <torch/SingleGeometry.h>
+#include <torch/BoundingBox.h>
 
 namespace torch
 {
@@ -17,7 +18,11 @@ class Mesh : public SingleGeometry
 
     void SetFaces(const std::vector<uint3>& faces);
 
+    BoundingBox GetBounds(const Transform& transform) override;
+
   protected:
+
+    void UpdateBounds(const std::vector<float3>& vertices);
 
     template <typename T>
     static void CopyTo(optix::Buffer buffer, const std::vector<T>& data);
@@ -39,6 +44,8 @@ class Mesh : public SingleGeometry
     optix::Buffer m_normals;
 
     optix::Buffer m_faces;
+
+    BoundingBox m_bounds;
 };
 
 } // namespace torch

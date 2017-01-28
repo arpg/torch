@@ -1,6 +1,7 @@
 #include <torch/GeometryGroup.h>
 #include <algorithm>
 #include <torch/Context.h>
+#include <torch/BoundingBox.h>
 #include <torch/Link.h>
 
 namespace torch
@@ -60,6 +61,19 @@ void GeometryGroup::BuildScene(Link& link)
 {
   Geometry::BuildScene(link);
   BuildChildScene(link);
+}
+
+BoundingBox GeometryGroup::GetBounds(const Transform& transform)
+{
+  const Transform childTransform = transform * m_transform;
+  BoundingBox bounds;
+
+  for (std::shared_ptr<Geometry> child : m_children)
+  {
+    bounds.Union(child->GetBounds(childTransform));
+  }
+
+  return bounds;
 }
 
 void GeometryGroup::BuildChildScene(Link& link)

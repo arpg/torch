@@ -12,6 +12,7 @@ Mesh::Mesh(std::shared_ptr<Context> context) :
 
 void Mesh::SetVertices(const std::vector<float3>& vertices)
 {
+  UpdateBounds(vertices);
   CopyTo(m_vertices, vertices);
 }
 
@@ -24,6 +25,21 @@ void Mesh::SetFaces(const std::vector<uint3>& faces)
 {
   m_geometry->setPrimitiveCount(faces.size());
   CopyTo(m_faces, faces);
+}
+
+BoundingBox Mesh::GetBounds(const Transform& transform)
+{
+  return transform * m_transform * m_bounds;
+}
+
+void Mesh::UpdateBounds(const std::vector<float3>& vertices)
+{
+  m_bounds = BoundingBox();
+
+  for (const float3 vertex : vertices)
+  {
+    m_bounds.Union(vertex.x, vertex.y, vertex.z);
+  }
 }
 
 template<typename T>

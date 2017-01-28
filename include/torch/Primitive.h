@@ -19,6 +19,8 @@ class Primitive : public Node
 
     void SetMaterial(std::shared_ptr<Material> material);
 
+    BoundingBox GetBounds(const Transform &transform) override;
+
     void BuildScene(Link& link) override;
 
   protected:

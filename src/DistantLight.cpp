@@ -15,7 +15,7 @@ DistantLight::DistantLight(std::shared_ptr<Context> context) :
 
 Spectrum DistantLight::GetPower() const
 {
-  const float worldRadius = 1; // TODO: compute
+  const float worldRadius = m_context->GetSceneRadius();
   return M_PI * worldRadius * worldRadius * m_radiance;
 }
 

@@ -21,6 +21,8 @@ class Geometry : public Object, public Transformable
     void PostBuildScene() override;
 
     void UpdateTransform() override;
+
+    virtual BoundingBox GetBounds(const Transform& transform) = 0;
 };
 
 } // namespace torch

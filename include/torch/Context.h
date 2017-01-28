@@ -1,6 +1,7 @@
 #pragma once
 
 #include <torch/Core.h>
+#include <torch/BoundingBox.h>
 
 namespace torch
 {
@@ -56,6 +57,10 @@ class Context : public std::enable_shared_from_this<Context>
 
     std::shared_ptr<SceneGeometrySampler> GetGeometrySampler() const;
 
+    BoundingBox GetSceneBounds() const;
+
+    float GetSceneRadius() const;
+
   protected:
 
     void PrepareLaunch();
@@ -103,6 +108,8 @@ class Context : public std::enable_shared_from_this<Context>
     optix::Program m_errorProgram;
 
     optix::Buffer m_errorBuffer;
+
+    BoundingBox m_bounds;
 };
 
 } // namespace torch

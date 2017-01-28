@@ -25,6 +25,8 @@ class GeometryGroup : public Geometry
 
     void BuildScene(Link& link) override;
 
+    BoundingBox GetBounds(const Transform& transform) override;
+
   protected:
 
     void BuildChildScene(Link& link);

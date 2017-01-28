@@ -1,15 +1,7 @@
 #include <optix.h>
+#include <torch/device/Camera.h>
 #include <torch/device/Random.h>
 #include <torch/device/Ray.h>
-
-struct Camera
-{
-  float2 center;
-  float3 position;
-  float3 u;
-  float3 v;
-  float3 w;
-};
 
 rtDeclareVariable(uint2, pixelIndex, rtLaunchIndex, );
 rtDeclareVariable(uint2, imageSize, rtLaunchDim, );
@@ -18,7 +10,7 @@ rtDeclareVariable(rtObject, sceneRoot, , );
 rtDeclareVariable(float, sceneEpsilon, , );
 
 rtDeclareVariable(unsigned int, sampleCount, , );
-rtDeclareVariable(Camera, camera, , );
+rtDeclareVariable(torch::CameraData, camera, , );
 rtBuffer<float3, 2> buffer;
 
 #define TORCH_DEVICE static __device__ __inline__

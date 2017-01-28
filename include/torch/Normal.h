@@ -44,4 +44,6 @@ struct Normal
   float x, y, z;
 };
 
+Normal operator*(float f, const Normal& p);
+
 } // namespace torch

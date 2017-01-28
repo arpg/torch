@@ -161,6 +161,16 @@ std::shared_ptr<SceneGeometrySampler> Context::GetGeometrySampler() const
   return m_geometrySampler;
 }
 
+BoundingBox Context::GetSceneBounds() const
+{
+  return m_bounds;
+}
+
+float Context::GetSceneRadius() const
+{
+  return m_bounds.GetRadius();
+}
+
 void Context::PrepareLaunch()
 {
   if (m_dirty)
@@ -168,6 +178,7 @@ void Context::PrepareLaunch()
     m_lightSampler->Clear();
     DropOrphans();
     PreBuildScene();
+    m_bounds = m_sceneRoot->GetBounds(Transform());
     BuildScene();
     PostBuildScene();
     m_lightSampler->Update();

@@ -1,15 +1,18 @@
 #pragma once
 
 #include <algorithm>
+#include <limits>
 #include <memory>
 #include <string>
-#include <vector>
 #include <unordered_map>
+#include <vector>
 #include <optixu/optixpp.h>
 #include <optixu/optixu_matrix.h>
 
 namespace torch
 {
+
+const float infinity = std::numeric_limits<float>::infinity();
 
 class AreaLight;
 class AreaLightData;

@@ -102,4 +102,9 @@ Normal Normal::Normalize() const
   return (*this) / Length();
 }
 
+Normal operator*(float f, const Normal& p)
+{
+  return p * f;
+}
+
 } // namespace torch
