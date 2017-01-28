@@ -10,10 +10,10 @@ rtDeclareVariable(SampleFunction, SampleSpheres, , );
 
 RT_CALLABLE_PROGRAM void Sample(torch::GeometrySample& sample)
 {
-  switch (torch::GetGeometryType(sample.id))
-  {
-    case torch::GEOM_TYPE_SPHERE:
-      SampleSpheres(sample);
-      break;
-  }
+  // switch (torch::GetGeometryType(sample.id))
+  // {
+  //   case torch::GEOM_TYPE_SPHERE:
+  //     SampleSpheres(sample);
+  //     break;
+  // }
 }

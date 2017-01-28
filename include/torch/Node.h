@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <optixu/optixpp.h>
+#include <torch/BoundingBox.h>
 #include <torch/Link.h>
 #include <torch/Object.h>
 #include <torch/Transformable.h>
@@ -35,7 +36,11 @@ class Node : public Object, public Transformable
 
     virtual void BuildScene(optix::Variable variable);
 
+    virtual void GetBounds(BoundingBox& bounds);
+
   protected:
+
+    virtual void GetBounds(const Transform& transform, BoundingBox& bounds);
 
     void BuildChildScene(Link& link);
 

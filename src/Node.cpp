@@ -76,6 +76,21 @@ void Node::BuildScene(optix::Variable variable)
   link.Write(variable);
 }
 
+void Node::GetBounds(BoundingBox& bounds)
+{
+  GetBounds(Transform(), bounds);
+}
+
+void Node::GetBounds(const Transform& transform, BoundingBox& bounds)
+{
+  Transform childTransform = transform * m_transform;
+
+  for (std::shared_ptr<Node> child : m_children)
+  {
+    child->GetBounds(childTransform, bounds);
+  }
+}
+
 void Node::BuildChildScene(Link& link)
 {
   Link childLink = link.Branch(m_transform);

@@ -1,14 +1,13 @@
 #pragma once
 
-#include <optix_math.h>
-
-#define TORCH_BOTH static __device__ __host__ __inline__
+#include <optixu/optixu_matrix.h>
 
 namespace torch
 {
 
 enum GeometryType
 {
+  GEOM_TYPE_MESH,
   GEOM_TYPE_SPHERE,
   GEOM_TYPE_COUNT
 };
@@ -23,25 +22,27 @@ struct GeometrySample
   float pdf;
 };
 
-struct SphereData
+struct MeshData
 {
-  // transform : transform
+  // vertices : unsigned int / rtBuffer<float3, 1>
+  // normals : unsigned int / rtBuffer<float3, 1>
+  // faces : unsigned int / rtBuffer<uint3, 1>
+  // T_wl : optix::Matrx4x4
+  // T_lw : optix::Matrx4x4
   // area : float
 };
 
-TORCH_BOTH unsigned char GetGeometryId(GeometryType type, unsigned int count)
+struct SphereData
 {
-  return type << 24 & count;
-}
+  optix::Matrix4x4 T_wl;
+  optix::Matrix4x4 T_lw;
+  float area;
+};
 
-TORCH_BOTH unsigned char GetGeometryType(unsigned int id)
+struct GeometryGroupData
 {
-  return id >> 24 & 0xFF;
-}
-
-TORCH_BOTH unsigned char GetGeometryCount(unsigned int id)
-{
-  return id & 0xFFFFFF;
-}
+  // ???
+  // area : float
+};
 
 } // namespace torch

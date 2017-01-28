@@ -1,4 +1,8 @@
 #include <torch/Transform.h>
+#include <torch/BoundingBox.h>
+#include <torch/Normal.h>
+#include <torch/Point.h>
+#include <torch/Vector.h>
 
 namespace torch
 {
@@ -164,6 +168,39 @@ Transform Transform::operator*(const Transform& transform) const
 {
   Transform result;
   result.m_matrix = m_matrix * transform.m_matrix;
+  return result;
+}
+
+Normal Transform::operator*(const Normal& normal) const
+{
+  float4 n = make_float4(normal.x, normal.y, normal.z, 0);
+  n = m_matrix.inverse() * n;
+  return Normal(n.x, n.y, n.z);
+}
+
+Point Transform::operator*(const Point& point) const
+{
+  const float4 p = m_matrix * make_float4(point.x, point.y, point.z, 1);
+  return Point(p.x, p.y, p.z);
+}
+
+Vector Transform::operator*(const Vector& vector) const
+{
+  const float4 v = m_matrix * make_float4(vector.x, vector.y, vector.z, 0);
+  return Vector(v.x, v.y, v.z);
+}
+
+BoundingBox Transform::operator*(const BoundingBox& b) const
+{
+  BoundingBox result;
+  result.Add((*this) * Point(b.bmin.x, b.bmin.y, b.bmin.z));
+  result.Add((*this) * Point(b.bmin.x, b.bmin.y, b.bmax.z));
+  result.Add((*this) * Point(b.bmin.x, b.bmax.y, b.bmin.z));
+  result.Add((*this) * Point(b.bmin.x, b.bmax.y, b.bmax.z));
+  result.Add((*this) * Point(b.bmax.x, b.bmin.y, b.bmin.z));
+  result.Add((*this) * Point(b.bmax.x, b.bmin.y, b.bmax.z));
+  result.Add((*this) * Point(b.bmax.x, b.bmax.y, b.bmin.z));
+  result.Add((*this) * Point(b.bmax.x, b.bmax.y, b.bmax.z));
   return result;
 }
 

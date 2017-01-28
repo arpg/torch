@@ -1,10 +1,13 @@
 #pragma once
 
-#include <optixu/optixpp.h>
-#include <optixu/optixu_matrix.h>
+#include <torch/Core.h>
 
 namespace torch
 {
+
+class Normal;
+class Point;
+class Vector;
 
 class Transform
 {
@@ -51,6 +54,14 @@ class Transform
     Transform Inverse() const;
 
     Transform operator*(const Transform& transform) const;
+
+    Normal operator*(const Normal& normal) const;
+
+    Point operator*(const Point& point) const;
+
+    Vector operator*(const Vector& vector) const;
+
+    BoundingBox operator*(const BoundingBox& b) const;
 
     void Write(optix::Transform transform) const;
 

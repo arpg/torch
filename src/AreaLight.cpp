@@ -54,7 +54,7 @@ void AreaLight::BuildScene(Link& link)
   data.geometry = 0;
   data.radiance = m_radiance.GetRGB();
   data.luminance = GetLuminance();
-  // data.area = GetArea();
+  // data.area = m_geometry->GetArea();
   data.area = 1;
 
   std::shared_ptr<SceneLightSampler> sampler;

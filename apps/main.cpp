@@ -20,7 +20,7 @@ int main(int argc, char** argv)
   std::shared_ptr<DistantLight> distLight;
   distLight = scene.CreateDistantLight();
   distLight->SetDirection(-0.2, 0.1, 0.4);
-  distLight->SetRadiance(2, 2, 2);
+  distLight->SetRadiance(4, 4, 4);
   scene.Add(distLight);
 
   // std::shared_ptr<DistantLight> distLight2;

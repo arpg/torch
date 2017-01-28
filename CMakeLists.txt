@@ -54,7 +54,9 @@ set(CPP_HEADERS
   ${CPP_HEADER_DIR}/AreaLight.h
   ${CPP_HEADER_DIR}/AreaLightSampler.h
   ${CPP_HEADER_DIR}/Camera.h
+  ${CPP_HEADER_DIR}/Core.h
   ${CPP_HEADER_DIR}/Context.h
+  ${CPP_HEADER_DIR}/BoundingBox.h
   ${CPP_HEADER_DIR}/DistantLight.h
   ${CPP_HEADER_DIR}/DistantLightSampler.h
   ${CPP_HEADER_DIR}/Distribution.h
@@ -70,6 +72,7 @@ set(CPP_HEADERS
   ${CPP_HEADER_DIR}/LightSampler.h
   ${CPP_HEADER_DIR}/Link.h
   ${CPP_HEADER_DIR}/Object.h
+  ${CPP_HEADER_DIR}/Point.h
   ${CPP_HEADER_DIR}/PointLight.h
   ${CPP_HEADER_DIR}/PointLightSampler.h
   ${CPP_HEADER_DIR}/Primitive.h
@@ -77,6 +80,7 @@ set(CPP_HEADERS
   ${CPP_HEADER_DIR}/MatteMaterial.h
   ${CPP_HEADER_DIR}/Mesh.h
   ${CPP_HEADER_DIR}/Node.h
+  ${CPP_HEADER_DIR}/Normal.h
   ${CPP_HEADER_DIR}/Random.h
   ${CPP_HEADER_DIR}/Ray.h
   ${CPP_HEADER_DIR}/Scene.h
@@ -88,6 +92,7 @@ set(CPP_HEADERS
   ${CPP_HEADER_DIR}/SphereSampler.h
   ${CPP_HEADER_DIR}/Transform.h
   ${CPP_HEADER_DIR}/Transformable.h
+  ${CPP_HEADER_DIR}/Vector.h
 )
 
 # define c++ sources
@@ -97,6 +102,7 @@ set(CPP_SOURCE_DIR src)
 set(CPP_SOURCES
   ${CPP_SOURCE_DIR}/AreaLight.cpp
   ${CPP_SOURCE_DIR}/AreaLightSampler.cpp
+  ${CPP_SOURCE_DIR}/BoundingBox.cpp
   ${CPP_SOURCE_DIR}/Camera.cpp
   ${CPP_SOURCE_DIR}/Context.cpp
   ${CPP_SOURCE_DIR}/DistantLight.cpp
@@ -111,6 +117,7 @@ set(CPP_SOURCES
   ${CPP_SOURCE_DIR}/LightSampler.cpp
   ${CPP_SOURCE_DIR}/Link.cpp
   ${CPP_SOURCE_DIR}/Object.cpp
+  ${CPP_SOURCE_DIR}/Point.cpp
   ${CPP_SOURCE_DIR}/PointLight.cpp
   ${CPP_SOURCE_DIR}/PointLightSampler.cpp
   ${CPP_SOURCE_DIR}/Primitive.cpp
@@ -118,6 +125,7 @@ set(CPP_SOURCES
   ${CPP_SOURCE_DIR}/MatteMaterial.cpp
   ${CPP_SOURCE_DIR}/Mesh.cpp
   ${CPP_SOURCE_DIR}/Node.cpp
+  ${CPP_SOURCE_DIR}/Normal.cpp
   ${CPP_SOURCE_DIR}/Scene.cpp
   ${CPP_SOURCE_DIR}/SceneGeometrySampler.cpp
   ${CPP_SOURCE_DIR}/SceneLightSampler.cpp
@@ -127,6 +135,7 @@ set(CPP_SOURCES
   ${CPP_SOURCE_DIR}/SphereSampler.cpp
   ${CPP_SOURCE_DIR}/Transform.cpp
   ${CPP_SOURCE_DIR}/Transformable.cpp
+  ${CPP_SOURCE_DIR}/Vector.cpp
 )
 
 # define cuda headers
