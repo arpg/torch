@@ -1,8 +1,8 @@
 #include <torch/DistantLightSampler.h>
 #include <torch/Context.h>
 #include <torch/Distribution.h>
-#include <torch/LightData.h>
 #include <torch/PtxUtil.h>
+#include <torch/device/LightData.h>
 
 namespace torch
 {

@@ -1,9 +1,9 @@
 #include <torch/SceneGeometrySampler.h>
 #include <torch/Context.h>
 #include <torch/Distribution.h>
-#include <torch/GeometryData.h>
 #include <torch/PtxUtil.h>
 #include <torch/SphereSampler.h>
+#include <torch/device/GeometryData.h>
 
 namespace torch
 {

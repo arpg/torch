@@ -1,6 +1,6 @@
 #include <optix.h>
 #include <optix_math.h>
-#include <torch/Geometry.cuh>
+#include <torch/device/Geometry.h>
 
 rtDeclareVariable(float3, geometricNormal, attribute geometricNormal, );
 rtDeclareVariable(float3, shadingNormal, attribute shadingNormal, );

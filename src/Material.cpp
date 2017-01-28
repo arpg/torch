@@ -2,7 +2,7 @@
 #include <torch/Context.h>
 #include <torch/Link.h>
 #include <torch/PtxUtil.h>
-#include <torch/Ray.h>
+#include <torch/device/Ray.h>
 
 namespace torch
 {

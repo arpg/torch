@@ -1,7 +1,7 @@
 #include <optix.h>
 #include <optix_math.h>
-#include <torch/LightData.h>
-#include <torch/Random.h>
+#include <torch/device/LightData.h>
+#include <torch/device/Random.h>
 
 typedef rtCallableProgramX<unsigned int(float, float&)> SampleFunction;
 rtDeclareVariable(SampleFunction, GetLightIndex, , );

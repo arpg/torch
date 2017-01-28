@@ -1,8 +1,8 @@
 #include <torch/AreaLight.h>
 #include <torch/Context.h>
 #include <torch/Geometry.h>
-#include <torch/LightData.h>
 #include <torch/SceneLightSampler.h>
+#include <torch/device/LightData.h>
 
 namespace torch
 {

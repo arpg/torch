@@ -12,12 +12,14 @@ namespace torch
 {
 
 class AreaLight;
+class AreaLightData;
 class AreaLightSampler;
-class Camera;
-class Core;
-class Context;
 class BoundingBox;
+class Camera;
+class Context;
+class Core;
 class DistantLight;
+class DistantLightData;
 class DistantLightSampler;
 class Distribution;
 class Exception;
@@ -31,16 +33,17 @@ class Light;
 class LightData;
 class LightSampler;
 class Link;
-class Object;
-class Point;
-class PointLight;
-class PointLightSampler;
-class Primitive;
 class Material;
 class MatteMaterial;
 class Mesh;
 class Node;
 class Normal;
+class Object;
+class Point;
+class PointLight;
+class PointLightData;
+class PointLightSampler;
+class Primitive;
 class Random;
 class Ray;
 class Scene;
@@ -49,14 +52,10 @@ class SceneLightSampler;
 class SingleGeometry;
 class Spectrum;
 class Sphere;
+class SphereData;
 class SphereSampler;
 class Transform;
 class Transformable;
 class Vector;
-
-class SphereData;
-class PointLightData;
-class AreaLightData;
-class DistantLightData;
 
 } // namespace torch

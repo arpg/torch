@@ -1,6 +1,6 @@
 #include <optix.h>
-#include <torch/LightData.h>
-#include <torch/Ray.h>
+#include <torch/device/LightData.h>
+#include <torch/device/Ray.h>
 
 rtDeclareVariable(rtObject, sceneRoot, , );
 rtDeclareVariable(float, sceneEpsilon, , );

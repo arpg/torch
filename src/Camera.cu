@@ -1,6 +1,6 @@
 #include <optix.h>
-#include <torch/Random.h>
-#include <torch/Ray.h>
+#include <torch/device/Random.h>
+#include <torch/device/Ray.h>
 
 struct Camera
 {

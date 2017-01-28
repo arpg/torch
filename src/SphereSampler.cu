@@ -1,6 +1,6 @@
 #include <optix.h>
-#include <torch/GeometryData.h>
-#include <torch/Random.h>
+#include <torch/device/GeometryData.h>
+#include <torch/device/Random.h>
 
 rtBuffer<torch::SphereData, 1> spheres;
 

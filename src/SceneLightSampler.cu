@@ -1,6 +1,6 @@
 #include <optix.h>
-#include <torch/LightData.h>
-#include <torch/Random.h>
+#include <torch/device/LightData.h>
+#include <torch/device/Random.h>
 
 typedef rtCallableProgramX<unsigned int(float, float&)> TypeFunction;
 typedef rtCallableProgramX<void(torch::LightSample&)> SampleFunction;

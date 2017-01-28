@@ -3,9 +3,9 @@
 #include <torch/Context.h>
 #include <torch/DistantLightSampler.h>
 #include <torch/Distribution.h>
-#include <torch/LightData.h>
 #include <torch/PointLightSampler.h>
 #include <torch/PtxUtil.h>
+#include <torch/device/LightData.h>
 
 namespace torch
 {

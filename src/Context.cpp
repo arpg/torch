@@ -3,9 +3,9 @@
 #include <torch/GeometrySampler.h>
 #include <torch/Group.h>
 #include <torch/LightSampler.h>
-#include <torch/Ray.h>
 #include <torch/SceneGeometrySampler.h>
 #include <torch/SceneLightSampler.h>
+#include <torch/device/Ray.h>
 
 #include <iostream>
 #include <torch/PtxUtil.h>

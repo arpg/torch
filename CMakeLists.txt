@@ -62,13 +62,11 @@ set(CPP_HEADERS
   ${CPP_HEADER_DIR}/Distribution.h
   ${CPP_HEADER_DIR}/Exception.h
   ${CPP_HEADER_DIR}/Geometry.h
-  ${CPP_HEADER_DIR}/GeometryData.h
   ${CPP_HEADER_DIR}/GeometryGroup.h
   ${CPP_HEADER_DIR}/GeometrySampler.h
   ${CPP_HEADER_DIR}/Group.h
   ${CPP_HEADER_DIR}/Image.h
   ${CPP_HEADER_DIR}/Light.h
-  ${CPP_HEADER_DIR}/LightData.h
   ${CPP_HEADER_DIR}/LightSampler.h
   ${CPP_HEADER_DIR}/Link.h
   ${CPP_HEADER_DIR}/Object.h
@@ -81,8 +79,6 @@ set(CPP_HEADERS
   ${CPP_HEADER_DIR}/Mesh.h
   ${CPP_HEADER_DIR}/Node.h
   ${CPP_HEADER_DIR}/Normal.h
-  ${CPP_HEADER_DIR}/Random.h
-  ${CPP_HEADER_DIR}/Ray.h
   ${CPP_HEADER_DIR}/Scene.h
   ${CPP_HEADER_DIR}/SceneGeometrySampler.h
   ${CPP_HEADER_DIR}/SceneLightSampler.h
@@ -140,10 +136,14 @@ set(CPP_SOURCES
 
 # define cuda headers
 
-set(CUDA_HEADER_DIR include/${LIBRARY_NAME})
+set(CUDA_HEADER_DIR include/${LIBRARY_NAME}/device)
 
 set(CUDA_HEADERS
-  ${CUDA_HEADER_DIR}/Geometry.cuh
+  ${CUDA_HEADER_DIR}/Geometry.h
+  ${CUDA_HEADER_DIR}/GeometryData.h
+  ${CUDA_HEADER_DIR}/LightData.h
+  ${CUDA_HEADER_DIR}/Random.h
+  ${CUDA_HEADER_DIR}/Ray.h
 )
 
 # define cuda sources

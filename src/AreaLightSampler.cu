@@ -1,8 +1,8 @@
 #include <optix.h>
 #include <optix_math.h>
-#include <torch/LightData.h>
-#include <torch/GeometryData.h>
-#include <torch/Random.h>
+#include <torch/device/LightData.h>
+#include <torch/device/GeometryData.h>
+#include <torch/device/Random.h>
 
 typedef rtCallableProgramX<unsigned int(float, float&)> SampleLightFunction;
 typedef rtCallableProgramX<void(torch::GeometrySample&)> SampleGeomFunction;
