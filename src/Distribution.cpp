@@ -33,7 +33,6 @@ void Distribution::SetValues(const std::vector<float>& values)
 void Distribution::Upload(const std::vector<float>& cdf)
 {
   m_buffer->setSize(cdf.size());
-  m_program["count"]->setUint(cdf.size());
   float* device = reinterpret_cast<float*>(m_buffer->map());
   std::copy(cdf.begin(), cdf.end(), device);
   m_buffer->unmap();
@@ -67,7 +66,6 @@ void Distribution::CreateProgram()
   const std::string file = PtxUtil::GetFile("Distribution");
   m_program = m_context->CreateProgram(file, "Sample");
   m_program["cdf"]->setBuffer(m_buffer);
-  m_program["count"]->setUint(1);
 }
 
 } // namespace torch

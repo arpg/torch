@@ -1,13 +1,12 @@
 #include <optix.h>
 
 rtBuffer<float, 1> cdf;
-rtDeclareVariable(unsigned int, count, , );
 
 RT_CALLABLE_PROGRAM unsigned int Sample(float sample, float& pdf)
 {
   unsigned int index = 1;
   unsigned int begin = 1;
-  unsigned int end = count - 1;
+  unsigned int end = cdf.size() - 1;
 
   while (begin < end)
   {

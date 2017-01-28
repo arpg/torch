@@ -58,13 +58,13 @@ int main(int argc, char** argv)
   std::vector<float3> vertices;
   vertices.push_back(make_float3(0, 0, 0));
   vertices.push_back(make_float3(1, 1, 0));
-  vertices.push_back(make_float3(1, 0, 0));
+  vertices.push_back(make_float3(1, 0, 0.2));
   vertices.push_back(make_float3(0, 1, 0));
 
   std::vector<float3> normals;
   normals.push_back(make_float3(0, 0, -1));
   normals.push_back(make_float3(0, 0, -1));
-  normals.push_back(make_float3(0, 0, -1));
+  normals.push_back(normalize(make_float3(0, -0.8, -0.2)));
   normals.push_back(make_float3(0, 0, -1));
 
   std::vector<uint3> faces;
@@ -74,7 +74,7 @@ int main(int argc, char** argv)
   std::shared_ptr<Mesh> mesh;
   mesh = scene.CreateMesh();
   mesh->SetOrientation(0, 0, 0);
-  mesh->SetPosition(0, 0, 4);
+  mesh->SetPosition(-3, 0, 4);
   mesh->SetScale(1, 1, 1);
   mesh->SetVertices(vertices);
   mesh->SetNormals(normals);
@@ -108,7 +108,7 @@ int main(int argc, char** argv)
   primitive->SetMaterial(material);
   primitive->SetOrientation(0, 0, M_PIf / 8);
   primitive->SetPosition(0, 0, 5);
-  // group->AddChild(primitive);
+  group->AddChild(primitive);
 
   std::shared_ptr<Sphere> geometry2;
   geometry2 = scene.CreateSphere();
@@ -126,7 +126,7 @@ int main(int argc, char** argv)
   primitive2->SetMaterial(material2);
   primitive2->SetOrientation(0, 0, 0);
   primitive2->SetPosition(1.5, -0.5, 3.5);
-  // group->AddChild(primitive2);
+  group->AddChild(primitive2);
 
   std::shared_ptr<Camera> camera;
   camera = scene.CreateCamera();
