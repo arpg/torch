@@ -67,9 +67,9 @@ void Transform::SetRotation(const optix::Matrix3x3& rotation)
 
   float* dst = M.getData();
   const float* src = rotation.getData();
-  std::copy(&src[0], &src[2], &dst[0]);
-  std::copy(&src[3], &src[5], &dst[4]);
-  std::copy(&src[6], &src[8], &dst[8]);
+  std::copy(&src[0], &src[3], &dst[0]);
+  std::copy(&src[3], &src[6], &dst[4]);
+  std::copy(&src[6], &src[9], &dst[8]);
 
   m_matrix = M * S;
 }

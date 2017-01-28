@@ -16,15 +16,16 @@ int main(int argc, char** argv)
   group->SetPosition(0, 0, 0);
   scene.Add(group);
 
-  std::shared_ptr<DistantLight> distLight;
-  distLight = scene.CreateDistantLight();
-  distLight->SetDirection(-0.2, 0.1, 0.4);
-  distLight->SetRadiance(2, 2, 2);
-  scene.Add(distLight);
+  // std::shared_ptr<DistantLight> distLight;
+  // distLight = scene.CreateDistantLight();
+  // distLight->SetDirection(-0.2, 0.1, 0.4);
+  // distLight->SetRadiance(2, 2, 2);
+  // scene.Add(distLight);
 
   std::shared_ptr<DistantLight> distLight2;
   distLight2 = scene.CreateDistantLight();
-  distLight2->SetDirection(0.3, 0.8, 0.7);
+  // distLight2->SetDirection(0.3, 0.8, 0.7);
+  distLight2->SetDirection(0, 1, 0);
   distLight2->SetRadiance(2, 2, 2);
   scene.Add(distLight2);
 
@@ -67,7 +68,8 @@ int main(int argc, char** argv)
   primitive = scene.CreatePrimitive();
   primitive->SetGeometry(geometry);
   primitive->SetMaterial(material);
-  primitive->SetOrientation(0, 0, M_PIf / 8);
+  // primitive->SetOrientation(0, 0, M_PIf / 8);
+  primitive->SetOrientation(0, 0, 0);
   primitive->SetPosition(0, 0, 5);
   group->AddChild(primitive);
 
