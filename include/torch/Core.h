@@ -16,6 +16,7 @@ class AreaLightData;
 class AreaLightSampler;
 class BoundingBox;
 class Camera;
+class CameraData;
 class Context;
 class Core;
 class DistantLight;

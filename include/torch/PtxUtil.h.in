@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string>
+#include <torch/Core.h>
 
 #cmakedefine PTX_FOLDER "@PTX_FOLDER@"
 #cmakedefine PTX_PREFIX "@PTX_PREFIX@"

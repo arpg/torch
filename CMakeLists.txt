@@ -139,6 +139,7 @@ set(CPP_SOURCES
 set(CUDA_HEADER_DIR include/${LIBRARY_NAME}/device)
 
 set(CUDA_HEADERS
+  ${CUDA_HEADER_DIR}/Camera.h
   ${CUDA_HEADER_DIR}/Geometry.h
   ${CUDA_HEADER_DIR}/Light.h
   ${CUDA_HEADER_DIR}/Random.h
@@ -199,7 +200,8 @@ add_custom_target(PTX_FILES ALL
 
 # build project library
 
-add_library(${LIBRARY_NAME} SHARED ${CPP_SOURCES} ${CPP_HEADERS})
+set(LIBRARY_SOURCES ${CPP_SOURCES} ${CPP_HEADERS} ${CUDA_HEADERS})
+add_library(${LIBRARY_NAME} SHARED ${LIBRARY_SOURCES})
 target_link_libraries(${LIBRARY_NAME} ${REQUIRED_LIBRARIES})
 
 # build applications

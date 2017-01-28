@@ -9,17 +9,6 @@ class Camera : public Node
 {
   public:
 
-    struct Data
-    {
-      float2 center;
-      float3 position;
-      float3 u;
-      float3 v;
-      float3 w;
-    };
-
-  public:
-
     Camera(std::shared_ptr<Context> context);
 
     void SetImageSize(unsigned int w, unsigned int h);
@@ -44,7 +33,7 @@ class Camera : public Node
 
     void UploadCamera(const Transform& transform);
 
-    void GetData(const Transform& transform, Data& data) const;
+    void GetData(const Transform& transform, CameraData& data) const;
 
   private:
 

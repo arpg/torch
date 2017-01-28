@@ -4,6 +4,7 @@
 #include <torch/Link.h>
 #include <torch/Node.h>
 #include <torch/PtxUtil.h>
+#include <torch/device/Camera.h>
 
 namespace torch
 {
@@ -78,12 +79,12 @@ void Camera::CopyBuffer(Image& image)
 
 void Camera::UploadCamera(const Transform& transform)
 {
-  Data data;
+  CameraData data;
   GetData(transform, data);
-  m_program["camera"]->setUserData(sizeof(Data), &data);
+  m_program["camera"]->setUserData(sizeof(CameraData), &data);
 }
 
-void Camera::GetData(const Transform& transform, Data& data) const
+void Camera::GetData(const Transform& transform, CameraData& data) const
 {
   const optix::Matrix3x4 matrix = transform.GetMatrix3x4();
   data.center.x = 1 - m_centerPoint.x / m_imageSize.x;
