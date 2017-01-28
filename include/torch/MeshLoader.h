@@ -9,13 +9,13 @@ class MeshLoader
 {
   public:
 
-    MeshLoader(const std::string& file);
+    MeshLoader(std::shared_ptr<Mesh> mesh);
 
-    void Load(std::shared_ptr<Mesh> mesh);
+    void Load(const std::string& file);
 
   protected:
 
-    const std::string m_file;
+    const std::shared_ptr<Mesh> m_mesh;
 };
 
 } // namespace torch

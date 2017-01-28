@@ -56,13 +56,10 @@ int main(int argc, char** argv)
   scene.Add(light2);
 
   std::shared_ptr<Mesh> mesh;
-  mesh = scene.CreateMesh();
+  mesh = scene.CreateMesh("bunny.ply");
   mesh->SetOrientation(0, 0.8 * M_PIf, M_PIf);
   mesh->SetPosition(-0.75, 1.5, 3.5);
   mesh->SetScale(10);
-
-  MeshLoader loader("bunny.ply");
-  loader.Load(mesh);
 
   std::shared_ptr<MatteMaterial> material3;
   material3 = scene.CreateMatteMaterial();

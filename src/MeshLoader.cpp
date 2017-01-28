@@ -7,12 +7,12 @@
 namespace torch
 {
 
-MeshLoader::MeshLoader(const std::string& file) :
-  m_file(file)
+MeshLoader::MeshLoader(std::shared_ptr<Mesh> mesh) :
+  m_mesh(mesh)
 {
 }
 
-void MeshLoader::Load(std::shared_ptr<Mesh> mesh)
+void MeshLoader::Load(const std::string& file)
 {
   unsigned int flags = 0;
   flags |= aiProcess_Triangulate;
@@ -25,7 +25,7 @@ void MeshLoader::Load(std::shared_ptr<Mesh> mesh)
   flags |= aiProcess_Debone;
 
   Assimp::Importer importer;
-  const aiScene* scene = importer.ReadFile(m_file.c_str(), flags);
+  const aiScene* scene = importer.ReadFile(file.c_str(), flags);
   const unsigned int meshCount = scene->mNumMeshes;
   unsigned int vertexCount = 0;
   unsigned int faceCount = 0;
@@ -70,9 +70,9 @@ void MeshLoader::Load(std::shared_ptr<Mesh> mesh)
     faceOffset += faceCount;
   }
 
-  mesh->SetVertices(vertices);
-  mesh->SetNormals(normals);
-  mesh->SetFaces(faces);
+  m_mesh->SetVertices(vertices);
+  m_mesh->SetNormals(normals);
+  m_mesh->SetFaces(faces);
 }
 
 } // namespace torch

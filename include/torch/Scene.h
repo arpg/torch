@@ -33,6 +33,8 @@ class Scene
 
     std::shared_ptr<Mesh> CreateMesh();
 
+    std::shared_ptr<Mesh> CreateMesh(const std::string& file);
+
     std::shared_ptr<Sphere> CreateSphere();
 
     std::shared_ptr<MatteMaterial> CreateMatteMaterial();
