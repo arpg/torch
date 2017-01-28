@@ -7,6 +7,7 @@ typedef rtCallableProgramX<void(torch::LightSample&)> SampleFunction;
 
 rtDeclareVariable(TypeFunction,   GetLightType, , );
 rtDeclareVariable(SampleFunction, SampleAreaLights, , );
+rtDeclareVariable(SampleFunction, SampleDistantLights, , );
 rtDeclareVariable(SampleFunction, SamplePointLights, , );
 
 RT_CALLABLE_PROGRAM void Sample(torch::LightSample& sample)
@@ -19,6 +20,10 @@ RT_CALLABLE_PROGRAM void Sample(torch::LightSample& sample)
   {
     case torch::LIGHT_TYPE_AREA:
       SampleAreaLights(sample);
+      break;
+
+    case torch::LIGHT_TYPE_DISTANT:
+      SampleDistantLights(sample);
       break;
 
     case torch::LIGHT_TYPE_POINT:

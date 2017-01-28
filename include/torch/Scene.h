@@ -6,8 +6,9 @@ namespace torch
 {
 
 class AreaLight;
-class Context;
 class Camera;
+class Context;
+class DistantLight;
 class GeometryGroup;
 class Group;
 class MatteMaterial;
@@ -33,6 +34,8 @@ class Scene
     std::shared_ptr<Group> CreateGroup();
 
     std::shared_ptr<AreaLight> CreateAreaLight();
+
+    std::shared_ptr<DistantLight> CreateDistantLight();
 
     std::shared_ptr<PointLight> CreatePointLight();
 

@@ -12,11 +12,15 @@ class Transform
 
     Transform();
 
+    Transform(const optix::Matrix4x4& matrix);
+
     Transform(optix::Transform transform);
 
     optix::Matrix4x4 GetRotationMatrix() const;
 
     float3 GetEulerAngles() const;
+
+    void SetRotation(const optix::Matrix3x3& rotation);
 
     void SetRotation(float x, float y, float z);
 

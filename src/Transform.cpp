@@ -8,6 +8,11 @@ Transform::Transform() :
 {
 }
 
+Transform::Transform(const optix::Matrix4x4& matrix) :
+  m_matrix(matrix)
+{
+}
+
 Transform::Transform(optix::Transform transform)
 {
   transform->getMatrix(false, m_matrix.getData(), nullptr);
@@ -53,6 +58,20 @@ float3 Transform::GetEulerAngles() const
   const float c1 = cos(result.x);
   result.z = atan2(s1 * R[2] - c1 * R[1], c1 * R[5] - s1 * R[6]);
   return -result;
+}
+
+void Transform::SetRotation(const optix::Matrix3x3& rotation)
+{
+  const optix::Matrix4x4 S = GetScaleMatrix();
+  optix::Matrix4x4 M = GetTranslationMatrix();
+
+  float* dst = M.getData();
+  const float* src = rotation.getData();
+  std::copy(&src[0], &src[2], &dst[0]);
+  std::copy(&src[3], &src[5], &dst[4]);
+  std::copy(&src[6], &src[8], &dst[8]);
+
+  m_matrix = M * S;
 }
 
 void Transform::SetRotation(float x, float y, float z)

@@ -16,30 +16,42 @@ int main(int argc, char** argv)
   group->SetPosition(0, 0, 0);
   scene.Add(group);
 
-  std::shared_ptr<Sphere> lightGeom;
-  lightGeom = scene.CreateSphere();
-  lightGeom->SetOrientation(0, 0, 0);
-  lightGeom->SetPosition(0, 0, 0);
-  lightGeom->SetScale(1);
+  std::shared_ptr<DistantLight> distLight;
+  distLight = scene.CreateDistantLight();
+  distLight->SetDirection(-0.2, 0.1, 0.4);
+  distLight->SetRadiance(2, 2, 2);
+  scene.Add(distLight);
 
-  std::shared_ptr<AreaLight> areaLight;
-  areaLight = scene.CreateAreaLight();
-  areaLight->SetGeometry(lightGeom);
-  areaLight->SetRadiance(0.5, 0.5, 0.5);
-  areaLight->SetPosition(4, -1, -1);
-  scene.Add(areaLight);
+  std::shared_ptr<DistantLight> distLight2;
+  distLight2 = scene.CreateDistantLight();
+  distLight2->SetDirection(0.3, 0.8, 0.7);
+  distLight2->SetRadiance(2, 2, 2);
+  scene.Add(distLight2);
 
-  std::shared_ptr<PointLight> light1;
-  light1 = scene.CreatePointLight();
-  light1->SetIntensity(50, 50, 50);
-  light1->SetPosition(4, -1, -1);
-  // scene.Add(light1);
+  // std::shared_ptr<Sphere> lightGeom;
+  // lightGeom = scene.CreateSphere();
+  // lightGeom->SetOrientation(0, 0, 0);
+  // lightGeom->SetPosition(0, 0, 0);
+  // lightGeom->SetScale(1);
 
-  std::shared_ptr<PointLight> light2;
-  light2 = scene.CreatePointLight();
-  light2->SetIntensity(10, 10, 106);
-  light2->SetPosition(-4, -2, -1);
-  // scene.Add(light2);
+  // std::shared_ptr<AreaLight> areaLight;
+  // areaLight = scene.CreateAreaLight();
+  // areaLight->SetGeometry(lightGeom);
+  // areaLight->SetRadiance(0.5, 0.5, 0.5);
+  // areaLight->SetPosition(4, -1, -1);
+  // scene.Add(areaLight);
+
+  // std::shared_ptr<PointLight> light1;
+  // light1 = scene.CreatePointLight();
+  // light1->SetIntensity(50, 50, 50);
+  // light1->SetPosition(4, -1, -1);
+  // // scene.Add(light1);
+
+  // std::shared_ptr<PointLight> light2;
+  // light2 = scene.CreatePointLight();
+  // light2->SetIntensity(10, 10, 106);
+  // light2->SetPosition(-4, -2, -1);
+  // // scene.Add(light2);
 
   std::shared_ptr<Sphere> geometry;
   geometry = scene.CreateSphere();
@@ -84,7 +96,7 @@ int main(int argc, char** argv)
   camera->SetCenterPoint(320, 240);
   camera->SetOrientation(0, 0, 0);
   camera->SetPosition(0, 0, 0);
-  camera->SetSampleCount(2048);
+  camera->SetSampleCount(512);
 
   Image image;
   camera->Capture(image);

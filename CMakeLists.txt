@@ -55,6 +55,8 @@ set(CPP_HEADERS
   ${CPP_HEADER_DIR}/AreaLightSampler.h
   ${CPP_HEADER_DIR}/Camera.h
   ${CPP_HEADER_DIR}/Context.h
+  ${CPP_HEADER_DIR}/DistantLight.h
+  ${CPP_HEADER_DIR}/DistantLightSampler.h
   ${CPP_HEADER_DIR}/Distribution.h
   ${CPP_HEADER_DIR}/Exception.h
   ${CPP_HEADER_DIR}/Geometry.h
@@ -96,6 +98,8 @@ set(CPP_SOURCES
   ${CPP_SOURCE_DIR}/AreaLightSampler.cpp
   ${CPP_SOURCE_DIR}/Camera.cpp
   ${CPP_SOURCE_DIR}/Context.cpp
+  ${CPP_SOURCE_DIR}/DistantLight.cpp
+  ${CPP_SOURCE_DIR}/DistantLightSampler.cpp
   ${CPP_SOURCE_DIR}/Distribution.cpp
   ${CPP_SOURCE_DIR}/Geometry.cpp
   ${CPP_SOURCE_DIR}/GeometryGroup.cpp
@@ -138,6 +142,7 @@ set(CUDA_SOURCE_DIR src)
 set(CUDA_SOURCES
   ${CUDA_SOURCE_DIR}/AreaLightSampler.cu
   ${CUDA_SOURCE_DIR}/Camera.cu
+  ${CUDA_SOURCE_DIR}/DistantLightSampler.cu
   ${CUDA_SOURCE_DIR}/Distribution.cu
   ${CUDA_SOURCE_DIR}/Exception.cu
   ${CUDA_SOURCE_DIR}/MatteMaterial.cu

@@ -5,18 +5,14 @@
 
 typedef rtCallableProgramX<unsigned int(float, float&)> SampleFunction;
 rtDeclareVariable(SampleFunction, GetLightIndex, , );
-rtBuffer<torch::PointLightData, 1> lights;
+rtBuffer<torch::DistantLightData, 1> lights;
 
 RT_CALLABLE_PROGRAM void Sample(torch::LightSample& sample)
 {
   const float rand = torch::randf(sample.seed);
   const unsigned int index = GetLightIndex(rand, sample.pdf);
-
-  const torch::PointLightData& light = lights[index];
-  const float3 difference = light.position - sample.origin;
-  const float distanceSquared = dot(difference, difference);
-
-  sample.radiance = light.intensity / distanceSquared;
-  sample.direction = normalize(difference);
-  sample.tmax = sqrt(distanceSquared);
+  const torch::DistantLightData& light = lights[index];
+  sample.radiance = light.radiance;
+  sample.direction = -light.direction;
+  sample.tmax = RT_DEFAULT_MAX;
 }
