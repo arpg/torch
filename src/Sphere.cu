@@ -44,10 +44,10 @@ RT_PROGRAM void Intersect(int index)
   // compute intermediate intersect results
   const float od = dot(origin, direction);
   const float oo = dot(origin, origin);
-  const float a  = od * od - oo + 0.25;
+  const float a  = od * od - oo + 0.25f;
 
   // check if intersects found
-  if (a > 0)
+  if (a > 0.0f)
   {
     // compute actual intersects
     const float b  = sqrt(a);

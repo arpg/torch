@@ -30,7 +30,7 @@ RT_PROGRAM void ClosestHit()
 
   float theta = dot(geometricNormal, sample.direction);
 
-  if (theta > 0)
+  if (theta > 0.0f)
   {
     optix::Ray shadowRay;
     shadowRay.origin = sample.origin;

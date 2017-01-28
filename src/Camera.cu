@@ -54,7 +54,7 @@ RT_PROGRAM void Capture()
   {
     GetDirection(ray.direction, seed);
     data.seed = seed;
-    data.throughput = make_float3(1.0 / sampleCount);
+    data.throughput = make_float3(1.0f / sampleCount);
     rtTrace(sceneRoot, ray, data);
     InitializeRay(ray, data);
     seed = data.seed;

@@ -33,6 +33,10 @@ find_package(GLog REQUIRED)
 list(APPEND REQUIRED_INCLUDE_DIRS ${GLog_INCLUDE_DIRS})
 list(APPEND REQUIRED_LIBRARIES ${GLog_LIBRARIES})
 
+find_package(Assimp REQUIRED)
+list(APPEND REQUIRED_INCLUDE_DIRS ${ASSIMP_INCLUDE_DIRS})
+list(APPEND REQUIRED_LIBRARIES ${ASSIMP_LIBRARIES})
+
 list(APPEND REQUIRED_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/include)
 list(APPEND REQUIRED_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/include)
 include_directories(${REQUIRED_INCLUDE_DIRS})
@@ -77,6 +81,7 @@ set(CPP_HEADERS
   ${CPP_HEADER_DIR}/Material.h
   ${CPP_HEADER_DIR}/MatteMaterial.h
   ${CPP_HEADER_DIR}/Mesh.h
+  ${CPP_HEADER_DIR}/MeshLoader.h
   ${CPP_HEADER_DIR}/Node.h
   ${CPP_HEADER_DIR}/Normal.h
   ${CPP_HEADER_DIR}/Scene.h
@@ -120,6 +125,7 @@ set(CPP_SOURCES
   ${CPP_SOURCE_DIR}/Material.cpp
   ${CPP_SOURCE_DIR}/MatteMaterial.cpp
   ${CPP_SOURCE_DIR}/Mesh.cpp
+  ${CPP_SOURCE_DIR}/MeshLoader.cpp
   ${CPP_SOURCE_DIR}/Node.cpp
   ${CPP_SOURCE_DIR}/Normal.cpp
   ${CPP_SOURCE_DIR}/Scene.cpp

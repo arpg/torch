@@ -9,35 +9,6 @@ rtBuffer<float3, 1> vertices;
 rtBuffer<float3, 1> normals;
 rtBuffer<uint3, 1> faces;
 
-// TORCH_DEVICE bool ReportIntersect(float t)
-// {
-//   // transform ray to local space
-//   const float3 origin = PointToLocal(ray.origin);
-//   const float3 direction = NormalToLocal(ray.direction);
-//
-//   // compute scaled hit point
-//   const float3 localPoint = origin + t * direction;
-//   const float3 worldPoint = PointToWorld(localPoint);
-//
-//   // compute time to scaled hit point
-//   const float3 delta = worldPoint - ray.origin;
-//   const int sign = (dot(delta, ray.direction) < 0) ? -1 : 1;
-//   t = sign * sqrt(dot(delta, delta));
-//
-//   // check if valid intersect
-//   if (rtPotentialIntersection(t))
-//   {
-//     // compute scaled surface normal
-//     geometricNormal = NormalToWorld(localPoint);
-//     shadingNormal = geometricNormal;
-//     rtReportIntersection(0);
-//     return true;
-//   }
-//
-//   // invalid intersect
-//   return false;
-// }
-
 RT_PROGRAM void Intersect(int index)
 {
   const uint3& face = faces[index];
@@ -48,8 +19,9 @@ RT_PROGRAM void Intersect(int index)
   optix::Ray triRay;
   triRay.origin = PointToLocal(ray.origin);
   triRay.direction = normalize(VectorToLocal(ray.direction));
+  triRay.direction = normalize(VectorToLocal(ray.direction));
   triRay.tmax = RT_DEFAULT_MAX;
-  triRay.tmin = 0;
+  triRay.tmin = 0.0f;
 
   float3 n;
   float t;
@@ -57,6 +29,7 @@ RT_PROGRAM void Intersect(int index)
   float gamma;
 
   bool hit = intersect_triangle(triRay, v0, v1, v2, n, t, beta, gamma);
+  n = normalize(n);
 
   if (hit)
   {
@@ -67,7 +40,7 @@ RT_PROGRAM void Intersect(int index)
     // compute time to scaled hit point
     const float3 delta = worldPoint - ray.origin;
     const int sign = (dot(delta, ray.direction) < 0) ? -1 : 1;
-    t = sign * sqrt(dot(delta, delta));
+    t = sign * sqrtf(dot(delta, delta));
 
     // check if valid intersect
     if (rtPotentialIntersection(t))
@@ -77,7 +50,7 @@ RT_PROGRAM void Intersect(int index)
 
       if (normals.size())
       {
-        const float alpha = 1 - beta - gamma;
+        const float alpha = 1.0f - beta - gamma;
         shadingNormal = alpha * normals[face.x] + beta * normals[face.y] + gamma * normals[face.z];
       }
       else

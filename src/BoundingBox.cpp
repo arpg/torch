@@ -38,7 +38,7 @@ void BoundingBox::Union(const BoundingBox& b)
 
 float BoundingBox::GetRadius() const
 {
-  const Point center = 0.5 * bmax + bmin;
+  const Point center = 0.5 * (bmax + bmin);
   return (bmax - center).Length();
 }
 

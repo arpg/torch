@@ -17,11 +17,11 @@ int main(int argc, char** argv)
   group->SetPosition(0, 0, 0);
   scene.Add(group);
 
-  std::shared_ptr<DistantLight> distLight;
-  distLight = scene.CreateDistantLight();
-  distLight->SetDirection(-0.2, 0.1, 0.4);
-  distLight->SetRadiance(4, 4, 4);
-  scene.Add(distLight);
+  // std::shared_ptr<DistantLight> distLight;
+  // distLight = scene.CreateDistantLight();
+  // distLight->SetDirection(-0.2, 0.1, 0.4);
+  // distLight->SetRadiance(4, 4, 4);
+  // scene.Add(distLight);
 
   // std::shared_ptr<DistantLight> distLight2;
   // distLight2 = scene.CreateDistantLight();
@@ -43,46 +43,30 @@ int main(int argc, char** argv)
   // areaLight->SetPosition(4, -1, -1);
   // scene.Add(areaLight);
 
-  // std::shared_ptr<PointLight> light1;
-  // light1 = scene.CreatePointLight();
-  // light1->SetIntensity(50, 50, 50);
-  // light1->SetPosition(4, -1, -1);
-  // scene.Add(light1);
+  std::shared_ptr<PointLight> light1;
+  light1 = scene.CreatePointLight();
+  light1->SetIntensity(75, 75, 75);
+  light1->SetPosition(4, -1, -1);
+  scene.Add(light1);
 
-  // std::shared_ptr<PointLight> light2;
-  // light2 = scene.CreatePointLight();
-  // light2->SetIntensity(10, 10, 106);
-  // light2->SetPosition(-4, -2, -1);
-  // scene.Add(light2);
-
-  std::vector<float3> vertices;
-  vertices.push_back(make_float3(0, 0, 0));
-  vertices.push_back(make_float3(1, 1, 0));
-  vertices.push_back(make_float3(1, 0, 0.2));
-  vertices.push_back(make_float3(0, 1, 0));
-
-  std::vector<float3> normals;
-  normals.push_back(make_float3(0, 0, -1));
-  normals.push_back(make_float3(0, 0, -1));
-  normals.push_back(normalize(make_float3(0, -0.8, -0.2)));
-  normals.push_back(make_float3(0, 0, -1));
-
-  std::vector<uint3> faces;
-  faces.push_back(make_uint3(0, 1, 2));
-  faces.push_back(make_uint3(0, 3, 1));
+  std::shared_ptr<PointLight> light2;
+  light2 = scene.CreatePointLight();
+  light2->SetIntensity(20, 20, 306);
+  light2->SetPosition(-4, -2, -1);
+  scene.Add(light2);
 
   std::shared_ptr<Mesh> mesh;
   mesh = scene.CreateMesh();
-  mesh->SetOrientation(0, 0, 0);
-  mesh->SetPosition(-3, 0, 4);
-  mesh->SetScale(1, 1, 1);
-  mesh->SetVertices(vertices);
-  mesh->SetNormals(normals);
-  mesh->SetFaces(faces);
+  mesh->SetOrientation(0, 0.8 * M_PIf, M_PIf);
+  mesh->SetPosition(-0.75, 1.5, 3.5);
+  mesh->SetScale(10);
+
+  MeshLoader loader("bunny.ply");
+  loader.Load(mesh);
 
   std::shared_ptr<MatteMaterial> material3;
   material3 = scene.CreateMatteMaterial();
-  material3->SetAlbedo(0.1, 0.1, 1.0);
+  material3->SetAlbedo(0.1, 1.0, 1.0);
 
   std::shared_ptr<Primitive> primitive3;
   primitive3 = scene.CreatePrimitive();
@@ -135,7 +119,7 @@ int main(int argc, char** argv)
   camera->SetCenterPoint(320, 240);
   camera->SetOrientation(0, 0, 0);
   camera->SetPosition(0, 0, 0);
-  camera->SetSampleCount(512);
+  camera->SetSampleCount(4096);
 
   Image image;
   camera->Capture(image);
