@@ -14,11 +14,6 @@ PointLight::PointLight(std::shared_ptr<Context> context) :
 {
 }
 
-Spectrum PointLight::GetPower() const
-{
-  return 4 * M_PI * m_intensity;
-}
-
 Spectrum PointLight::GetIntensity() const
 {
  return m_intensity;
@@ -43,7 +38,7 @@ void PointLight::BuildScene(Link& link)
   const Transform transform = link.GetTransform() * m_transform;
   data.position = transform.GetTranslation();
   data.intensity = m_intensity.GetRGB();
-  data.luminance = GetLuminance();
+  // data.luminance = GetLuminance();
 
   std::shared_ptr<SceneLightSampler> sampler;
   sampler = m_context->GetLightSampler();

@@ -1,4 +1,5 @@
 #include <optix.h>
+#include <torch/device/Core.h>
 #include <torch/device/Camera.h>
 #include <torch/device/Random.h>
 #include <torch/device/Ray.h>
@@ -12,8 +13,6 @@ rtDeclareVariable(float, sceneEpsilon, , );
 rtDeclareVariable(unsigned int, sampleCount, , );
 rtDeclareVariable(torch::CameraData, camera, , );
 rtBuffer<float3, 2> buffer;
-
-#define TORCH_DEVICE static __device__ __inline__
 
 static __inline__ __device__
 void GetDirection(float3& direction, unsigned int& seed)

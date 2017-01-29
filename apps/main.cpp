@@ -11,49 +11,24 @@ int main(int argc, char** argv)
   Scene scene;
   scene.SetEpsilon(1E-4);
 
-  std::shared_ptr<Group> group;
-  group = scene.CreateGroup();
-  group->SetOrientation(0, 0, 0);
-  group->SetPosition(0, 0, 0);
-  scene.Add(group);
+  std::shared_ptr<EnvironmentLight> envLight;
+  envLight = scene.CreateEnvironmentLight();
+  envLight->SetRowCount(21);
+  envLight->SetRadiance(0.1, 0.1, 0.2);
+  envLight->SetRadiance(150, 1.0, 1.0, 0.5);
+  scene.Add(envLight);
 
-  // std::shared_ptr<DistantLight> distLight;
-  // distLight = scene.CreateDistantLight();
-  // distLight->SetDirection(-0.2, 0.1, 0.4);
-  // distLight->SetRadiance(4, 4, 4);
-  // scene.Add(distLight);
+  // std::shared_ptr<PointLight> light1;
+  // light1 = scene.CreatePointLight();
+  // light1->SetIntensity(75, 75, 75);
+  // light1->SetPosition(4, -1, -1);
+  // scene.Add(light1);
 
-  // std::shared_ptr<DistantLight> distLight2;
-  // distLight2 = scene.CreateDistantLight();
-  // // distLight2->SetDirection(0.3, 0.8, 0.7);
-  // distLight2->SetDirection(0, 0.5, 0.5);
-  // distLight2->SetRadiance(2, 2, 2);
-  // scene.Add(distLight2);
-
-  // std::shared_ptr<Sphere> lightGeom;
-  // lightGeom = scene.CreateSphere();
-  // lightGeom->SetOrientation(0, 0, 0);
-  // lightGeom->SetPosition(0, 0, 0);
-  // lightGeom->SetScale(1);
-
-  // std::shared_ptr<AreaLight> areaLight;
-  // areaLight = scene.CreateAreaLight();
-  // areaLight->SetGeometry(lightGeom);
-  // areaLight->SetRadiance(0.5, 0.5, 0.5);
-  // areaLight->SetPosition(4, -1, -1);
-  // scene.Add(areaLight);
-
-  std::shared_ptr<PointLight> light1;
-  light1 = scene.CreatePointLight();
-  light1->SetIntensity(75, 75, 75);
-  light1->SetPosition(4, -1, -1);
-  scene.Add(light1);
-
-  std::shared_ptr<PointLight> light2;
-  light2 = scene.CreatePointLight();
-  light2->SetIntensity(20, 20, 306);
-  light2->SetPosition(-4, -2, -1);
-  scene.Add(light2);
+  // std::shared_ptr<PointLight> light2;
+  // light2 = scene.CreatePointLight();
+  // light2->SetIntensity(75, 75, 75);
+  // light2->SetPosition(-4, -2, -1);
+  // scene.Add(light2);
 
   std::shared_ptr<Mesh> mesh;
   mesh = scene.CreateMesh("bunny.ply");
@@ -63,7 +38,7 @@ int main(int argc, char** argv)
 
   std::shared_ptr<MatteMaterial> material3;
   material3 = scene.CreateMatteMaterial();
-  material3->SetAlbedo(0.1, 1.0, 1.0);
+  material3->SetAlbedo(1.0, 1.0, 1.0);
 
   std::shared_ptr<Primitive> primitive3;
   primitive3 = scene.CreatePrimitive();
@@ -72,6 +47,12 @@ int main(int argc, char** argv)
   primitive3->SetOrientation(0, 0, 0);
   primitive3->SetPosition(0, 0, 0);
   scene.Add(primitive3);
+
+  std::shared_ptr<Group> group;
+  group = scene.CreateGroup();
+  group->SetOrientation(0, 0, 0);
+  group->SetPosition(0, 0, 0);
+  scene.Add(group);
 
   std::shared_ptr<Sphere> geometry;
   geometry = scene.CreateSphere();
@@ -116,7 +97,7 @@ int main(int argc, char** argv)
   camera->SetCenterPoint(320, 240);
   camera->SetOrientation(0, 0, 0);
   camera->SetPosition(0, 0, 0);
-  camera->SetSampleCount(4096);
+  camera->SetSampleCount(512);
 
   Image image;
   camera->Capture(image);

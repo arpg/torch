@@ -3,11 +3,10 @@
 #include <optix_math.h>
 #include <optixu/optixu_aabb.h>
 #include <optixu/optixu_matrix.h>
+#include <torch/device/Core.h>
 
 rtDeclareVariable(optix::Matrix4x4, T_wl, , );
 rtDeclareVariable(optix::Matrix4x4, T_lw, , );
-
-#define TORCH_DEVICE static __device__ __inline__
 
 TORCH_DEVICE float3 PointToLocal(const float3& p)
 {

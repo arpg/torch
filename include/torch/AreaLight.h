@@ -12,8 +12,6 @@ class AreaLight : public Light
 
     AreaLight(std::shared_ptr<Context> context);
 
-    Spectrum GetPower() const override;
-
     Spectrum GetRadiance() const;
 
     void SetRadiance(const Spectrum& radiance);

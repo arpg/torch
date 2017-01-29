@@ -17,6 +17,8 @@ class SceneLightSampler
 
     void Add(const DistantLightData& light);
 
+    void Add(const EnvironmentLightData& light);
+
     void Add(const PointLightData& light);
 
     void Clear();

@@ -12,8 +12,6 @@ class PointLight : public Light
 
     PointLight(std::shared_ptr<Context> context);
 
-    Spectrum GetPower() const override;
-
     Spectrum GetIntensity() const;
 
     void SetIntensity(const Spectrum& intensity);

@@ -3,6 +3,7 @@
 #include <torch/Context.h>
 #include <torch/DistantLightSampler.h>
 #include <torch/Distribution.h>
+#include <torch/EnvironmentLightSampler.h>
 #include <torch/PointLightSampler.h>
 #include <torch/PtxUtil.h>
 #include <torch/device/Light.h>
@@ -31,6 +32,12 @@ void SceneLightSampler::Add(const DistantLightData& light)
 {
   LightSampler* sampler = m_samplers[LIGHT_TYPE_DISTANT].get();
   static_cast<DistantLightSampler*>(sampler)->Add(light);
+}
+
+void SceneLightSampler::Add(const EnvironmentLightData& light)
+{
+  LightSampler* sampler = m_samplers[LIGHT_TYPE_ENVIRONMENT].get();
+  static_cast<EnvironmentLightSampler*>(sampler)->Add(light);
 }
 
 void SceneLightSampler::Add(const PointLightData& light)
@@ -105,6 +112,10 @@ void SceneLightSampler::CreateLightSamplers()
   sampler = std::make_unique<DistantLightSampler>(m_context);
   m_program["SampleDistantLights"]->set(sampler.get()->GetProgram());
   m_samplers[LIGHT_TYPE_DISTANT] = std::move(sampler);
+
+  sampler = std::make_unique<EnvironmentLightSampler>(m_context);
+  m_program["SampleEnvironmentLights"]->set(sampler.get()->GetProgram());
+  m_samplers[LIGHT_TYPE_ENVIRONMENT] = std::move(sampler);
 
   sampler = std::make_unique<PointLightSampler>(m_context);
   m_program["SamplePointLights"]->set(sampler.get()->GetProgram());

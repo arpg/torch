@@ -12,8 +12,6 @@ class DistantLight : public Light
 
     DistantLight(std::shared_ptr<Context> context);
 
-    Spectrum GetPower() const override;
-
     Spectrum GetRadiance() const;
 
     void SetRadiance(const Spectrum& intensity);

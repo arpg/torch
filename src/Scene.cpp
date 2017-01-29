@@ -3,6 +3,7 @@
 #include <torch/Camera.h>
 #include <torch/Context.h>
 #include <torch/DistantLight.h>
+#include <torch/EnvironmentLight.h>
 #include <torch/GeometryGroup.h>
 #include <torch/Group.h>
 #include <torch/MatteMaterial.h>
@@ -59,6 +60,10 @@ std::shared_ptr<AreaLight> Scene::CreateAreaLight()
 std::shared_ptr<DistantLight> Scene::CreateDistantLight()
 {
   return CreateObject<DistantLight>();
+}
+std::shared_ptr<EnvironmentLight> Scene::CreateEnvironmentLight()
+{
+  return CreateObject<EnvironmentLight>();
 }
 
 std::shared_ptr<PointLight> Scene::CreatePointLight()

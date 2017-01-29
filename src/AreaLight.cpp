@@ -12,13 +12,6 @@ AreaLight::AreaLight(std::shared_ptr<Context> context) :
 {
 }
 
-Spectrum AreaLight::GetPower() const
-{
-  // TODO: use area
-  // return M_PIf * m_radiance * m_geometry->GetArea();
-  return 2 * M_PIf * m_radiance * (4 * M_PIf * 0.5 * 0.5);
-}
-
 Spectrum AreaLight::GetRadiance() const
 {
   return m_radiance;
@@ -53,7 +46,7 @@ void AreaLight::BuildScene(Link& link)
   AreaLightData data;
   data.geometry = 0;
   data.radiance = m_radiance.GetRGB();
-  data.luminance = GetLuminance();
+  // data.luminance = GetLuminance();
   // data.area = m_geometry->GetArea();
   data.area = 1;
 

@@ -13,12 +13,6 @@ DistantLight::DistantLight(std::shared_ptr<Context> context) :
 {
 }
 
-Spectrum DistantLight::GetPower() const
-{
-  const float worldRadius = m_context->GetSceneRadius();
-  return M_PI * worldRadius * worldRadius * m_radiance;
-}
-
 Spectrum DistantLight::GetRadiance() const
 {
  return m_radiance;
@@ -73,7 +67,7 @@ void DistantLight::BuildScene(Link& link)
   const optix::Matrix4x4 R = transform.GetRotationMatrix();
   data.direction = make_float3(R.getCol(1));
   data.radiance = m_radiance.GetRGB();
-  data.luminance = GetLuminance();
+  // data.luminance = GetLuminance();
 
   std::shared_ptr<SceneLightSampler> sampler;
   sampler = m_context->GetLightSampler();

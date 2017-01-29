@@ -1,6 +1,6 @@
 #pragma once
 
-#include <optix_math.h>
+#include <optixu/optixu_matrix.h>
 
 namespace torch
 {
@@ -9,6 +9,7 @@ enum LightType
 {
   LIGHT_TYPE_AREA,
   LIGHT_TYPE_DISTANT,
+  LIGHT_TYPE_ENVIRONMENT,
   LIGHT_TYPE_POINT,
   LIGHT_TYPE_COUNT
 };
@@ -36,6 +37,14 @@ struct DistantLightData
 {
   float3 radiance;
   float3 direction;
+  float luminance;
+};
+
+struct EnvironmentLightData
+{
+  unsigned int rowCount;
+  optix::Matrix3x3 rotation;
+  float3* radiance;
   float luminance;
 };
 

@@ -25,6 +25,8 @@ class Scene
 
     std::shared_ptr<DistantLight> CreateDistantLight();
 
+    std::shared_ptr<EnvironmentLight> CreateEnvironmentLight();
+
     std::shared_ptr<PointLight> CreatePointLight();
 
     std::shared_ptr<Primitive> CreatePrimitive();
