@@ -45,7 +45,7 @@ class PointLightSampler : public LightSampler
 
     std::vector<PointLightData> m_lights;
 
-    std::unique_ptr<Distribution> m_distribution;
+    std::unique_ptr<Distribution1D> m_distribution;
 };
 
 } // namespace torch

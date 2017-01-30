@@ -5,11 +5,11 @@
 namespace torch
 {
 
-class Distribution
+class Distribution1D
 {
   public:
 
-    Distribution(std::shared_ptr<Context> context);
+    Distribution1D(std::shared_ptr<Context> context);
 
     optix::Program GetProgram() const;
 

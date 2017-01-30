@@ -3,7 +3,7 @@
 
 using namespace torch;
 
-TEST(NodeTest, Children)
+TEST(Node, Children)
 {
   Scene scene;
   std::shared_ptr<Camera> parent;

@@ -11,19 +11,23 @@ class EnvironmentLightSampler : public LightSampler
 
     EnvironmentLightSampler(std::shared_ptr<Context> context);
 
+    ~EnvironmentLightSampler();
+
     optix::Program GetProgram() const override;
 
     float GetLuminance() const override;
+
+    void Add(const EnvironmentLightData& light);
 
     void Clear() override;
 
     void Update() override;
 
-    void Add(const EnvironmentLightData& light);
-
   protected:
 
     void UpdateDistribution();
+
+    void UpdateLightDistributions();
 
     void UpdateBuffers();
 
@@ -40,13 +44,11 @@ class EnvironmentLightSampler : public LightSampler
 
     void CreateBuffers();
 
-    void CreateRowProgramsBuffer();
+    void CreateSampleProgramsBuffer();
 
-    void CreateColProgramsBuffer();
+    void CreateLightOffsetsBuffer();
 
     void CreateRowOffsetsBuffer();
-
-    void CreateColOffsetsBuffer();
 
     void CreateRotationsBuffer();
 
@@ -56,21 +58,21 @@ class EnvironmentLightSampler : public LightSampler
 
     optix::Program m_program;
 
-    std::vector<EnvironmentLightData> m_lights;
+    optix::Buffer m_samplePrograms;
 
-    std::unique_ptr<Distribution> m_distribution;
-
-    optix::Buffer m_rowPrograms;
-
-    optix::Buffer m_colPrograms;
+    optix::Buffer m_lightOffsets;
 
     optix::Buffer m_rowOffsets;
-
-    optix::Buffer m_colOffsets;
 
     optix::Buffer m_rotations;
 
     optix::Buffer m_radiance;
+
+    std::vector<EnvironmentLightData> m_lights;
+
+    std::unique_ptr<Distribution1D> m_distribution;
+
+    std::vector<std::unique_ptr<Distribution2D>> m_lightDistributions;
 };
 
 } // namespace torch

@@ -25,7 +25,7 @@ Eigen::Matrix4f GetRotationMatrix(const optix::Matrix4x4& rotation)
   return Eigen::Map<RowMatrix>(transpose.getData());
 }
 
-TEST(TransformTest, Translation)
+TEST(Transform, Translation)
 {
   Transform transform;
   float3 expected;
@@ -59,7 +59,7 @@ TEST(TransformTest, Translation)
   EXPECT_NEAR(expected.z, found.z, epsilon);
 }
 
-TEST(TransformTest, Rotation)
+TEST(Transform, Rotation)
 {
   Transform transform;
   Eigen::Matrix4f expected;
@@ -158,7 +158,7 @@ TEST(TransformTest, Rotation)
   }
 }
 
-TEST(TransformTest, Scale)
+TEST(Transform, Scale)
 {
   Transform transform;
   float3 expected;

@@ -1,6 +1,6 @@
 #include <torch/SphereSampler.h>
 #include <torch/Context.h>
-#include <torch/Distribution.h>
+#include <torch/Distribution1D.h>
 #include <torch/PtxUtil.h>
 #include <torch/device/Geometry.h>
 

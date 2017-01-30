@@ -4,12 +4,12 @@
 
 rtBuffer<float, 1> rowCdf;
 rtBuffer<float, 1> colCdfs;
-rtBuffer<unsigned int, 1> offsets;
+rtBuffer<uint, 1> offsets;
 
-TORCH_DEVICE unsigned int GetIndex(float sample, float* cdf,
-    unsigned int begin, unsigned int end, float& pdf)
+TORCH_DEVICE uint GetIndex(float sample, float* cdf, uint begin, uint end,
+    float& pdf)
 {
-  unsigned int index = begin;
+  uint index = begin;
 
   while (begin < end)
   {
@@ -21,18 +21,19 @@ TORCH_DEVICE unsigned int GetIndex(float sample, float* cdf,
   return index - begin;
 }
 
-RT_CALLABLE_PROGRAM void Sample(const float2& sample, uint2& index, float& pdf)
+RT_CALLABLE_PROGRAM void Sample(const float2& sample, uint& row, uint& col,
+    float& pdf)
 {
-  unsigned int begin, end;
+  uint begin, end;
   float colPdf;
 
   begin = 0;
   end = rowCdf.size() - 1;
-  index.x = GetIndex(sample.x, &rowCdf[0], begin, end, pdf);
+  row = GetIndex(sample.x, &rowCdf[0], begin, end, pdf);
 
-  begin = offsets[index.x];
-  end = offsets[index.x + 1] - begin;
-  index.y = GetIndex(sample.y, &colCdfs[0], begin, end, colPdf);
+  begin = offsets[row];
+  end = offsets[row + 1] - begin;
+  col = GetIndex(sample.y, &colCdfs[0], begin, end, colPdf);
 
   pdf *= colPdf;
 }

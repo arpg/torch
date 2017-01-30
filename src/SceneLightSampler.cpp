@@ -2,7 +2,7 @@
 #include <torch/AreaLightSampler.h>
 #include <torch/Context.h>
 #include <torch/DistantLightSampler.h>
-#include <torch/Distribution.h>
+#include <torch/Distribution1D.h>
 #include <torch/EnvironmentLightSampler.h>
 #include <torch/PointLightSampler.h>
 #include <torch/PtxUtil.h>
@@ -96,7 +96,7 @@ void SceneLightSampler::CreateProgram()
 
 void SceneLightSampler::CreateDistribution()
 {
-  m_distribution = std::make_unique<Distribution>(m_context);
+  m_distribution = std::make_unique<Distribution1D>(m_context);
   m_program["GetLightType"]->set(m_distribution->GetProgram());
 }
 

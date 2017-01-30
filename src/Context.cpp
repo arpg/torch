@@ -1,5 +1,5 @@
 #include <torch/Context.h>
-#include <torch/Distribution.h>
+#include <torch/Distribution1D.h>
 #include <torch/GeometrySampler.h>
 #include <torch/Group.h>
 #include <torch/LightSampler.h>
@@ -7,6 +7,7 @@
 #include <torch/SceneLightSampler.h>
 #include <torch/device/Ray.h>
 
+#include <string.h>
 #include <iostream>
 #include <torch/PtxUtil.h>
 
@@ -232,8 +233,12 @@ void Context::FinishLaunch()
   unsigned char host[128];
   unsigned char* device = reinterpret_cast<unsigned char*>(m_errorBuffer->map());
   std::copy(device, device + 128, host);
-  std::cout << "Message: " << host << std::endl;
   m_errorBuffer->unmap();
+
+  if (strcmp(reinterpret_cast<const char*>(host), "device stack overflow") == 0)
+  {
+    std::cerr << "Message: " << host << std::endl;
+  }
 #endif
 }
 

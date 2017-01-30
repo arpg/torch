@@ -1,22 +1,22 @@
-#include <torch/Distribution.h>
+#include <torch/Distribution1D.h>
 #include <torch/Context.h>
 #include <torch/PtxUtil.h>
 
 namespace torch
 {
 
-Distribution::Distribution(std::shared_ptr<Context> context) :
+Distribution1D::Distribution1D(std::shared_ptr<Context> context) :
   m_context(context)
 {
   Initialize();
 }
 
-optix::Program Distribution::GetProgram() const
+optix::Program Distribution1D::GetProgram() const
 {
   return m_program;
 }
 
-void Distribution::SetValues(const std::vector<float>& values)
+void Distribution1D::SetValues(const std::vector<float>& values)
 {
   std::vector<float> cdf(values.size() + 1);
   cdf[0] = 0;
@@ -30,7 +30,7 @@ void Distribution::SetValues(const std::vector<float>& values)
   Upload(cdf);
 }
 
-void Distribution::Upload(const std::vector<float>& cdf)
+void Distribution1D::Upload(const std::vector<float>& cdf)
 {
   m_buffer->setSize(cdf.size());
   float* device = reinterpret_cast<float*>(m_buffer->map());
@@ -38,7 +38,7 @@ void Distribution::Upload(const std::vector<float>& cdf)
   m_buffer->unmap();
 }
 
-void Distribution::Normalize(std::vector<float>& cdf)
+void Distribution1D::Normalize(std::vector<float>& cdf)
 {
   const float integral = cdf.back();
 
@@ -48,22 +48,22 @@ void Distribution::Normalize(std::vector<float>& cdf)
   }
 }
 
-void Distribution::Initialize()
+void Distribution1D::Initialize()
 {
   CreateBuffer();
   CreateProgram();
 }
 
-void Distribution::CreateBuffer()
+void Distribution1D::CreateBuffer()
 {
   m_buffer = m_context->CreateBuffer(RT_BUFFER_INPUT);
   m_buffer->setFormat(RT_FORMAT_FLOAT);
   m_buffer->setSize(1);
 }
 
-void Distribution::CreateProgram()
+void Distribution1D::CreateProgram()
 {
-  const std::string file = PtxUtil::GetFile("Distribution");
+  const std::string file = PtxUtil::GetFile("Distribution1D");
   m_program = m_context->CreateProgram(file, "Sample");
   m_program["cdf"]->setBuffer(m_buffer);
 }

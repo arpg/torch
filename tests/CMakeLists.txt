@@ -33,8 +33,10 @@ set(TEST_CPP_HEADERS
 set(TEST_CPP_SOURCE_DIR .)
 
 set(TEST_CPP_SOURCES
-  ${TEST_CPP_SOURCE_DIR}/TransformTest.cpp
-  ${TEST_CPP_SOURCE_DIR}/NodeTest.cpp
+  ${TEST_CPP_SOURCE_DIR}/Distribution1D.cpp
+  ${TEST_CPP_SOURCE_DIR}/Distribution2D.cpp
+  ${TEST_CPP_SOURCE_DIR}/Transform.cpp
+  ${TEST_CPP_SOURCE_DIR}/Node.cpp
 )
 
 # define cuda sources
@@ -42,6 +44,7 @@ set(TEST_CPP_SOURCES
 set(TEST_CUDA_SOURCE_DIR .)
 
 set(TEST_CUDA_SOURCES
+  ${TEST_CUDA_SOURCE_DIR}/Distribution1D.cu
 )
 
 # build config headers

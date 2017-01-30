@@ -1,6 +1,6 @@
 #include <torch/DistantLightSampler.h>
 #include <torch/Context.h>
-#include <torch/Distribution.h>
+#include <torch/Distribution1D.h>
 #include <torch/PtxUtil.h>
 #include <torch/device/Light.h>
 
@@ -83,7 +83,7 @@ void DistantLightSampler::CreateProgram()
 
 void DistantLightSampler::CreateDistribution()
 {
-  m_distribution = std::make_unique<Distribution>(m_context);
+  m_distribution = std::make_unique<Distribution1D>(m_context);
   m_program["GetLightIndex"]->set(m_distribution->GetProgram());
 }
 

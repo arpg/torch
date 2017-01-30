@@ -1,6 +1,7 @@
 #include <torch/EnvironmentLight.h>
 #include <torch/Context.h>
-#include <torch/Distribution.h>
+#include <torch/Distribution1D.h>
+#include <torch/Link.h>
 #include <torch/Spectrum.h>
 #include <torch/device/Light.h>
 
@@ -63,13 +64,36 @@ void EnvironmentLight::SetRadiance(const std::vector<Spectrum>& radiance)
 
 void EnvironmentLight::BuildScene(Link& link)
 {
-  // Light::BuildScene(link);
+  Light::BuildScene(link);
 
-  // EnvironmentLightData data;
-  // data.rowCount = m_rowCount;
-  // data.radiance = reinterpret_cast<float3*>(m_radiance.data());
+  EnvironmentLightData data;
+  data.rowCount = m_rowCount;
 
-  // const optix::Matrix4x4 R = m_transform.GetRotationMatrix();
+  data.luminance = 1; // TODO: implement
+
+  // TODO: fix both potential memory issues
+  // we are passing a pointer to member variable
+  // EnvironmentLightSampler hold reference to this
+  // if this object (EnvironmentLight) is destroyed, the pointer will be invalid
+  //============================================================================
+  data.radiance = reinterpret_cast<float3*>(m_radiance.data());
+  data.offsets = m_offsets.data();
+  //============================================================================
+
+  const optix::Matrix4x4 R =
+      (link.GetTransform() * m_transform).GetRotationMatrix().inverse();
+
+  data.rotation[0] = R[0];
+  data.rotation[1] = R[1];
+  data.rotation[2] = R[2];
+
+  data.rotation[3] = R[4];
+  data.rotation[4] = R[5];
+  data.rotation[5] = R[6];
+
+  data.rotation[6] = R[8];
+  data.rotation[7] = R[9];
+  data.rotation[8] = R[10];
 }
 
 void EnvironmentLight::Initialize()
@@ -92,7 +116,7 @@ void EnvironmentLight::UpdateOffsets()
     m_offsets[i + 1] = directions + m_offsets[i];
   }
 
-  m_offsets.back() = 1 + m_offsets[m_rowCount - 2];
+  m_offsets[m_rowCount] = 1 + m_offsets[m_rowCount - 1];
   m_radiance.resize(m_offsets.back());
 }
 

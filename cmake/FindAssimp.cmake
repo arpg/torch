@@ -1,34 +1,20 @@
 # - Try to find Assimp
 # Once done, this will define
 #
-#  ASSIMP_FOUND - system has Assimp
-#  ASSIMP_INCLUDE_DIR - the Assimp include directories
-#  ASSIMP_LIBRARIES - link these to use Assimp
+#  Assimp_FOUND - system has Assimp
+#  Assimp_INCLUDE_DIR - the Assimp include directories
+#  Assimp_LIBRARIES - link these to use Assimp
 
-FIND_PATH(ASSIMP_INCLUDE_DIR assimp/mesh.h
-  /usr/include
-  /usr/local/include
-  /opt/local/include
+find_path(Assimp_INCLUDE_DIR NAMES assimp/mesh.h)
+find_library(Assimp_LIBRARIES NAMES assimp)
+include(FindPackageHandleStandardArgs)
+
+find_package_handle_standard_args(
+  Assimp
+  DEFAULT_MSG
+  Assimp_INCLUDE_DIR
+  Assimp_LIBRARIES
 )
 
-FIND_LIBRARY(ASSIMP_LIBRARY assimp
-  /usr/lib64
-  /usr/lib
-  /usr/local/lib
-  /opt/local/lib
-)
-
-IF(ASSIMP_INCLUDE_DIR AND ASSIMP_LIBRARY)
-  SET(ASSIMP_FOUND TRUE)
-  SET(ASSIMP_LIBRARIES ${ASSIMP_LIBRARY})
-ENDIF(ASSIMP_INCLUDE_DIR AND ASSIMP_LIBRARY)
-
-IF(ASSIMP_FOUND)
-   IF(NOT ASSIMP_FIND_QUIETLY)
-      MESSAGE(STATUS "Found Assimp: ${ASSIMP_LIBRARY}")
-   ENDIF(NOT ASSIMP_FIND_QUIETLY)
-ELSE(ASSIMP_FOUND)
-   IF(ASSIMP_FIND_REQUIRED)
-      MESSAGE(FATAL_ERROR "Could not find libassimp")
-   ENDIF(ASSIMP_FIND_REQUIRED)
-ENDIF(ASSIMP_FOUND)
+set(Glog_INCLUDE_DIRS ${Assimp_INCLUDE_DIRS})
+set(Glog_LIBRARIES ${Assimp_LIBRARIES})

@@ -34,8 +34,8 @@ list(APPEND REQUIRED_INCLUDE_DIRS ${GLog_INCLUDE_DIRS})
 list(APPEND REQUIRED_LIBRARIES ${GLog_LIBRARIES})
 
 find_package(Assimp REQUIRED)
-list(APPEND REQUIRED_INCLUDE_DIRS ${ASSIMP_INCLUDE_DIRS})
-list(APPEND REQUIRED_LIBRARIES ${ASSIMP_LIBRARIES})
+list(APPEND REQUIRED_INCLUDE_DIRS ${Assimp_INCLUDE_DIRS})
+list(APPEND REQUIRED_LIBRARIES ${Assimp_LIBRARIES})
 
 list(APPEND REQUIRED_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/include)
 list(APPEND REQUIRED_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/include)
@@ -63,7 +63,7 @@ set(CPP_HEADERS
   ${CPP_HEADER_DIR}/Core.h
   ${CPP_HEADER_DIR}/DistantLight.h
   ${CPP_HEADER_DIR}/DistantLightSampler.h
-  ${CPP_HEADER_DIR}/Distribution.h
+  ${CPP_HEADER_DIR}/Distribution1D.h
   ${CPP_HEADER_DIR}/Distribution2D.h
   ${CPP_HEADER_DIR}/EnvironmentLight.h
   ${CPP_HEADER_DIR}/EnvironmentLightSampler.h
@@ -111,7 +111,7 @@ set(CPP_SOURCES
   ${CPP_SOURCE_DIR}/Context.cpp
   ${CPP_SOURCE_DIR}/DistantLight.cpp
   ${CPP_SOURCE_DIR}/DistantLightSampler.cpp
-  ${CPP_SOURCE_DIR}/Distribution.cpp
+  ${CPP_SOURCE_DIR}/Distribution1D.cpp
   ${CPP_SOURCE_DIR}/Distribution2D.cpp
   ${CPP_SOURCE_DIR}/EnvironmentLight.cpp
   ${CPP_SOURCE_DIR}/EnvironmentLightSampler.cpp
@@ -168,7 +168,7 @@ set(CUDA_SOURCES
   ${CUDA_SOURCE_DIR}/AreaLightSampler.cu
   ${CUDA_SOURCE_DIR}/Camera.cu
   ${CUDA_SOURCE_DIR}/DistantLightSampler.cu
-  ${CUDA_SOURCE_DIR}/Distribution.cu
+  ${CUDA_SOURCE_DIR}/Distribution1D.cu
   ${CUDA_SOURCE_DIR}/Distribution2D.cu
   ${CUDA_SOURCE_DIR}/EnvironmentLightSampler.cu
   ${CUDA_SOURCE_DIR}/Exception.cu

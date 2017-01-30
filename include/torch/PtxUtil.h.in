@@ -2,10 +2,6 @@
 
 #include <torch/Core.h>
 
-#cmakedefine PTX_FOLDER "@PTX_FOLDER@"
-#cmakedefine PTX_PREFIX "@PTX_PREFIX@"
-#cmakedefine PTX_SUFFIX "@PTX_SUFFIX@"
-
 namespace torch
 {
 
@@ -15,7 +11,7 @@ class PtxUtil
 
     static inline std::string GetFile(const std::string& name)
     {
-      return PTX_FOLDER PTX_PREFIX + name + PTX_SUFFIX;
+      return "@PTX_FOLDER@@PTX_PREFIX@" + name + "@PTX_SUFFIX@";
     }
 };
 

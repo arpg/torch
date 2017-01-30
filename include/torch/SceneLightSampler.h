@@ -47,7 +47,7 @@ class SceneLightSampler
 
     optix::Program m_program;
 
-    std::unique_ptr<Distribution> m_distribution;
+    std::unique_ptr<Distribution1D> m_distribution;
 
     std::vector<std::unique_ptr<LightSampler>> m_samplers;
 };
