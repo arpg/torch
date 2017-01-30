@@ -1,6 +1,6 @@
 #pragma once
 
-#include <optixu/optixu_matrix.h>
+#include <torch/device/Core.h>
 
 namespace torch
 {
@@ -43,6 +43,7 @@ struct DistantLightData
 struct EnvironmentLightData
 {
   unsigned int rowCount;
+  unsigned int* offsets;
   optix::Matrix3x3 rotation;
   float3* radiance;
   float luminance;

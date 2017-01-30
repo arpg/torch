@@ -18,13 +18,13 @@ class EnvironmentLight : public Light
 
     unsigned int GetDirectionCount() const;
 
+    unsigned int GetDirectionCount(unsigned int row) const;
+
     void SetRadiance(const Spectrum& radiance);
 
     void SetRadiance(float r, float g, float b);
 
     void SetRadiance(size_t index, const Spectrum& radiance);
-
-    void SetRadiance(size_t index, float r, float g, float b);
 
     void SetRadiance(const std::vector<Spectrum>& radiance);
 
@@ -34,17 +34,15 @@ class EnvironmentLight : public Light
 
     void Initialize();
 
-    void UpdateDirectionCount();
+    void UpdateOffsets();
 
   protected:
 
     unsigned int m_rowCount;
 
-    unsigned int m_directionCount;
-
     std::vector<Spectrum> m_radiance;
 
-    static const unsigned int minRowCount;
+    std::vector<unsigned int> m_offsets;
 };
 
 } // namespace torch

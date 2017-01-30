@@ -1,6 +1,6 @@
 #pragma once
 
-#include <optixu/optixu_matrix.h>
+#include <torch/device/Core.h>
 
 namespace torch
 {

@@ -1,8 +1,5 @@
 #pragma once
 
-#include <optix_math.h>
-#include <optixu/optixu_aabb.h>
-#include <optixu/optixu_matrix.h>
 #include <torch/device/Core.h>
 
 rtDeclareVariable(optix::Matrix4x4, T_wl, , );

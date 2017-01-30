@@ -11,24 +11,14 @@ int main(int argc, char** argv)
   Scene scene;
   scene.SetEpsilon(1E-4);
 
+  const Spectrum sky = Spectrum::FromRGB(0.1, 0.1, 0.5);
+  const Spectrum sun = Spectrum::FromRGB(1.0, 1.0, 0.8);
   std::shared_ptr<EnvironmentLight> envLight;
   envLight = scene.CreateEnvironmentLight();
   envLight->SetRowCount(21);
-  envLight->SetRadiance(0.1, 0.1, 0.2);
-  envLight->SetRadiance(150, 1.0, 1.0, 0.5);
+  envLight->SetRadiance(sky);
+  envLight->SetRadiance(150, sun);
   scene.Add(envLight);
-
-  // std::shared_ptr<PointLight> light1;
-  // light1 = scene.CreatePointLight();
-  // light1->SetIntensity(75, 75, 75);
-  // light1->SetPosition(4, -1, -1);
-  // scene.Add(light1);
-
-  // std::shared_ptr<PointLight> light2;
-  // light2 = scene.CreatePointLight();
-  // light2->SetIntensity(75, 75, 75);
-  // light2->SetPosition(-4, -2, -1);
-  // scene.Add(light2);
 
   std::shared_ptr<Mesh> mesh;
   mesh = scene.CreateMesh("bunny.ply");

@@ -7,11 +7,9 @@
 namespace torch
 {
 
- const unsigned int EnvironmentLight::minRowCount = 3;
-
 EnvironmentLight::EnvironmentLight(std::shared_ptr<Context> context) :
   Light(context),
-  m_rowCount(minRowCount)
+  m_rowCount(1)
 {
   Initialize();
 }
@@ -23,14 +21,19 @@ unsigned int EnvironmentLight::GetRowCount() const
 
 void EnvironmentLight::SetRowCount(unsigned int count)
 {
-  m_rowCount = std::max(minRowCount, count);
-  UpdateDirectionCount();
+  m_rowCount = max(1, count);
+  UpdateOffsets();
   m_context->MarkDirty();
 }
 
 unsigned int EnvironmentLight::GetDirectionCount() const
 {
-  return m_directionCount;
+  return m_offsets.back();
+}
+
+unsigned int EnvironmentLight::GetDirectionCount(unsigned int row) const
+{
+  return m_offsets[row + 1] - m_offsets[row];
 }
 
 void EnvironmentLight::SetRadiance(const Spectrum& radiance)
@@ -48,11 +51,6 @@ void EnvironmentLight::SetRadiance(size_t index, const Spectrum& radiance)
 {
   m_radiance[index] = radiance;
   m_context->MarkDirty();
-}
-
-void EnvironmentLight::SetRadiance(size_t index, float r, float g, float b)
-{
-  SetRadiance(index, Spectrum::FromRGB(r, g, b));
 }
 
 void EnvironmentLight::SetRadiance(const std::vector<Spectrum>& radiance)
@@ -76,21 +74,26 @@ void EnvironmentLight::BuildScene(Link& link)
 
 void EnvironmentLight::Initialize()
 {
-  UpdateDirectionCount();
+  UpdateOffsets();
 }
 
-void EnvironmentLight::UpdateDirectionCount()
+void EnvironmentLight::UpdateOffsets()
 {
-  m_directionCount = 2;
   const float radiansPerRow = M_PIf / (m_rowCount - 1);
+  m_offsets.resize(m_rowCount + 1);
+  m_offsets[0] = 0;
+  m_offsets[1] = 1;
 
   for (unsigned int i = 1; i < m_rowCount - 1; ++i)
   {
-    const float quadrantLength = 2 * M_PIf * sinf(i * radiansPerRow) / 4;
-    m_directionCount += 4 * roundf(quadrantLength / radiansPerRow);
+    const float rowRadius = sinf(i * radiansPerRow);
+    const float quadLength = (2 * M_PIf * rowRadius) / 4;
+    const unsigned int directions = 4 * roundf(quadLength / radiansPerRow);
+    m_offsets[i + 1] = directions + m_offsets[i];
   }
 
-  m_radiance.resize(m_directionCount);
+  m_offsets.back() = 1 + m_offsets[m_rowCount - 2];
+  m_radiance.resize(m_offsets.back());
 }
 
 } // namespace torch

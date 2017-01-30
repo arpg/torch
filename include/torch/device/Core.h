@@ -1,9 +1,11 @@
 #pragma once
 
-#include <optix.h>
-#include <optix_math.h>
+#include <optixu/optixu_aabb.h>
+#include <optixu/optixu_matrix.h>
 
+#define TORCH_HOSTDEVICE static __inline__ __host__ __device__
 #define TORCH_DEVICE static __inline__ __device__
+#define TORCH_HOST static __inline__ __host__
 
 namespace torch
 {
