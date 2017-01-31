@@ -6,7 +6,7 @@ typedef rtCallableProgramId<void(const float2&, uint&, uint&, float&)> Distribut
 
 rtDeclareVariable(Distribution1D, GetLightIndex, , );
 rtBuffer<Distribution2D> SampleLight;
-rtBuffer<optix::Matrix3x3> transforms;
+rtBuffer<optix::Matrix3x3> rotations;
 rtBuffer<uint> lightOffsets;
 rtBuffer<uint> rowOffsets;
 rtBuffer<float3> radiance;
@@ -51,12 +51,17 @@ RT_CALLABLE_PROGRAM void Sample(torch::LightSample& sample)
   float dirPdf;
   uint row, col;
   const float2 uv = torch::randf2(sample.seed);
-  SampleLight[light](uv, row, col, dirPdf);
+  // SampleLight[light](uv, row, col, dirPdf);
   GetDirection(light, row, col, sample.direction);
 
-  sample.direction = transforms[light] * sample.direction;
+  sample.direction = rotations[light] * sample.direction;
   sample.direction = normalize(sample.direction);
   sample.radiance = GetRadiance(light, row, col);
   sample.tmax = RT_DEFAULT_MAX;
   sample.pdf *= dirPdf;
+
+  // sample.direction = normalize(make_float3(0, -1, -1));
+  // sample.radiance = make_float3(2.5, 2.5, 2.5);
+  // sample.tmax = RT_DEFAULT_MAX;
+  // sample.pdf = 1;
 }

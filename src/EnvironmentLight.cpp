@@ -2,6 +2,7 @@
 #include <torch/Context.h>
 #include <torch/Distribution1D.h>
 #include <torch/Link.h>
+#include <torch/SceneLightSampler.h>
 #include <torch/Spectrum.h>
 #include <torch/device/Light.h>
 
@@ -94,6 +95,10 @@ void EnvironmentLight::BuildScene(Link& link)
   data.rotation[6] = R[8];
   data.rotation[7] = R[9];
   data.rotation[8] = R[10];
+
+  std::shared_ptr<SceneLightSampler> sampler;
+  sampler = m_context->GetLightSampler();
+  sampler->Add(data);
 }
 
 void EnvironmentLight::Initialize()

@@ -68,24 +68,27 @@ void EnvironmentLightSampler::UpdateDistribution()
 
 void EnvironmentLightSampler::UpdateLightDistributions()
 {
-  // m_lightDistributions.resize(m_lights.size());
+  m_lightDistributions.resize(m_lights.size());
 
-  // for (unsigned int i = 0; i < m_lights.size(); ++i)
-  // {
-  //   const EnvironmentLightData& light = m_lights[i];
-  //   std::vector<std::vector<float>> values(light.rowCount);
-  //   unsigned int rIndex = 0;
+  for (unsigned int i = 0; i < m_lights.size(); ++i)
+  {
+    const EnvironmentLightData& light = m_lights[i];
+    const unsigned int dirCount = light.offsets[light.rowCount];
+    std::vector<float> values(dirCount);
 
-  //   for (unsigned int j = 0; j < light.rowCount; ++j)
-  //   {
-  //     const float3& a = light.radiance[rIndex++];
-  //     const Spectrum b = Spectrum::FromRGB(a.x, a.y, a.z);
-  //     values[i].push_back(b.GetY()); // TODO: scale by area
-  //   }
+    std::vector<unsigned int> offsets(light.rowCount + 1);
+    std::copy(light.offsets, light.offsets + offsets.size(), offsets.data());
 
-  //   m_lightDistributions[i] = std::make_unique<Distribution2D>(m_context);
-  //   m_lightDistributions[i]->SetValues(values);
-  // }
+    for (unsigned int j = 0; j < dirCount; ++j)
+    {
+      const float3& a = light.radiance[j];
+      const Spectrum b = Spectrum::FromRGB(a.x, a.y, a.z);
+      values[j] = b.GetY(); // TODO: scale by area
+    }
+
+    m_lightDistributions[i] = std::make_unique<Distribution2D>(m_context);
+    m_lightDistributions[i]->SetValues(values, offsets);
+  }
 }
 
 void EnvironmentLightSampler::UpdateBuffers()
@@ -119,7 +122,7 @@ void EnvironmentLightSampler::UpdateBuffers()
 
     const unsigned int dirCount = light.offsets[light.rowCount];
     float3* first = light.radiance;
-    float3* last = light.radiance + dirCount;
+    float3* last = light.radiance + 1; // dirCount; // TODO: copy correctly
     float3* result = &radiance[radIndex];
     std::copy(first, last, result);
     radIndex += dirCount;
