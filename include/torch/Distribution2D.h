@@ -13,7 +13,8 @@ class Distribution2D
 
     optix::Program GetProgram() const;
 
-    void SetValues(const std::vector<std::vector<float>>& values);
+    void SetValues(const std::vector<float>& values,
+        const std::vector<unsigned int>& offsets);
 
   private:
 
@@ -26,6 +27,9 @@ class Distribution2D
     void CreateColumnBuffer();
 
     void CreateOffsetBuffer();
+
+    template <typename T>
+    static void CopyVector(const std::vector<T>& values, optix::Buffer buffer);
 
   protected:
 

@@ -45,6 +45,7 @@ set(TEST_CUDA_SOURCE_DIR .)
 
 set(TEST_CUDA_SOURCES
   ${TEST_CUDA_SOURCE_DIR}/Distribution1D.cu
+  ${TEST_CUDA_SOURCE_DIR}/Distribution2D.cu
 )
 
 # build config headers

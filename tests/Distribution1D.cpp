@@ -1,158 +1,155 @@
 #include <gtest/gtest.h>
 #include <torch/Torch.h>
-#include <TestPtxUtil.h>
+#include "TestPtxUtil.h"
 
-class Distribution1D : public testing::Test
+struct Distribution1D : public testing::Test
 {
-  public:
+  Distribution1D() :
+    m_sampleCount(0)
+  {
+    Initialize();
+  }
 
-    Distribution1D() :
-      m_sampleCount(1),
-      m_bufferSize(0)
+  void SetValues(const std::vector<float>& values)
+  {
+    m_distribution->SetValues(values);
+    m_countBuffer->setSize(values.size());
+    m_pdfBuffer->setSize(values.size());
+    SetSampleCount();
+  }
+
+  void Sample(std::vector<float>& ratios, std::vector<float>& pdfs)
+  {
+    ClearBuffers();
+    LaunchProgram();
+    GetSampleRatios(ratios);
+    GetSamplePdfs(pdfs);
+  }
+
+  void SetSampleCount()
+  {
+    m_sampleCount = 10000 * GetBufferSize(m_countBuffer) / epsilon;
+  }
+
+  void ClearBuffers()
+  {
+    FillBuffer(m_countBuffer, 0u);
+    FillBuffer(m_pdfBuffer, 0.0f);
+  }
+
+  void LaunchProgram()
+  {
+    m_context->Launch(m_programId, m_sampleCount);
+  }
+
+  void GetSampleRatios(std::vector<float>& ratios)
+  {
+    const RTsize size = GetBufferSize(m_countBuffer);
+
+    ratios.resize(size);
+    std::vector<unsigned int> counts(size);
+    CopyBuffer(m_countBuffer, counts);
+
+    for (size_t i = 0; i < counts.size(); ++i)
     {
-      Initialize();
+      ratios[i] = float(counts[i]) / m_sampleCount;
     }
+  }
 
-    void SetValues(const std::vector<float>& values)
-    {
-      m_bufferSize = values.size();
-      m_distribution->SetValues(values);
-      m_countBuffer->setSize(m_bufferSize);
-      m_pdfBuffer->setSize(m_bufferSize);
-      SetSampleCount();
-    }
+  void GetSamplePdfs(std::vector<float>& pdfs)
+  {
+    CopyBuffer(m_pdfBuffer, pdfs);
+  }
 
-    void Sample(std::vector<float>& ratios, std::vector<float>& pdfs)
-    {
-      ClearBuffers();
-      LaunchProgram();
-      GetSampleRatios(ratios);
-      GetSamplePdfs(pdfs);
-    }
+  static void Normalize(std::vector<float>& values)
+  {
+    float sum = 0;
+    for (float value : values) sum += value;
+    for (size_t i = 0; i < values.size(); ++i) values[i] /= sum;
+  }
 
-    static void Normalize(std::vector<float>& values)
-    {
-      float sum = 0;
-      for (float value : values) sum += value;
-      for (size_t i = 0; i < values.size(); ++i) values[i] /= sum;
-    }
+  static RTsize GetBufferSize(optix::Buffer buffer)
+  {
+    RTsize w, h, d;
+    buffer->getSize(w, h, d);
+    return w * h * d;
+  }
 
-  protected:
+  template <typename T>
+  void FillBuffer(optix::Buffer buffer, T value)
+  {
+    T* device = reinterpret_cast<T*>(buffer->map());
+    std::fill(device, device + GetBufferSize(buffer), value);
+    buffer->unmap();
+  }
 
-    void SetSampleCount()
-    {
-      m_sampleCount = 10000 * m_bufferSize / epsilon;
-    }
+  template <typename T>
+  void CopyBuffer(optix::Buffer buffer, std::vector<T>& values)
+  {
+    values.resize(GetBufferSize(buffer));
+    T* device = reinterpret_cast<T*>(buffer->map());
+    std::copy(device, device + values.size(), values.data());
+    buffer->unmap();
+  }
 
-    void ClearBuffers()
-    {
-      FillBuffer(m_countBuffer, 0u);
-      FillBuffer(m_pdfBuffer, 0.0f);
-    }
+  void Initialize()
+  {
+    CreateContext();
+    CreateProgram();
+    CreateCountBuffer();
+    CreatePdfBuffer();
+    CreateDistribution();
+  }
 
-    void LaunchProgram()
-    {
-      m_context->Launch(m_programId, m_sampleCount);
-    }
+  void CreateContext()
+  {
+    m_context = torch::Context::Create();
+  }
 
-    void GetSampleRatios(std::vector<float>& ratios)
-    {
-      ratios.resize(m_bufferSize);
-      std::vector<unsigned int> counts(m_bufferSize);
-      CopyBuffer(m_countBuffer, counts);
+  void CreateProgram()
+  {
+    const std::string file = torch::TestPtxUtil::GetFile("Distribution1D");
+    m_program = m_context->CreateProgram(file, "Sample");
+    m_programId = m_context->RegisterLaunchProgram(m_program);
+  }
 
-      for (size_t i = 0; i < counts.size(); ++i)
-      {
-        ratios[i] = float(counts[i]) / m_sampleCount;
-      }
-    }
+  void CreateCountBuffer()
+  {
+    m_countBuffer = m_context->CreateBuffer(RT_BUFFER_INPUT_OUTPUT);
+    m_countBuffer->setFormat(RT_FORMAT_UNSIGNED_INT);
+    m_countBuffer->setSize(0);
+    m_program["counts"]->setBuffer(m_countBuffer);
+  }
 
-    void GetSamplePdfs(std::vector<float>& pdfs)
-    {
-      CopyBuffer(m_pdfBuffer, pdfs);
-    }
+  void CreatePdfBuffer()
+  {
+    m_pdfBuffer = m_context->CreateBuffer(RT_BUFFER_INPUT_OUTPUT);
+    m_pdfBuffer->setFormat(RT_FORMAT_FLOAT);
+    m_pdfBuffer->setSize(0);
+    m_program["pdfs"]->setBuffer(m_pdfBuffer);
+  }
 
-    template <typename T>
-    void FillBuffer(optix::Buffer buffer, T value)
-    {
-      T* device = reinterpret_cast<T*>(buffer->map());
-      std::fill(device, device + m_bufferSize, value);
-      buffer->unmap();
-    }
+  void CreateDistribution()
+  {
+    m_distribution = std::make_unique<torch::Distribution1D>(m_context);
+    m_program["Sample1D"]->set(m_distribution->GetProgram());
+  }
 
-    template <typename T>
-    void CopyBuffer(optix::Buffer buffer, std::vector<T>& counts)
-    {
-      counts.resize(m_bufferSize);
-      T* device = reinterpret_cast<T*>(buffer->map());
-      std::copy(device, device + m_bufferSize, counts.data());
-      buffer->unmap();
-    }
+  unsigned int m_sampleCount;
 
-  private:
+  unsigned int m_programId;
 
-    void Initialize()
-    {
-      CreateContext();
-      CreateProgram();
-      CreateCountBuffer();
-      CreatePdfBuffer();
-      CreateDistribution();
-    }
+  optix::Program m_program;
 
-    void CreateContext()
-    {
-      m_context = torch::Context::Create();
-    }
+  optix::Buffer m_countBuffer;
 
-    void CreateProgram()
-    {
-      const std::string file = torch::TestPtxUtil::GetFile("Distribution1D");
-      m_program = m_context->CreateProgram(file, "Sample");
-      m_programId = m_context->RegisterLaunchProgram(m_program);
-    }
+  optix::Buffer m_pdfBuffer;
 
-    void CreateCountBuffer()
-    {
-      m_countBuffer = m_context->CreateBuffer(RT_BUFFER_INPUT_OUTPUT);
-      m_countBuffer->setFormat(RT_FORMAT_UNSIGNED_INT);
-      m_countBuffer->setSize(m_bufferSize);
-      m_program["counts"]->setBuffer(m_countBuffer);
-    }
+  std::shared_ptr<torch::Context> m_context;
 
-    void CreatePdfBuffer()
-    {
-      m_pdfBuffer = m_context->CreateBuffer(RT_BUFFER_INPUT_OUTPUT);
-      m_pdfBuffer->setFormat(RT_FORMAT_FLOAT);
-      m_pdfBuffer->setSize(m_bufferSize);
-      m_program["pdfs"]->setBuffer(m_pdfBuffer);
-    }
+  std::unique_ptr<torch::Distribution1D> m_distribution;
 
-    void CreateDistribution()
-    {
-      m_distribution = std::make_unique<torch::Distribution1D>(m_context);
-      m_program["Sample1D"]->set(m_distribution->GetProgram());
-    }
-
-  protected:
-
-    unsigned int m_sampleCount;
-
-    unsigned int m_programId;
-
-    size_t m_bufferSize;
-
-    optix::Program m_program;
-
-    optix::Buffer m_countBuffer;
-
-    optix::Buffer m_pdfBuffer;
-
-    std::shared_ptr<torch::Context> m_context;
-
-    std::unique_ptr<torch::Distribution1D> m_distribution;
-
-    static constexpr float epsilon = 1E-4;
+  static constexpr float epsilon = 1E-4f;
 };
 
 TEST_F(Distribution1D, Normalized1)

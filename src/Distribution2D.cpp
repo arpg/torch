@@ -2,6 +2,8 @@
 #include <torch/Context.h>
 #include <torch/PtxUtil.h>
 
+#include <iostream>
+
 namespace torch
 {
 
@@ -16,44 +18,55 @@ optix::Program Distribution2D::GetProgram() const
   return m_program;
 }
 
-void Distribution2D::SetValues(const std::vector<std::vector<float>>& values)
+void Distribution2D::SetValues(const std::vector<float>& values,
+    const std::vector<unsigned int>& offsets)
 {
-  std::vector<unsigned int> offsets(values.size() + 1);
-  offsets[0] = 0;
+  const size_t rowCount = offsets.size() - 1;
+  std::vector<float> rowCdf(rowCount);
+  std::vector<float> colCdfs(values.size());
+  size_t index = 0;
 
-  for (unsigned int i = 0; i < values.size(); ++i)
+  for (size_t row = 0; row < rowCount; ++row)
   {
-    offsets[i + 1] = values[i].size() + offsets[i];
-  }
+    const size_t colCount = offsets[row + 1] - offsets[row];
 
-  std::vector<float> colCdfs(offsets.back());
-  std::vector<float> rowCdf(values.size());
-
-  for (unsigned int i = 0; i < values.size(); ++i)
-  {
-    const unsigned int offset = offsets[i];
-    float previous = 0;
-
-    for (unsigned int j = 0; j < values[i].size(); ++j)
+    for (size_t col = 0; col < colCount; ++col)
     {
-      colCdfs[offset + j] = values[i][j] + previous;
-      previous = colCdfs[offset + j];
+      const size_t i = index + col;
+      const float value = values[i];
+      colCdfs[i] = (col == 0) ? value : value + colCdfs[i - 1];
     }
 
-    rowCdf[i] = colCdfs[offsets[i + 1] - 1];
+    const float integral = colCdfs[index + colCount - 1];
 
-    for (unsigned int j = 0; j < values[i].size(); ++j)
+    for (size_t col = 0; col < colCount; ++col)
     {
-      colCdfs[offset + j] /= rowCdf[i];
+      colCdfs[index++] /= integral;
     }
+
+    rowCdf[row] = (row == 0) ? integral : integral + rowCdf[row - 1];
   }
 
-  const float integral = rowCdf.back();
+  const float integral = rowCdf[rowCount - 1];
 
-  for (unsigned int i = 0; i < values.size(); ++i)
+  for (size_t row = 0; row < rowCount; ++row)
   {
-    rowCdf[i] /= integral;
+    rowCdf[row] /= integral;
   }
+
+  CopyVector(rowCdf, m_rowCdf);
+  CopyVector(colCdfs, m_colCdfs);
+  CopyVector(offsets, m_offsets);
+}
+
+template<typename T>
+void Distribution2D::CopyVector(const std::vector<T>& values,
+    optix::Buffer buffer)
+{
+  buffer->setSize(values.size());
+  T* device = reinterpret_cast<T*>(buffer->map());
+  std::copy(values.begin(), values.end(), device);
+  buffer->unmap();
 }
 
 void Distribution2D::Initialize()

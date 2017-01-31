@@ -10,6 +10,7 @@ TORCH_DEVICE uint GetIndex(float sample, float* cdf, uint begin, uint end,
     float& pdf)
 {
   uint index = begin;
+  const uint offset = begin;
 
   while (begin < end)
   {
@@ -17,23 +18,24 @@ TORCH_DEVICE uint GetIndex(float sample, float* cdf, uint begin, uint end,
     (sample < cdf[index]) ? end = index : begin = ++index;
   }
 
-  pdf = (index - begin == 0) ? cdf[index] : cdf[index] - cdf[index - 1];
-  return index - begin;
+  pdf = (index - offset == 0) ? cdf[index] : cdf[index] - cdf[index - 1];
+  return index - offset;
 }
 
-RT_CALLABLE_PROGRAM void Sample(const float2& sample, uint& row, uint& col,
-    float& pdf)
+RT_CALLABLE_PROGRAM uint2 Sample(const float2& sample, float& pdf)
 {
   uint begin, end;
   float colPdf;
+  uint2 index;
 
   begin = 0;
   end = rowCdf.size() - 1;
-  row = GetIndex(sample.x, &rowCdf[0], begin, end, pdf);
+  index.x = GetIndex(sample.x, &rowCdf[0], begin, end, pdf);
 
-  begin = offsets[row];
-  end = offsets[row + 1] - begin;
-  col = GetIndex(sample.y, &colCdfs[0], begin, end, colPdf);
+  begin = offsets[index.x];
+  end = offsets[index.x + 1] - 1;
+  index.y = GetIndex(sample.y, &colCdfs[0], begin, end, colPdf);
 
   pdf *= colPdf;
+  return index;
 }

@@ -68,24 +68,24 @@ void EnvironmentLightSampler::UpdateDistribution()
 
 void EnvironmentLightSampler::UpdateLightDistributions()
 {
-  m_lightDistributions.resize(m_lights.size());
+  // m_lightDistributions.resize(m_lights.size());
 
-  for (unsigned int i = 0; i < m_lights.size(); ++i)
-  {
-    const EnvironmentLightData& light = m_lights[i];
-    std::vector<std::vector<float>> values(light.rowCount);
-    unsigned int rIndex = 0;
+  // for (unsigned int i = 0; i < m_lights.size(); ++i)
+  // {
+  //   const EnvironmentLightData& light = m_lights[i];
+  //   std::vector<std::vector<float>> values(light.rowCount);
+  //   unsigned int rIndex = 0;
 
-    for (unsigned int j = 0; j < light.rowCount; ++j)
-    {
-      const float3& a = light.radiance[rIndex++];
-      const Spectrum b = Spectrum::FromRGB(a.x, a.y, a.z);
-      values[i].push_back(b.GetY()); // TODO: scale by area
-    }
+  //   for (unsigned int j = 0; j < light.rowCount; ++j)
+  //   {
+  //     const float3& a = light.radiance[rIndex++];
+  //     const Spectrum b = Spectrum::FromRGB(a.x, a.y, a.z);
+  //     values[i].push_back(b.GetY()); // TODO: scale by area
+  //   }
 
-    m_lightDistributions[i] = std::make_unique<Distribution2D>(m_context);
-    m_lightDistributions[i]->SetValues(values);
-  }
+  //   m_lightDistributions[i] = std::make_unique<Distribution2D>(m_context);
+  //   m_lightDistributions[i]->SetValues(values);
+  // }
 }
 
 void EnvironmentLightSampler::UpdateBuffers()
