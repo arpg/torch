@@ -13,28 +13,30 @@ rtDeclareVariable(SampleFunction, SamplePointLights, , );
 
 RT_CALLABLE_PROGRAM void Sample(torch::LightSample& sample)
 {
-  float pdf;
-  const float rand = torch::randf(sample.seed);
-  const unsigned int type = GetLightType(rand, pdf);
+  // float pdf;
+  // const float rand = torch::randf(sample.seed);
+  // const unsigned int type = GetLightType(rand, pdf);
 
-  switch (type)
-  {
-    case torch::LIGHT_TYPE_AREA:
-      SampleAreaLights(sample);
-      break;
+  // switch (type)
+  // {
+  //   case torch::LIGHT_TYPE_AREA:
+  //     SampleAreaLights(sample);
+  //     break;
 
-    case torch::LIGHT_TYPE_DISTANT:
-      SampleDistantLights(sample);
-      break;
+  //   case torch::LIGHT_TYPE_DISTANT:
+  //     SampleDistantLights(sample);
+  //     break;
 
-    case torch::LIGHT_TYPE_ENVIRONMENT:
-      SampleEnvironmentLights(sample);
-      break;
+  //   case torch::LIGHT_TYPE_ENVIRONMENT:
+  //     SampleEnvironmentLights(sample);
+  //     break;
 
-    case torch::LIGHT_TYPE_POINT:
-      SamplePointLights(sample);
-      break;
-  }
+  //   case torch::LIGHT_TYPE_POINT:
+  //     SamplePointLights(sample);
+  //     break;
+  // }
 
-  sample.pdf *= pdf;
+  // sample.pdf *= pdf;
+
+  SampleEnvironmentLights(sample);
 }

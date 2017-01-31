@@ -99,9 +99,14 @@ void EnvironmentLightSampler::UpdateBuffers()
   for (unsigned int i = 0; i < m_lights.size(); ++i)
   {
     const EnvironmentLightData& light = m_lights[i];
-    radianceSize += light.offsets[light.rowCount + 1];
+    radianceSize += light.offsets[light.rowCount];
     rowOffsetsSize += light.rowCount;
   }
+
+  // m_samplePrograms->setSize(m_lights.size());
+
+  // optix::callableProgramId<uint2(const float2&, float&)>* programs =
+  //     static_cast<optix::callableProgramId<uint2(const float2&, float&)>*>(m_samplePrograms->map());
 
   std::vector<unsigned int> samplePrograms(m_lights.size());
   std::vector<unsigned int> lightOffsets(m_lights.size() + 1);
@@ -118,11 +123,16 @@ void EnvironmentLightSampler::UpdateBuffers()
     const EnvironmentLightData& light = m_lights[i];
     lightOffsets[i + 1] = light.rowCount;
     rotations[i] = light.rotation;
-    samplePrograms[i] = m_lightDistributions[i]->GetProgram();
+    samplePrograms[i] = m_lightDistributions[i]->GetProgram()->getId();
+
+    // programs[i] = optix::callableProgramId<uint2(const float2&, float&)>(
+    //       m_lightDistributions[i]->GetProgram());
+
+    // m_program["SampleLight2"]->setProgramId(m_lightDistributions[i]->GetProgram());
 
     const unsigned int dirCount = light.offsets[light.rowCount];
     float3* first = light.radiance;
-    float3* last = light.radiance + 1; // dirCount; // TODO: copy correctly
+    float3* last = light.radiance + dirCount; // TODO: copy correctly
     float3* result = &radiance[radIndex];
     std::copy(first, last, result);
     radIndex += dirCount;
@@ -132,6 +142,8 @@ void EnvironmentLightSampler::UpdateBuffers()
       rowOffsets[rowIndex++] = lightOffsets[i] + light.offsets[j];
     }
   }
+
+  // m_samplePrograms->unmap();
 
   WriteBuffer(m_samplePrograms, samplePrograms);
   WriteBuffer(m_lightOffsets, lightOffsets);

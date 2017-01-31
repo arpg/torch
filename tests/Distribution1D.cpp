@@ -28,7 +28,7 @@ struct Distribution1D : public testing::Test
 
   void SetSampleCount()
   {
-    m_sampleCount = 10000 * GetBufferSize(m_countBuffer) / epsilon;
+    m_sampleCount = 1E4 * GetBufferSize(m_countBuffer) / epsilon;
   }
 
   void ClearBuffers()

@@ -11,13 +11,16 @@ int main(int argc, char** argv)
   Scene scene;
   scene.SetEpsilon(1E-4);
 
-  const Spectrum sky = Spectrum::FromRGB(0.1, 0.1, 0.5);
-  const Spectrum sun = Spectrum::FromRGB(1.0, 1.0, 0.8);
+  // const Spectrum sky = Spectrum::FromRGB(0.25, 0.25, 0.5);
+  // const Spectrum sun = Spectrum::FromRGB(10.0, 10.0, 8.0);
+  const Spectrum sky = Spectrum::FromRGB(1.25, 1.25, 1.25);
+  const Spectrum sun = Spectrum::FromRGB(5.00, 0.00, 0.00);
   std::shared_ptr<EnvironmentLight> envLight;
   envLight = scene.CreateEnvironmentLight();
-  envLight->SetRowCount(21);
+  envLight->SetRowCount(5);
   envLight->SetRadiance(sky);
-  envLight->SetRadiance(150, sun);
+  envLight->SetRadiance(2, sun);
+  // envLight->SetRadiance(295, sun);
   scene.Add(envLight);
 
   std::shared_ptr<Mesh> mesh;

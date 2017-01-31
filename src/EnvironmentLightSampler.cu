@@ -2,7 +2,7 @@
 #include <torch/device/Random.h>
 
 typedef rtCallableProgramX<uint(float, float&)> Distribution1D;
-typedef rtCallableProgramId<void(const float2&, uint&, uint&, float&)> Distribution2D;
+typedef rtCallableProgramId<uint2(const float2&, float&)> Distribution2D;
 
 rtDeclareVariable(Distribution1D, GetLightIndex, , );
 rtBuffer<Distribution2D> SampleLight;
@@ -26,21 +26,21 @@ TORCH_DEVICE uint GetColumnCount(uint light, uint row)
 TORCH_DEVICE float3 GetRadiance(uint light, uint row, uint col)
 {
   const uint lightOffset = lightOffsets[light];
-  const uint rowOffset = rowOffsets[lightOffset] + row;
-  return radiance[rowOffset] + col;
+  const uint rowOffset = rowOffsets[lightOffset + row];
+  return radiance[rowOffset + col];
 }
 
 TORCH_DEVICE void GetDirection(uint light, uint row, uint col, float3& dir)
 {
   const uint rowCount = GetRowCount(light);
   const uint colCount = GetColumnCount(light, row);
-  const float rowRadians = M_PIf / (rowCount - 1);
-  const float colRadians = 2 * M_PIf / (col / colCount);
+  const float rowRadians = row * M_PIf / (rowCount - 1);
+  const float colRadians = col * 2 * M_PIf / colCount;
   const float rowRadius = sinf(rowRadians);
-  dir.x = rowRadius * cosf(colRadians);
-  dir.y = rowRadius * sinf(colRadians);
-  dir.z = cosf(rowRadians);
-  dir = normalize(dir);
+  dir.x = rowRadius * sinf(colRadians);
+  dir.z = rowRadius * cosf(colRadians);
+  dir.y = cosf(rowRadians);
+  dir = -normalize(dir);
 }
 
 RT_CALLABLE_PROGRAM void Sample(torch::LightSample& sample)
@@ -49,19 +49,14 @@ RT_CALLABLE_PROGRAM void Sample(torch::LightSample& sample)
   const uint light = GetLightIndex(rand, sample.pdf);
 
   float dirPdf;
-  uint row, col;
   const float2 uv = torch::randf2(sample.seed);
-  // SampleLight[light](uv, row, col, dirPdf);
-  GetDirection(light, row, col, sample.direction);
+  const uint2 index = SampleLight[light](uv, dirPdf);
+  GetDirection(light, index.x, index.y, sample.direction);
 
   sample.direction = rotations[light] * sample.direction;
   sample.direction = normalize(sample.direction);
-  sample.radiance = GetRadiance(light, row, col);
+  sample.radiance = GetRadiance(light, index.x, index.y);
+
   sample.tmax = RT_DEFAULT_MAX;
   sample.pdf *= dirPdf;
-
-  // sample.direction = normalize(make_float3(0, -1, -1));
-  // sample.radiance = make_float3(2.5, 2.5, 2.5);
-  // sample.tmax = RT_DEFAULT_MAX;
-  // sample.pdf = 1;
 }

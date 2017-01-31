@@ -257,7 +257,8 @@ void Context::CreateContext()
 
 #ifdef DEBUG_BUILD
   m_context->setPrintEnabled(true);
-  m_context->setPrintBufferSize(512);
+  // m_context->setPrintBufferSize(512);
+  m_context->setPrintBufferSize(2048);
   m_context->setExceptionEnabled(RT_EXCEPTION_ALL, true);
 
   const std::string file = PtxUtil::GetFile("Exception");
