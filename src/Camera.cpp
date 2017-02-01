@@ -42,19 +42,7 @@ void Camera::SetCenterPoint(float cx, float cy)
 void Camera::SetSampleCount(unsigned int count)
 {
   m_sampleCount = count;
-  m_context->MarkDirty();
-}
-
-void Camera::SetMinBounces(unsigned int depth)
-{
-  m_minDepth = depth;
-  m_context->MarkDirty();
-}
-
-void Camera::SetMaxBounces(unsigned int depth)
-{
-  m_maxDepth = depth;
-  m_context->MarkDirty();
+  m_program["sampleCount"]->setUint(m_sampleCount);
 }
 
 void Camera::Capture(Image& image)
@@ -105,10 +93,6 @@ void Camera::GetData(const Transform& transform, CameraData& data) const
   data.v = (m_imageSize.y / m_focalLength.y) * matrix.getCol(1);
   data.w = matrix.getCol(2);
   data.position = matrix.getCol(3);
-  data.imageSize = m_imageSize;
-  data.minDepth = m_minDepth;
-  data.maxDepth = m_maxDepth;
-  data.samples = m_sampleCount;
 }
 
 void Camera::Initialize()

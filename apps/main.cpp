@@ -96,7 +96,7 @@ int main(int argc, char** argv)
   camera->SetCenterPoint(320, 240);
   camera->SetOrientation(0, 0, 0);
   camera->SetPosition(0, 0, 0);
-  camera->SetSampleCount(128);
+  camera->SetSampleCount(512);
 
   Image image;
   camera->Capture(image);
