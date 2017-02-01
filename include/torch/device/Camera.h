@@ -7,11 +7,15 @@ namespace torch
 
 struct CameraData
 {
+  uint2 imageSize;
   float2 center;
   float3 position;
   float3 u;
   float3 v;
   float3 w;
+  unsigned int samples;
+  unsigned int minDepth;
+  unsigned int maxDepth;
 };
 
 } // namespace torch

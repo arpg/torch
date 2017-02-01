@@ -18,6 +18,57 @@ rtDeclareVariable(torch::ShadowData, srayData, rtPayload, );
 typedef rtCallableProgramX<void(torch::LightSample&)> SampleLightFunction;
 rtDeclareVariable(SampleLightFunction, SampleLights, , );
 
+TORCH_DEVICE float2 SampleDisk(const float2& uv)
+{
+  float2 result;
+  float r, theta;
+  const float sx = 2 * uv.x - 1;
+  const float sy = 2 * uv.y - 1;
+
+  if (sx == 0.0 && sy == 0.0)
+  {
+    result.x = 0.0;
+    result.y = 0.0;
+  }
+  else if (sx >= -sy)
+  {
+    if (sx > sy)
+    {
+      r = sx;
+      if (sy > 0.0) theta = sy / r;
+      else          theta = 8.0 + sy / r;
+    }
+    else
+    {
+      r = sy;
+      theta = 2.0 - sx / r;
+    }
+  }
+  else
+  {
+    if (sx <= sy)
+    {
+      r = -sx;
+      theta = 4.0 - sy / r;
+    }
+    else
+    {
+      r = -sy;
+      theta = 6.0 + sx / r;
+    }
+  }
+
+  theta *= M_PIf / 4.0;
+  result.x = r * cosf(theta);
+  result.y = r * sinf(theta);
+  return result;
+}
+
+RT_PROGRAM void SampleBrdf(torch::BrdfSample& sample)
+{
+
+}
+
 RT_PROGRAM void ClosestHit()
 {
   torch::LightSample sample;

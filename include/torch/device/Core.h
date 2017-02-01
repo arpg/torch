@@ -11,4 +11,12 @@
 namespace torch
 {
 
+struct BrdfSample
+{
+  unsigned int seed;
+  float3 direction;
+  float3 throughput;
+  float pdf;
+};
+
 } // namespace torch

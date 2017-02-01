@@ -12,11 +12,19 @@ enum RayType
   RAY_TYPE_COUNT,
 };
 
+struct RayBounce
+{
+  float3 origin;
+  float3 direction;
+  float3 throughput;
+};
+
 struct RadianceData
 {
   float3 radiance;
   float3 throughput;
   unsigned int seed;
+  RayBounce bounce;
 };
 
 struct ShadowData

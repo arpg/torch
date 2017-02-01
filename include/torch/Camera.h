@@ -19,6 +19,10 @@ class Camera : public Node
 
     void SetSampleCount(unsigned int count);
 
+    void SetMinBounces(unsigned int depth);
+
+    void SetMaxBounces(unsigned int depth);
+
     void Capture(Image& image);
 
     void PreBuildScene() override;
@@ -52,6 +56,10 @@ class Camera : public Node
     float2 m_centerPoint;
 
     unsigned int m_sampleCount;
+
+    unsigned int m_minDepth;
+
+    unsigned int m_maxDepth;
 
     optix::Buffer m_buffer;
 
