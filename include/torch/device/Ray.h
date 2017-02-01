@@ -25,6 +25,7 @@ struct RadianceData
   float3 throughput;
   unsigned int seed;
   RayBounce bounce;
+  unsigned int depth;
 };
 
 struct ShadowData

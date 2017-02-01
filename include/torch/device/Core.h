@@ -14,6 +14,7 @@ namespace torch
 struct BrdfSample
 {
   unsigned int seed;
+  float3 normal;
   float3 direction;
   float3 throughput;
   float pdf;

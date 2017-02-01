@@ -37,6 +37,7 @@ set(TEST_CPP_SOURCES
   ${TEST_CPP_SOURCE_DIR}/Distribution2D.cpp
   ${TEST_CPP_SOURCE_DIR}/Transform.cpp
   ${TEST_CPP_SOURCE_DIR}/Node.cpp
+  ${TEST_CPP_SOURCE_DIR}/Sampling.cpp
 )
 
 # define cuda sources

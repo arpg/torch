@@ -51,12 +51,28 @@ RT_PROGRAM void Capture()
 
   for (unsigned int i = 0; i < sampleCount; ++i)
   {
+    data.bounce.origin = make_float3(0, 0, 0);
+    data.bounce.direction = make_float3(0, 0, 0);
+    data.bounce.throughput = make_float3(0, 0, 0);
+    data.depth = 0;
+
     GetDirection(ray.direction, seed);
     data.seed = seed;
     data.throughput = make_float3(1.0f / sampleCount);
     rtTrace(sceneRoot, ray, data);
     InitializeRay(ray, data);
     seed = data.seed;
+
+    if (dot(data.bounce.direction, data.bounce.direction) > 0)
+    {
+      data.depth = 1;
+      ray.origin = data.bounce.origin;
+      ray.direction = data.bounce.direction;
+      data.throughput = data.bounce.throughput;
+      rtTrace(sceneRoot, ray, data);
+      InitializeRay(ray, data);
+      seed = data.seed;
+    }
   }
 
   buffer[pixelIndex] = data.radiance;

@@ -161,6 +161,7 @@ set(CUDA_HEADERS
   ${CUDA_HEADER_DIR}/Light.h
   ${CUDA_HEADER_DIR}/Random.h
   ${CUDA_HEADER_DIR}/Ray.h
+  ${CUDA_HEADER_DIR}/Sampling.h
   ${CUDA_HEADER_DIR}/Transform.h
 )
 
