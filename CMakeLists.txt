@@ -69,6 +69,7 @@ set(CPP_HEADERS
   ${CPP_HEADER_DIR}/EnvironmentLightSampler.h
   ${CPP_HEADER_DIR}/Exception.h
   ${CPP_HEADER_DIR}/GeometryGroup.h
+  ${CPP_HEADER_DIR}/GeometryGroupSampler.h
   ${CPP_HEADER_DIR}/Geometry.h
   ${CPP_HEADER_DIR}/GeometrySampler.h
   ${CPP_HEADER_DIR}/Group.h
@@ -80,6 +81,7 @@ set(CPP_HEADERS
   ${CPP_HEADER_DIR}/MatteMaterial.h
   ${CPP_HEADER_DIR}/Mesh.h
   ${CPP_HEADER_DIR}/MeshLoader.h
+  ${CPP_HEADER_DIR}/MeshSampler.h
   ${CPP_HEADER_DIR}/Node.h
   ${CPP_HEADER_DIR}/Normal.h
   ${CPP_HEADER_DIR}/Object.h
@@ -117,6 +119,7 @@ set(CPP_SOURCES
   ${CPP_SOURCE_DIR}/EnvironmentLightSampler.cpp
   ${CPP_SOURCE_DIR}/Geometry.cpp
   ${CPP_SOURCE_DIR}/GeometryGroup.cpp
+  ${CPP_SOURCE_DIR}/GeometryGroupSampler.cpp
   ${CPP_SOURCE_DIR}/GeometrySampler.cpp
   ${CPP_SOURCE_DIR}/Group.cpp
   ${CPP_SOURCE_DIR}/Image.cpp
@@ -127,6 +130,7 @@ set(CPP_SOURCES
   ${CPP_SOURCE_DIR}/MatteMaterial.cpp
   ${CPP_SOURCE_DIR}/Mesh.cpp
   ${CPP_SOURCE_DIR}/MeshLoader.cpp
+  ${CPP_SOURCE_DIR}/MeshSampler.cpp
   ${CPP_SOURCE_DIR}/Node.cpp
   ${CPP_SOURCE_DIR}/Normal.cpp
   ${CPP_SOURCE_DIR}/Object.cpp
@@ -172,8 +176,10 @@ set(CUDA_SOURCES
   ${CUDA_SOURCE_DIR}/Distribution2D.cu
   ${CUDA_SOURCE_DIR}/EnvironmentLightSampler.cu
   ${CUDA_SOURCE_DIR}/Exception.cu
+  ${CUDA_SOURCE_DIR}/GeometryGroupSampler.cu
   ${CUDA_SOURCE_DIR}/MatteMaterial.cu
   ${CUDA_SOURCE_DIR}/Mesh.cu
+  ${CUDA_SOURCE_DIR}/MeshSampler.cu
   ${CUDA_SOURCE_DIR}/PointLightSampler.cu
   ${CUDA_SOURCE_DIR}/SceneGeometrySampler.cu
   ${CUDA_SOURCE_DIR}/SceneLightSampler.cu

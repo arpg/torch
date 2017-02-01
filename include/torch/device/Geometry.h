@@ -7,6 +7,7 @@ namespace torch
 
 enum GeometryType
 {
+  GEOM_TYPE_GROUP,
   GEOM_TYPE_MESH,
   GEOM_TYPE_SPHERE,
   GEOM_TYPE_COUNT
@@ -14,12 +15,19 @@ enum GeometryType
 
 struct GeometrySample
 {
+  GeometryType type;
   unsigned int id;
   unsigned int seed;
   float3 origin;
-  float3 position;
+  float3 direction;
   float tmin;
+  float tmax;
   float pdf;
+};
+
+struct GeometryGroupData
+{
+
 };
 
 struct MeshData
@@ -37,12 +45,6 @@ struct SphereData
   optix::Matrix4x4 T_wl;
   optix::Matrix4x4 T_lw;
   float area;
-};
-
-struct GeometryGroupData
-{
-  // ???
-  // area : float
 };
 
 } // namespace torch

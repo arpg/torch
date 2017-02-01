@@ -18,6 +18,11 @@ optix::Program SphereSampler::GetProgram() const
   return m_program;
 }
 
+void SphereSampler::Add(const SphereData& sphere)
+{
+  m_spheres.push_back(sphere);
+}
+
 void SphereSampler::Clear()
 {
   m_spheres.clear();
@@ -30,11 +35,6 @@ void SphereSampler::Update()
   device = reinterpret_cast<SphereData*>(m_buffer->map());
   std::copy(m_spheres.begin(), m_spheres.end(), device);
   m_buffer->unmap();
-}
-
-void SphereSampler::Add(const SphereData& sphere)
-{
-  m_spheres.push_back(sphere);
 }
 
 void SphereSampler::Initialize()
@@ -55,7 +55,7 @@ void SphereSampler::CreateBuffer()
   m_program["spheres"]->setBuffer(m_buffer);
   m_buffer->setFormat(RT_FORMAT_USER);
   m_buffer->setElementSize(sizeof(SphereData));
-  m_buffer->setSize(1);
+  m_buffer->setSize(0);
 }
 
 } // namespace torch

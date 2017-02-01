@@ -13,6 +13,10 @@ class SceneGeometrySampler
 
     optix::Program GetProgram() const;
 
+    void Add(const GeometryGroupData& group);
+
+    void Add(const MeshData& mesh);
+
     void Add(const SphereData& sphere);
 
     void Clear();

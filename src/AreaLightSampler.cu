@@ -17,14 +17,16 @@ RT_CALLABLE_PROGRAM void Sample(torch::LightSample& sample)
   const torch::AreaLightData& light = lights[index];
 
   torch::GeometrySample geomSample;
-  geomSample.id = light.geometry;
+  geomSample.type = light.geomType;
+  geomSample.id = light.geomId;
   geomSample.origin = sample.origin;
   geomSample.tmin = sample.tmin;
+  geomSample.seed = sample.seed;
   SampleGeometry(geomSample);
 
-  const float3 difference = geomSample.position - sample.origin;
   sample.radiance = light.radiance;
-  sample.direction = normalize(difference);
-  sample.tmax = length(difference);
+  sample.direction = geomSample.direction;
+  sample.tmax = geomSample.tmax;
   sample.pdf *= geomSample.pdf;
+  sample.seed = geomSample.seed;
 }

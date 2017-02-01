@@ -67,6 +67,7 @@ void DistantLight::BuildScene(Link& link)
   const optix::Matrix4x4 R = transform.GetRotationMatrix();
   data.direction = make_float3(R.getCol(1));
   data.radiance = m_radiance.GetRGB();
+  data.luminance = 1;
   // data.luminance = GetLuminance();
 
   std::shared_ptr<SceneLightSampler> sampler;

@@ -38,7 +38,7 @@ void PointLight::BuildScene(Link& link)
   const Transform transform = link.GetTransform() * m_transform;
   data.position = transform.GetTranslation();
   data.intensity = m_intensity.GetRGB();
-  // data.luminance = GetLuminance();
+  data.luminance = 1; // GetLuminance();
 
   std::shared_ptr<SceneLightSampler> sampler;
   sampler = m_context->GetLightSampler();

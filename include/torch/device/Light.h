@@ -1,6 +1,7 @@
 #pragma once
 
 #include <torch/device/Core.h>
+#include <torch/device/Geometry.h>
 
 namespace torch
 {
@@ -27,7 +28,8 @@ struct LightSample
 
 struct AreaLightData
 {
-  unsigned int geometry;
+  GeometryType geomType;
+  unsigned int geomId;
   float3 radiance;
   float area;
   float luminance;

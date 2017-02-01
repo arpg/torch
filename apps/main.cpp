@@ -1,3 +1,4 @@
+#include <ctime>
 #include <iostream>
 #include <vector>
 #include <torch/Torch.h>
@@ -6,22 +7,27 @@ using namespace torch;
 
 int main(int argc, char** argv)
 {
+  const clock_t start = clock();
   std::cout << "Starting..." << std::endl;
 
   Scene scene;
   scene.SetEpsilon(1E-4);
 
-  // const Spectrum sky = Spectrum::FromRGB(0.25, 0.25, 0.5);
-  // const Spectrum sun = Spectrum::FromRGB(10.0, 10.0, 8.0);
-  const Spectrum sky = Spectrum::FromRGB(1.25, 1.25, 1.25);
-  const Spectrum sun = Spectrum::FromRGB(5.00, 0.00, 0.00);
   std::shared_ptr<EnvironmentLight> envLight;
   envLight = scene.CreateEnvironmentLight();
-  envLight->SetRowCount(5);
-  envLight->SetRadiance(sky);
-  envLight->SetRadiance(2, sun);
-  // envLight->SetRadiance(295, sun);
+  envLight->SetRowCount(512);
+  envLight->SetRadiance(0.00005, 0.00005, 0.00005);
   scene.Add(envLight);
+
+  std::shared_ptr<Sphere> sphere;
+  sphere = scene.CreateSphere();
+
+  std::shared_ptr<AreaLight> light;
+  light = scene.CreateAreaLight();
+  light->SetGeometry(sphere);
+  light->SetRadiance(5, 5, 5);
+  light->SetPosition(1, 1, 0);
+  scene.Add(light);
 
   std::shared_ptr<Mesh> mesh;
   mesh = scene.CreateMesh("bunny.ply");
@@ -73,7 +79,7 @@ int main(int argc, char** argv)
 
   std::shared_ptr<MatteMaterial> material2;
   material2 = scene.CreateMatteMaterial();
-  material2->SetAlbedo(0.1, 0.5, 0.1);
+  material2->SetAlbedo(0.1, 0.3, 0.1);
 
   std::shared_ptr<Primitive> primitive2;
   primitive2 = scene.CreatePrimitive();
@@ -90,11 +96,14 @@ int main(int argc, char** argv)
   camera->SetCenterPoint(320, 240);
   camera->SetOrientation(0, 0, 0);
   camera->SetPosition(0, 0, 0);
-  camera->SetSampleCount(512);
+  camera->SetSampleCount(128);
 
   Image image;
   camera->Capture(image);
   image.Save("image.png");
-  std::cout << "Finished." << std::endl;
+
+  const clock_t stop = clock();
+  const double time = double(stop - start) / CLOCKS_PER_SEC;
+  std::cout << "Elapsed Time: " << time << std::endl;
   return 0;
 }

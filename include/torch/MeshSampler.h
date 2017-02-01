@@ -5,15 +5,15 @@
 namespace torch
 {
 
-class SphereSampler : public GeometrySampler
+class MeshSampler : public GeometrySampler
 {
   public:
 
-    SphereSampler(std::shared_ptr<Context> context);
+    MeshSampler(std::shared_ptr<Context> context);
 
     optix::Program GetProgram() const override;
 
-    void Add(const SphereData& sphere);
+    void Add(const MeshData& mesh);
 
     void Clear() override;
 
@@ -33,7 +33,7 @@ class SphereSampler : public GeometrySampler
 
     optix::Program m_program;
 
-    std::vector<SphereData> m_spheres;
+    std::vector<MeshData> m_meshes;
 };
 
 } // namespace torch
