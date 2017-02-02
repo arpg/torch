@@ -17,6 +17,7 @@ int main(int argc, char** argv)
   envLight = scene.CreateEnvironmentLight();
   envLight->SetRowCount(512);
   envLight->SetRadiance(0.00005, 0.00005, 0.00005);
+  // envLight->SetRadiance(0, Spectrum::FromRGB(10, 10, 5));
   scene.Add(envLight);
 
   std::shared_ptr<Sphere> sphere;
@@ -61,7 +62,7 @@ int main(int argc, char** argv)
 
   std::shared_ptr<MatteMaterial> material;
   material = scene.CreateMatteMaterial();
-  material->SetAlbedo(1.0, 0.1, 0.1);
+  material->SetAlbedo(0.7, 0.1, 0.1);
 
   std::shared_ptr<Primitive> primitive;
   primitive = scene.CreatePrimitive();
@@ -96,7 +97,7 @@ int main(int argc, char** argv)
   camera->SetCenterPoint(320, 240);
   camera->SetOrientation(0, 0, 0);
   camera->SetPosition(0, 0, 0);
-  camera->SetSampleCount(512);
+  camera->SetSampleCount(64);
 
   Image image;
   camera->Capture(image);

@@ -39,6 +39,11 @@ TORCH_DEVICE unsigned int InitializeSeed()
   return torch::init_seed<16>(a, b);
 }
 
+TORCH_DEVICE float GetY(const float3& L)
+{
+  return 0.212671f * L.x + 0.715160f * L.y + 0.072169f * L.z;
+}
+
 RT_PROGRAM void Capture()
 {
   optix::Ray ray;
@@ -51,27 +56,43 @@ RT_PROGRAM void Capture()
 
   for (unsigned int i = 0; i < sampleCount; ++i)
   {
+    InitializeRay(ray, data);
+    GetDirection(ray.direction, seed);
     data.bounce.origin = make_float3(0, 0, 0);
     data.bounce.direction = make_float3(0, 0, 0);
     data.bounce.throughput = make_float3(0, 0, 0);
-    data.depth = 0;
-
-    GetDirection(ray.direction, seed);
-    data.seed = seed;
     data.throughput = make_float3(1.0f / sampleCount);
-    rtTrace(sceneRoot, ray, data);
-    InitializeRay(ray, data);
-    seed = data.seed;
 
-    if (dot(data.bounce.direction, data.bounce.direction) > 0)
+    for (unsigned int depth = 0; depth < 8; ++depth)
     {
-      data.depth = 1;
-      ray.origin = data.bounce.origin;
-      ray.direction = data.bounce.direction;
-      data.throughput = data.bounce.throughput;
+      data.depth = depth;
+      data.seed = seed;
       rtTrace(sceneRoot, ray, data);
       InitializeRay(ray, data);
       seed = data.seed;
+
+      torch::RayBounce& bounce = data.bounce;
+
+      if (length(bounce.direction) < 1E-8)
+      {
+        break;
+      }
+
+      if (depth > 3)
+      {
+        const float continueProb = min(0.5f, GetY(bounce.throughput));
+
+        if (torch::randf(seed) > continueProb)
+        {
+          break;
+        }
+
+        bounce.throughput /= continueProb;
+      }
+
+      ray.origin = data.bounce.origin;
+      ray.direction = data.bounce.direction;
+      data.throughput = data.bounce.throughput;
     }
   }
 

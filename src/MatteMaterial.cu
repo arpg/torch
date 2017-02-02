@@ -70,12 +70,12 @@ RT_PROGRAM void ClosestHit()
 
     rtTrace(sceneRoot, shadowRay, shadowData);
 
-    if (!shadowData.occluded)
-    {
+    // if (!shadowData.occluded && rayData.depth > 0)
+    // {
       float3 brdf = albedo / M_PIf;
       theta = dot(shadingNormal, sample.direction);
       rayData.radiance += rayData.throughput * brdf * sample.radiance * theta / sample.pdf;
-    }
+    // }
   }
 
   torch::BrdfSample brdfSample;
@@ -86,7 +86,7 @@ RT_PROGRAM void ClosestHit()
   theta = dot(shadingNormal, brdfSample.direction);
   rayData.bounce.origin = sample.origin;
   rayData.bounce.direction = brdfSample.direction;
-  rayData.bounce.throughput = rayData.throughput; // theta * rayData.throughput * brdfSample.throughput / brdfSample.pdf;
+  rayData.bounce.throughput = make_float3(0.5); // theta * rayData.throughput * brdfSample.throughput / brdfSample.pdf;
 }
 
 RT_PROGRAM void AnyHit()
