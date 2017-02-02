@@ -30,8 +30,8 @@ rtDeclareVariable(SampleLightFunction, SampleLights, , );
 
    optix::Matrix3x3 R;
    R.setCol(0, u);
-   R.setCol(1, n);
-   R.setCol(2, v);
+   R.setCol(1, v);
+   R.setCol(2, n);
    return R;
  }
 
@@ -41,7 +41,7 @@ TORCH_DEVICE void SampleBrdf(torch::BrdfSample& sample)
   torch::SampleHemisphereCosine(torch::randf2(sample.seed), direction);
   sample.pdf = direction.z / M_PIf;
   sample.direction = NormalToRotation(sample.normal) * direction;
-  sample.throughput = 0.5 * albedo / M_PIf;
+  sample.throughput = albedo / M_PIf;
 }
 
 RT_PROGRAM void ClosestHit()
@@ -70,12 +70,12 @@ RT_PROGRAM void ClosestHit()
 
     rtTrace(sceneRoot, shadowRay, shadowData);
 
-    // if (!shadowData.occluded && rayData.depth > 0)
-    // {
+    if (!shadowData.occluded)
+    {
       float3 brdf = albedo / M_PIf;
       theta = dot(shadingNormal, sample.direction);
       rayData.radiance += rayData.throughput * brdf * sample.radiance * theta / sample.pdf;
-    // }
+    }
   }
 
   torch::BrdfSample brdfSample;
@@ -86,7 +86,7 @@ RT_PROGRAM void ClosestHit()
   theta = dot(shadingNormal, brdfSample.direction);
   rayData.bounce.origin = sample.origin;
   rayData.bounce.direction = brdfSample.direction;
-  rayData.bounce.throughput = make_float3(0.5); // theta * rayData.throughput * brdfSample.throughput / brdfSample.pdf;
+  rayData.bounce.throughput = theta * rayData.throughput * brdfSample.throughput / brdfSample.pdf;
 }
 
 RT_PROGRAM void AnyHit()

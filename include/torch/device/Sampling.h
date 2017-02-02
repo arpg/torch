@@ -51,9 +51,9 @@ TORCH_HOSTDEVICE void SampleHemisphereCosine(const float2& sample, float3& p)
 {
   float2 uv;
   SampleDiskUniform(sample, uv);
-  p.y = sqrtf(1 - dot(uv, uv));
+  p.z = sqrtf(1 - dot(uv, uv));
   p.x = uv.x;
-  p.z = uv.y;
+  p.y = uv.y;
 }
 
 } // namespace torch

@@ -18,7 +18,7 @@ int main(int argc, char** argv)
   envLight->SetRowCount(512);
   envLight->SetRadiance(0.00005, 0.00005, 0.00005);
   // envLight->SetRadiance(0, Spectrum::FromRGB(10, 10, 5));
-  scene.Add(envLight);
+  // scene.Add(envLight);
 
   std::shared_ptr<Sphere> sphere;
   sphere = scene.CreateSphere();
@@ -80,7 +80,8 @@ int main(int argc, char** argv)
 
   std::shared_ptr<MatteMaterial> material2;
   material2 = scene.CreateMatteMaterial();
-  material2->SetAlbedo(0.1, 0.3, 0.1);
+  // material2->SetAlbedo(0.1, 0.3, 0.1);
+  material2->SetAlbedo(0.25, 0.25, 0.25);
 
   std::shared_ptr<Primitive> primitive2;
   primitive2 = scene.CreatePrimitive();
@@ -90,6 +91,24 @@ int main(int argc, char** argv)
   primitive2->SetPosition(1.5, -0.5, 3.5);
   group->AddChild(primitive2);
 
+  std::shared_ptr<Sphere> geometry4;
+  geometry4 = scene.CreateSphere();
+  geometry4->SetOrientation(0, 0, 0);
+  geometry4->SetPosition(0, 0, 0);
+  geometry4->SetScale(0.1, 4, 10);
+
+  std::shared_ptr<MatteMaterial> material4;
+  material4 = scene.CreateMatteMaterial();
+  material4->SetAlbedo(0.1, 0.1, 0.05);
+
+  std::shared_ptr<Primitive> primitive4;
+  primitive4 = scene.CreatePrimitive();
+  primitive4->SetGeometry(geometry4);
+  primitive4->SetMaterial(material4);
+  primitive4->SetOrientation(0, 0, 0);
+  primitive4->SetPosition(2.5, 0, 0);
+  group->AddChild(primitive4);
+
   std::shared_ptr<Camera> camera;
   camera = scene.CreateCamera();
   camera->SetImageSize(640, 480);
@@ -97,7 +116,7 @@ int main(int argc, char** argv)
   camera->SetCenterPoint(320, 240);
   camera->SetOrientation(0, 0, 0);
   camera->SetPosition(0, 0, 0);
-  camera->SetSampleCount(64);
+  camera->SetSampleCount(128);
 
   Image image;
   camera->Capture(image);
