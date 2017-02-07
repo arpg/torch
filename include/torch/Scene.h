@@ -13,6 +13,8 @@ class Scene
 
     void Add(std::shared_ptr<Node> node);
 
+    void GetCameras(std::vector<std::shared_ptr<Camera>>& cameras);
+
     std::shared_ptr<Camera> CreateCamera();
 
     std::shared_ptr<Group> CreateGroup();
@@ -47,6 +49,8 @@ class Scene
   protected:
 
     std::shared_ptr<Context> m_context;
+
+    std::vector<std::weak_ptr<Camera>> m_cameras;
 };
 
 } // namespace torch

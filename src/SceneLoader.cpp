@@ -90,7 +90,7 @@ std::shared_ptr<Node> SceneLoader::ParseCamera(Element* elem)
   Element* centerPoint = elem->FirstChildElement("center_point");
   TORCH_ASSERT(centerPoint, "camera missing center_point");
   ParseFloat2(centerPoint, cx, cy);
-  camera->SetFocalLength(cx, cy);
+  camera->SetCenterPoint(cx, cy);
 
   Element* sampleCount = elem->FirstChildElement("sample_count");
   TORCH_ASSERT(sampleCount, "camera missing sample_count");

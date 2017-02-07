@@ -14,18 +14,17 @@ int main(int argc, char** argv)
   SceneLoader loader("scene.xml");
   loader.Load(scene);
 
-  std::shared_ptr<Camera> camera;
-  camera = scene.CreateCamera();
-  camera->SetImageSize(640, 480);
-  camera->SetFocalLength(320, 320);
-  camera->SetCenterPoint(320, 240);
-  camera->SetOrientation(0, 0, 0);
-  camera->SetPosition(0, 0, 0);
-  camera->SetSampleCount(128);
-
+  std::vector<std::shared_ptr<Camera>> cameras;
+  scene.GetCameras(cameras);
   Image image;
-  camera->Capture(image);
-  image.Save("image.png");
+
+  for (size_t i = 0; i < cameras.size(); ++i)
+  {
+    std::cout << "Rendering image " << i << "..." << std::endl;
+    const std::string file = "image" + std::to_string(i) + ".png";
+    cameras[i]->Capture(image);
+    image.Save(file);
+  }
 
   const clock_t stop = clock();
   const double time = double(stop - start) / CLOCKS_PER_SEC;

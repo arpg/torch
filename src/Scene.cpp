@@ -28,9 +28,31 @@ void Scene::Add(std::shared_ptr<Node> node)
   sceneRoot->AddChild(node);
 }
 
+void Scene::GetCameras(std::vector<std::shared_ptr<Camera>>& cameras)
+{
+  size_t index = 0;
+  cameras.reserve(m_cameras.size());
+
+  for (size_t i = 0; i < m_cameras.size(); ++i)
+  {
+    std::weak_ptr<Camera> camera = m_cameras[i];
+
+    if (camera.use_count() > 0)
+    {
+      cameras.push_back(camera.lock());
+      m_cameras[index++] = camera;
+    }
+  }
+
+  m_cameras.resize(index);
+}
+
 std::shared_ptr<Camera> Scene::CreateCamera()
 {
-  return CreateObject<Camera>();
+  std::shared_ptr<Camera> camera;
+  camera = CreateObject<Camera>();
+  m_cameras.push_back(camera);
+  return camera;
 }
 
 std::shared_ptr<Group> Scene::CreateGroup()
