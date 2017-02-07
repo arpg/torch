@@ -17,7 +17,8 @@ Spectrum MatteMaterial::GetAlbedo() const
 void MatteMaterial::SetAlbedo(const Spectrum& albedo)
 {
   m_albedo = albedo;
-  m_material["albedo"]->setFloat(m_albedo.GetRGB());
+  const Vector rgb = m_albedo.GetRGB();
+  m_material["albedo"]->setFloat(rgb.x, rgb.y, rgb.z);
 }
 
 void MatteMaterial::SetAlbedo(float r, float g, float b)
@@ -27,7 +28,8 @@ void MatteMaterial::SetAlbedo(float r, float g, float b)
 
 void MatteMaterial::Initialize()
 {
-  m_material["albedo"]->setFloat(m_albedo.GetRGB());
+  const Vector rgb = m_albedo.GetRGB();
+  m_material["albedo"]->setFloat(rgb.x, rgb.y, rgb.z);
 }
 
 } // namespace torch

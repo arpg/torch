@@ -1,4 +1,5 @@
 #include <torch/Transformable.h>
+#include <torch/Vector.h>
 
 namespace torch
 {
@@ -18,7 +19,7 @@ void Transformable::SetTransform(const Transform& transform)
   UpdateTransform();
 }
 
-float3 Transformable::GetOrientation() const
+Vector Transformable::GetOrientation() const
 {
   return m_transform.GetEulerAngles();
 }
@@ -29,7 +30,7 @@ void Transformable::SetOrientation(float x, float y, float z)
   UpdateTransform();
 }
 
-float3 Transformable::GetPosition() const
+Vector Transformable::GetPosition() const
 {
   return m_transform.GetTranslation();
 }
@@ -40,7 +41,7 @@ void Transformable::SetPosition(float x, float y, float z)
   UpdateTransform();
 }
 
-float3 Transformable::GetScale() const
+Vector Transformable::GetScale() const
 {
   return m_transform.GetScale();
 }

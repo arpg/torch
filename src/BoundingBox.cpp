@@ -5,10 +5,15 @@
 namespace torch
 {
 
-BoundingBox::BoundingBox() :
-  bmin(+infinity, +infinity, +infinity),
-  bmax(-infinity, -infinity, -infinity)
+BoundingBox::BoundingBox()
 {
+  Invalidate();
+}
+
+void BoundingBox::Invalidate()
+{
+  bmin = Point(+infinity, +infinity, +infinity);
+  bmax = Point(-infinity, -infinity, -infinity);
 }
 
 void BoundingBox::Union(const Point& p)

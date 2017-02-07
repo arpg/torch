@@ -3,6 +3,8 @@
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 #include <torch/Mesh.h>
+#include <torch/Normal.h>
+#include <torch/Point.h>
 
 namespace torch
 {
@@ -40,8 +42,8 @@ void MeshLoader::Load(const std::string& file)
   }
 
   unsigned int normalCount = (hasNormals) ? vertexCount : 0;
-  std::vector<float3> vertices(vertexCount);
-  std::vector<float3> normals(normalCount);
+  std::vector<Point> vertices(vertexCount);
+  std::vector<Normal> normals(normalCount);
   std::vector<uint3> faces(faceCount);
   unsigned int vertexOffset = 0;
   unsigned int faceOffset = 0;

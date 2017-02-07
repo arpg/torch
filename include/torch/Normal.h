@@ -13,6 +13,8 @@ struct Normal
 
   explicit Normal(const Vector& v);
 
+  Normal operator-() const;
+
   Normal operator+(const Normal& v) const;
 
   Normal& operator+=(const Normal& v);

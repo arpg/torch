@@ -1,5 +1,7 @@
 #include <torch/Mesh.h>
 #include <torch/Context.h>
+#include <torch/Point.h>
+#include <torch/Normal.h>
 
 namespace torch
 {
@@ -10,13 +12,13 @@ Mesh::Mesh(std::shared_ptr<Context> context) :
   Initialize();
 }
 
-void Mesh::SetVertices(const std::vector<float3>& vertices)
+void Mesh::SetVertices(const std::vector<Point>& vertices)
 {
   UpdateBounds(vertices);
   CopyTo(m_vertices, vertices);
 }
 
-void Mesh::SetNormals(const std::vector<float3>& normals)
+void Mesh::SetNormals(const std::vector<Normal>& normals)
 {
   CopyTo(m_normals, normals);
 }
@@ -32,11 +34,11 @@ BoundingBox Mesh::GetBounds(const Transform& transform)
   return transform * m_transform * m_bounds;
 }
 
-void Mesh::UpdateBounds(const std::vector<float3>& vertices)
+void Mesh::UpdateBounds(const std::vector<Point>& vertices)
 {
   m_bounds = BoundingBox();
 
-  for (const float3 vertex : vertices)
+  for (const Point& vertex : vertices)
   {
     m_bounds.Union(vertex.x, vertex.y, vertex.z);
   }

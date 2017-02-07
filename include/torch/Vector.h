@@ -13,6 +13,8 @@ struct Vector
 
   explicit Vector(const Normal& n);
 
+  Vector operator-() const;
+
   Vector operator+(const Vector& v) const;
 
   Vector& operator+=(const Vector& v);

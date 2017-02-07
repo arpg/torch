@@ -6,7 +6,7 @@ using namespace torch;
 
 const float epsilon = 1E-4;
 
-Eigen::Matrix4f GetRotationMatrix(const float3& rotation)
+Eigen::Matrix4f GetRotationMatrix(const Vector& rotation)
 {
   const Eigen::Quaternionf quaternion =
       Eigen::AngleAxisf(rotation.x, Eigen::Vector3f::UnitX()) *
@@ -28,30 +28,30 @@ Eigen::Matrix4f GetRotationMatrix(const optix::Matrix4x4& rotation)
 TEST(Transform, Translation)
 {
   Transform transform;
-  float3 expected;
-  float3 found;
+  Vector expected;
+  Vector found;
 
-  expected = make_float3(0, 0, 0);
+  expected = Vector(0, 0, 0);
   found = transform.GetTranslation();
   EXPECT_NEAR(expected.x, found.x, epsilon);
   EXPECT_NEAR(expected.y, found.y, epsilon);
   EXPECT_NEAR(expected.z, found.z, epsilon);
 
-  expected = make_float3(1, 2, 3);
+  expected = Vector(1, 2, 3);
   transform.SetTranslation(expected);
   found = transform.GetTranslation();
   EXPECT_NEAR(expected.x, found.x, epsilon);
   EXPECT_NEAR(expected.y, found.y, epsilon);
   EXPECT_NEAR(expected.z, found.z, epsilon);
 
-  expected = make_float3(0, -1, 2);
+  expected = Vector(0, -1, 2);
   transform.SetTranslation(expected);
   found = transform.GetTranslation();
   EXPECT_NEAR(expected.x, found.x, epsilon);
   EXPECT_NEAR(expected.y, found.y, epsilon);
   EXPECT_NEAR(expected.z, found.z, epsilon);
 
-  expected = make_float3(0, 0, 0);
+  expected = Vector(0, 0, 0);
   transform.SetTranslation(expected);
   found = transform.GetTranslation();
   EXPECT_NEAR(expected.x, found.x, epsilon);
@@ -64,9 +64,9 @@ TEST(Transform, Rotation)
   Transform transform;
   Eigen::Matrix4f expected;
   Eigen::Matrix4f found;
-  float3 rotation;
+  Vector rotation;
 
-  rotation = make_float3(0, 0, 0);
+  rotation = Vector(0, 0, 0);
   expected = GetRotationMatrix(rotation);
   found = GetRotationMatrix(transform.GetRotationMatrix());
 
@@ -75,7 +75,7 @@ TEST(Transform, Rotation)
     EXPECT_NEAR(expected.data()[i], found.data()[i], epsilon);
   }
 
-  rotation = make_float3(0.5, 0, 0);
+  rotation = Vector(0.5, 0, 0);
   transform.SetRotation(rotation);
   expected = GetRotationMatrix(rotation);
   found = GetRotationMatrix(transform.GetRotationMatrix());
@@ -85,7 +85,7 @@ TEST(Transform, Rotation)
     EXPECT_NEAR(expected.data()[i], found.data()[i], epsilon);
   }
 
-  rotation = make_float3(0, 0.5, 0);
+  rotation = Vector(0, 0.5, 0);
   transform.SetRotation(rotation);
   expected = GetRotationMatrix(rotation);
   found = GetRotationMatrix(transform.GetRotationMatrix());
@@ -95,7 +95,7 @@ TEST(Transform, Rotation)
     EXPECT_NEAR(expected.data()[i], found.data()[i], epsilon);
   }
 
-  rotation = make_float3(0, 0, 0.5);
+  rotation = Vector(0, 0, 0.5);
   transform.SetRotation(rotation);
   expected = GetRotationMatrix(rotation);
   found = GetRotationMatrix(transform.GetRotationMatrix());
@@ -105,7 +105,7 @@ TEST(Transform, Rotation)
     EXPECT_NEAR(expected.data()[i], found.data()[i], epsilon);
   }
 
-  rotation = make_float3(0.1, 0.2, 0.3);
+  rotation = Vector(0.1, 0.2, 0.3);
   transform.SetRotation(rotation);
   expected = GetRotationMatrix(rotation);
   found = GetRotationMatrix(transform.GetRotationMatrix());
@@ -115,7 +115,7 @@ TEST(Transform, Rotation)
     EXPECT_NEAR(expected.data()[i], found.data()[i], epsilon);
   }
 
-  rotation = make_float3(1, 2, 3);
+  rotation = Vector(1, 2, 3);
   transform.SetRotation(rotation);
   expected = GetRotationMatrix(rotation);
   found = GetRotationMatrix(transform.GetRotationMatrix());
@@ -125,7 +125,7 @@ TEST(Transform, Rotation)
     EXPECT_NEAR(expected.data()[i], found.data()[i], epsilon);
   }
 
-  rotation = make_float3(-1, 2, -3);
+  rotation = Vector(-1, 2, -3);
   transform.SetRotation(rotation);
   expected = GetRotationMatrix(rotation);
   found = GetRotationMatrix(transform.GetRotationMatrix());
@@ -135,7 +135,7 @@ TEST(Transform, Rotation)
     EXPECT_NEAR(expected.data()[i], found.data()[i], epsilon);
   }
 
-  rotation = make_float3(0.1, 0.2, 0.3);
+  rotation = Vector(0.1, 0.2, 0.3);
   transform.SetScale(1, 2, 3);
   transform.SetRotation(rotation);
   expected = GetRotationMatrix(rotation);
@@ -146,7 +146,7 @@ TEST(Transform, Rotation)
     EXPECT_NEAR(expected.data()[i], found.data()[i], epsilon);
   }
 
-  rotation = make_float3(-1, 2, -3);
+  rotation = Vector(-1, 2, -3);
   transform.SetScale(0.1, 0.2, 0.3);
   transform.SetRotation(rotation);
   expected = GetRotationMatrix(rotation);
@@ -161,30 +161,30 @@ TEST(Transform, Rotation)
 TEST(Transform, Scale)
 {
   Transform transform;
-  float3 expected;
-  float3 found;
+  Vector expected;
+  Vector found;
 
-  expected = make_float3(1, 1, 1);
+  expected = Vector(1, 1, 1);
   found = transform.GetScale();
   EXPECT_NEAR(expected.x, found.x, epsilon);
   EXPECT_NEAR(expected.y, found.y, epsilon);
   EXPECT_NEAR(expected.z, found.z, epsilon);
 
-  expected = make_float3(1, 2, 3);
+  expected = Vector(1, 2, 3);
   transform.SetScale(expected);
   found = transform.GetScale();
   EXPECT_NEAR(expected.x, found.x, epsilon);
   EXPECT_NEAR(expected.y, found.y, epsilon);
   EXPECT_NEAR(expected.z, found.z, epsilon);
 
-  expected = make_float3(2, 2, 2);
+  expected = Vector(2, 2, 2);
   transform.SetScale(expected);
   found = transform.GetScale();
   EXPECT_NEAR(expected.x, found.x, epsilon);
   EXPECT_NEAR(expected.y, found.y, epsilon);
   EXPECT_NEAR(expected.z, found.z, epsilon);
 
-  expected = make_float3(0.1, 0.2, 0.3);
+  expected = Vector(0.1, 0.2, 0.3);
   transform.SetScale(expected);
   found = transform.GetScale();
   EXPECT_NEAR(expected.x, found.x, epsilon);
@@ -192,7 +192,7 @@ TEST(Transform, Scale)
   EXPECT_NEAR(expected.z, found.z, epsilon);
 
   transform.SetRotation(0.1, 0.2, 0.3);
-  expected = make_float3(0.1, 0.2, 0.3);
+  expected = Vector(0.1, 0.2, 0.3);
   transform.SetScale(expected);
   found = transform.GetScale();
   EXPECT_NEAR(expected.x, found.x, epsilon);
@@ -200,7 +200,7 @@ TEST(Transform, Scale)
   EXPECT_NEAR(expected.z, found.z, epsilon);
 
   transform.SetRotation(0.3, 0.2, 0.1);
-  expected = make_float3(1, 2, 3);
+  expected = Vector(1, 2, 3);
   transform.SetScale(expected);
   found = transform.GetScale();
   EXPECT_NEAR(expected.x, found.x, epsilon);

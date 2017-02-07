@@ -2,7 +2,7 @@
 #include <torch/AreaLight.h>
 #include <torch/Camera.h>
 #include <torch/Context.h>
-#include <torch/DistantLight.h>
+#include <torch/DirectionalLight.h>
 #include <torch/EnvironmentLight.h>
 #include <torch/GeometryGroup.h>
 #include <torch/Group.h>
@@ -19,20 +19,6 @@ namespace torch
 Scene::Scene()
 {
   Initialize();
-}
-
-float Scene::GetEpsilon() const
-{
-  optix::Variable variable;
-  variable = m_context->GetVariable("sceneEpsilon");
-  return variable->getFloat();
-}
-
-void Scene::SetEpsilon(float epsilon)
-{
-  optix::Variable variable;
-  variable = m_context->GetVariable("sceneEpsilon");
-  variable->setFloat(epsilon);
 }
 
 void Scene::Add(std::shared_ptr<Node> node)
@@ -57,9 +43,9 @@ std::shared_ptr<AreaLight> Scene::CreateAreaLight()
   return CreateObject<AreaLight>();
 }
 
-std::shared_ptr<DistantLight> Scene::CreateDistantLight()
+std::shared_ptr<DirectionalLight> Scene::CreateDirectionalLight()
 {
-  return CreateObject<DistantLight>();
+  return CreateObject<DirectionalLight>();
 }
 std::shared_ptr<EnvironmentLight> Scene::CreateEnvironmentLight()
 {

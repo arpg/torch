@@ -17,29 +17,29 @@ class Transform
 
     optix::Matrix4x4 GetRotationMatrix() const;
 
-    float3 GetEulerAngles() const;
+    Vector GetEulerAngles() const;
 
     void SetRotation(const optix::Matrix3x3& rotation);
 
     void SetRotation(float x, float y, float z);
 
-    void SetRotation(const float3& rotation);
+    void SetRotation(const Vector& rotation);
 
-    float3 GetTranslation() const;
+    Vector GetTranslation() const;
 
     optix::Matrix4x4 GetTranslationMatrix() const;
 
     void SetTranslation(float x, float y, float z);
 
-    void SetTranslation(const float3& translation);
+    void SetTranslation(const Vector& translation);
 
     optix::Matrix4x4 GetScaleMatrix() const;
 
-    float3 GetScale() const;
+    Vector GetScale() const;
 
     void SetScale(float x, float y, float z);
 
-    void SetScale(const float3& scale);
+    void SetScale(const Vector& scale);
 
     void SetScale(float scale);
 

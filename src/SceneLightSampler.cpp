@@ -1,7 +1,7 @@
 #include <torch/SceneLightSampler.h>
 #include <torch/AreaLightSampler.h>
 #include <torch/Context.h>
-#include <torch/DistantLightSampler.h>
+#include <torch/DirectionalLightSampler.h>
 #include <torch/Distribution1D.h>
 #include <torch/EnvironmentLightSampler.h>
 #include <torch/PointLightSampler.h>
@@ -28,10 +28,10 @@ void SceneLightSampler::Add(const AreaLightData& light)
   static_cast<AreaLightSampler*>(sampler)->Add(light);
 }
 
-void SceneLightSampler::Add(const DistantLightData& light)
+void SceneLightSampler::Add(const DirectionalLightData& light)
 {
-  LightSampler* sampler = m_samplers[LIGHT_TYPE_DISTANT].get();
-  static_cast<DistantLightSampler*>(sampler)->Add(light);
+  LightSampler* sampler = m_samplers[LIGHT_TYPE_Directional].get();
+  static_cast<DirectionalLightSampler*>(sampler)->Add(light);
 }
 
 void SceneLightSampler::Add(const EnvironmentLightData& light)
@@ -109,9 +109,9 @@ void SceneLightSampler::CreateLightSamplers()
   m_program["SampleAreaLights"]->set(sampler.get()->GetProgram());
   m_samplers[LIGHT_TYPE_AREA] = std::move(sampler);
 
-  sampler = std::make_unique<DistantLightSampler>(m_context);
-  m_program["SampleDistantLights"]->set(sampler.get()->GetProgram());
-  m_samplers[LIGHT_TYPE_DISTANT] = std::move(sampler);
+  sampler = std::make_unique<DirectionalLightSampler>(m_context);
+  m_program["SampleDirectionalLights"]->set(sampler.get()->GetProgram());
+  m_samplers[LIGHT_TYPE_Directional] = std::move(sampler);
 
   sampler = std::make_unique<EnvironmentLightSampler>(m_context);
   m_program["SampleEnvironmentLights"]->set(sampler.get()->GetProgram());

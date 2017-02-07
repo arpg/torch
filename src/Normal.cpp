@@ -20,6 +20,11 @@ Normal::Normal(const Vector& v) :
 {
 }
 
+Normal Normal::operator-() const
+{
+  return Normal(-x, -y, -z);
+}
+
 Normal Normal::operator+(const Normal& v) const
 {
   return Normal(x + v.x, y + v.y, z + v.z);

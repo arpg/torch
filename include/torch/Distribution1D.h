@@ -25,9 +25,9 @@ class Distribution1D
 
     void Initialize();
 
-    void CreateBuffer();
-
     void CreateProgram();
+
+    void CreateBuffer();
 
   protected:
 

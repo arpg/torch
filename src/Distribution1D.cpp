@@ -50,8 +50,14 @@ void Distribution1D::Normalize(std::vector<float>& cdf)
 
 void Distribution1D::Initialize()
 {
-  CreateBuffer();
   CreateProgram();
+  CreateBuffer();
+}
+
+void Distribution1D::CreateProgram()
+{
+  const std::string file = PtxUtil::GetFile("Distribution1D");
+  m_program = m_context->CreateProgram(file, "Sample");
 }
 
 void Distribution1D::CreateBuffer()
@@ -59,12 +65,6 @@ void Distribution1D::CreateBuffer()
   m_buffer = m_context->CreateBuffer(RT_BUFFER_INPUT);
   m_buffer->setFormat(RT_FORMAT_FLOAT);
   m_buffer->setSize(1);
-}
-
-void Distribution1D::CreateProgram()
-{
-  const std::string file = PtxUtil::GetFile("Distribution1D");
-  m_program = m_context->CreateProgram(file, "Sample");
   m_program["cdf"]->setBuffer(m_buffer);
 }
 

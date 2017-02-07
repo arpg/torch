@@ -5,11 +5,11 @@
 namespace torch
 {
 
-class DistantLightSampler : public LightSampler
+class DirectionalLightSampler : public LightSampler
 {
   public:
 
-    DistantLightSampler(std::shared_ptr<Context> context);
+    DirectionalLightSampler(std::shared_ptr<Context> context);
 
     optix::Program GetProgram() const override;
 
@@ -19,7 +19,7 @@ class DistantLightSampler : public LightSampler
 
     void Update() override;
 
-    void Add(const DistantLightData& light);
+    void Add(const DirectionalLightData& light);
 
   protected:
 
@@ -43,7 +43,7 @@ class DistantLightSampler : public LightSampler
 
     optix::Program m_program;
 
-    std::vector<DistantLightData> m_lights;
+    std::vector<DirectionalLightData> m_lights;
 
     std::unique_ptr<Distribution1D> m_distribution;
 };

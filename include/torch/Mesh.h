@@ -12,9 +12,9 @@ class Mesh : public SingleGeometry
 
     Mesh(std::shared_ptr<Context> context);
 
-    void SetVertices(const std::vector<float3>& vertices);
+    void SetVertices(const std::vector<Point>& vertices);
 
-    void SetNormals(const std::vector<float3>& normals);
+    void SetNormals(const std::vector<Normal>& normals);
 
     void SetFaces(const std::vector<uint3>& faces);
 
@@ -22,7 +22,7 @@ class Mesh : public SingleGeometry
 
   protected:
 
-    void UpdateBounds(const std::vector<float3>& vertices);
+    void UpdateBounds(const std::vector<Point>& vertices);
 
     template <typename T>
     static void CopyTo(optix::Buffer buffer, const std::vector<T>& data);

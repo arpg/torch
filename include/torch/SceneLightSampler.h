@@ -15,7 +15,7 @@ class SceneLightSampler
 
     void Add(const AreaLightData& light);
 
-    void Add(const DistantLightData& light);
+    void Add(const DirectionalLightData& light);
 
     void Add(const EnvironmentLightData& light);
 

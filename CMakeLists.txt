@@ -61,8 +61,8 @@ set(CPP_HEADERS
   ${CPP_HEADER_DIR}/Camera.h
   ${CPP_HEADER_DIR}/Context.h
   ${CPP_HEADER_DIR}/Core.h
-  ${CPP_HEADER_DIR}/DistantLight.h
-  ${CPP_HEADER_DIR}/DistantLightSampler.h
+  ${CPP_HEADER_DIR}/DirectionalLight.h
+  ${CPP_HEADER_DIR}/DirectionalLightSampler.h
   ${CPP_HEADER_DIR}/Distribution1D.h
   ${CPP_HEADER_DIR}/Distribution2D.h
   ${CPP_HEADER_DIR}/EnvironmentLight.h
@@ -111,8 +111,8 @@ set(CPP_SOURCES
   ${CPP_SOURCE_DIR}/BoundingBox.cpp
   ${CPP_SOURCE_DIR}/Camera.cpp
   ${CPP_SOURCE_DIR}/Context.cpp
-  ${CPP_SOURCE_DIR}/DistantLight.cpp
-  ${CPP_SOURCE_DIR}/DistantLightSampler.cpp
+  ${CPP_SOURCE_DIR}/DirectionalLight.cpp
+  ${CPP_SOURCE_DIR}/DirectionalLightSampler.cpp
   ${CPP_SOURCE_DIR}/Distribution1D.cpp
   ${CPP_SOURCE_DIR}/Distribution2D.cpp
   ${CPP_SOURCE_DIR}/EnvironmentLight.cpp
@@ -172,7 +172,7 @@ set(CUDA_SOURCE_DIR src)
 set(CUDA_SOURCES
   ${CUDA_SOURCE_DIR}/AreaLightSampler.cu
   ${CUDA_SOURCE_DIR}/Camera.cu
-  ${CUDA_SOURCE_DIR}/DistantLightSampler.cu
+  ${CUDA_SOURCE_DIR}/DirectionalLightSampler.cu
   ${CUDA_SOURCE_DIR}/Distribution1D.cu
   ${CUDA_SOURCE_DIR}/Distribution2D.cu
   ${CUDA_SOURCE_DIR}/EnvironmentLightSampler.cu

@@ -10,6 +10,8 @@ struct BoundingBox
 {
   BoundingBox();
 
+  void Invalidate();
+
   void Union(const Point& p);
 
   void Union(float x, float y, float z);

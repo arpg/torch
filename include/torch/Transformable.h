@@ -15,15 +15,15 @@ class Transformable
 
     void SetTransform(const Transform& transform);
 
-    float3 GetOrientation() const;
+    Vector GetOrientation() const;
 
     void SetOrientation(float x, float y, float z);
 
-    float3 GetPosition() const;
+    Vector GetPosition() const;
 
     void SetPosition(float x, float y, float z);
 
-    float3 GetScale() const;
+    Vector GetScale() const;
 
     void SetScale(float x, float y, float z);
 

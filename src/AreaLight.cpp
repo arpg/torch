@@ -47,7 +47,10 @@ void AreaLight::BuildScene(Link& link)
   AreaLightData data;
   data.geomType = GEOM_TYPE_SPHERE;
   data.geomId = 0;
-  data.radiance = m_radiance.GetRGB();
+
+  const Vector rgb = m_radiance.GetRGB();
+  data.radiance = make_float3(rgb.x, rgb.y, rgb.z);
+
   data.luminance = 1;
   data.area = 1;
 

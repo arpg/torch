@@ -9,7 +9,7 @@ namespace torch
 enum LightType
 {
   LIGHT_TYPE_AREA,
-  LIGHT_TYPE_DISTANT,
+  LIGHT_TYPE_Directional,
   LIGHT_TYPE_ENVIRONMENT,
   LIGHT_TYPE_POINT,
   LIGHT_TYPE_COUNT
@@ -35,7 +35,7 @@ struct AreaLightData
   float luminance;
 };
 
-struct DistantLightData
+struct DirectionalLightData
 {
   float3 radiance;
   float3 direction;

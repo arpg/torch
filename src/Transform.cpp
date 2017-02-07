@@ -41,9 +41,9 @@ optix::Matrix4x4 Transform::GetRotationMatrix() const
   return R;
 }
 
-float3 Transform::GetEulerAngles() const
+Vector Transform::GetEulerAngles() const
 {
-  float3 result;
+  Vector result;
   const optix::Matrix4x4 R = GetRotationMatrix();
   const float c2 = sqrt(R[0] * R[0] + R[4] * R[4]);
   result.x = atan2(R[9], R[10]);
@@ -90,14 +90,15 @@ void Transform::SetRotation(float x, float y, float z)
   m_matrix = T * R * S;
 }
 
-void Transform::SetRotation(const float3& rotation)
+void Transform::SetRotation(const Vector& rotation)
 {
   SetRotation(rotation.x, rotation.y, rotation.z);
 }
 
-float3 Transform::GetTranslation() const
+Vector Transform::GetTranslation() const
 {
-  return make_float3(m_matrix.getCol(3));
+  const float4 col = m_matrix.getCol(3);
+  return Vector(col.x, col.y, col.z);
 }
 
 optix::Matrix4x4 Transform::GetTranslationMatrix() const
@@ -109,12 +110,18 @@ optix::Matrix4x4 Transform::GetTranslationMatrix() const
 
 void Transform::SetTranslation(float x, float y, float z)
 {
-  SetTranslation(make_float3(x, y, z));
+  SetTranslation(Vector(x, y, z));
 }
 
-void Transform::SetTranslation(const float3& translation)
+void Transform::SetTranslation(const Vector& translation)
 {
-  m_matrix.setCol(3, make_float4(translation, 1));
+  float4 col;
+  col.x = translation.x;
+  col.y = translation.y;
+  col.z = translation.z;
+  col.w = 1;
+
+  m_matrix.setCol(3, col);
 }
 
 optix::Matrix4x4 Transform::GetScaleMatrix() const
@@ -123,22 +130,23 @@ optix::Matrix4x4 Transform::GetScaleMatrix() const
   return R.transpose() * m_matrix;
 }
 
-float3 Transform::GetScale() const
+Vector Transform::GetScale() const
 {
   const optix::Matrix4x4 S = GetScaleMatrix();
-  return make_float3(S[0], S[5], S[10]);
+  return Vector(S[0], S[5], S[10]);
 }
 
 void Transform::SetScale(float x, float y, float z)
 {
-  SetScale(make_float3(x, y, z));
+  SetScale(Vector(x, y, z));
 }
 
-void Transform::SetScale(const float3& scale)
+void Transform::SetScale(const Vector& scale)
 {
+  const float3 s = make_float3(scale.x, scale.y, scale.z);
   const optix::Matrix4x4 T = GetTranslationMatrix();
   const optix::Matrix4x4 R = GetRotationMatrix();
-  const optix::Matrix4x4 S = optix::Matrix4x4::scale(scale);
+  const optix::Matrix4x4 S = optix::Matrix4x4::scale(s);
   m_matrix = T * R * S;
 }
 

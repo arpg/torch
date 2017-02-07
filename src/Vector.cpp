@@ -21,6 +21,11 @@ Vector::Vector(const Normal& n) :
 
 }
 
+Vector Vector::operator-() const
+{
+  return Vector(-x, -y, -z);
+}
+
 Vector Vector::operator+(const Vector& v) const
 {
   return Vector(x + v.x, y + v.y, z + v.z);
@@ -78,6 +83,11 @@ float Vector::operator*(const Vector& v) const
   return x * v.x + y * v.y + z * v.z;
 }
 
+Vector operator*(float f, const Vector& v)
+{
+  return v * f;
+}
+
 float Vector::operator[](int i) const
 {
   return (&x)[i];
@@ -109,11 +119,6 @@ float Vector::Length() const
 Vector Vector::Normalize() const
 {
   return (*this) / Length();
-}
-
-Vector operator*(float f, const Vector& v)
-{
-  return v * f;
 }
 
 } // namespace torch

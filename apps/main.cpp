@@ -11,7 +11,6 @@ int main(int argc, char** argv)
   std::cout << "Starting..." << std::endl;
 
   Scene scene;
-  scene.SetEpsilon(1E-4);
 
   std::shared_ptr<EnvironmentLight> envLight;
   envLight = scene.CreateEnvironmentLight();

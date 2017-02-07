@@ -1,6 +1,7 @@
 #pragma once
 
 #include <torch/Core.h>
+#include <torch/Vector.h>
 
 namespace torch
 {
@@ -13,15 +14,11 @@ class Spectrum
 
     float GetY() const;
 
-    float3 GetXYZ() const;
+    Vector GetXYZ() const;
 
-    float3 GetRGB() const;
-
-    Spectrum operator+(float a) const;
+    Vector GetRGB() const;
 
     Spectrum operator+(const Spectrum& a) const;
-
-    Spectrum& operator+=(float a);
 
     Spectrum& operator+=(const Spectrum& a);
 
@@ -33,20 +30,18 @@ class Spectrum
 
     Spectrum& operator*=(const Spectrum& a);
 
-    static Spectrum FromXYZ(const float3& xyz);
+    static Spectrum FromXYZ(const Vector& xyz);
 
     static Spectrum FromXYZ(float x, float y, float z);
 
-    static Spectrum FromRGB(const float3& rgb);
+    static Spectrum FromRGB(const Vector& rgb);
 
     static Spectrum FromRGB(float r, float g, float b);
 
   protected:
 
-    float3 m_rgb;
+    Vector m_rgb;
 };
-
-Spectrum operator+(float a, const Spectrum& b);
 
 Spectrum operator*(float a, const Spectrum& b);
 

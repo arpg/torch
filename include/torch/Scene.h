@@ -11,10 +11,6 @@ class Scene
 
     Scene();
 
-    float GetEpsilon() const;
-
-    void SetEpsilon(float epsilon);
-
     void Add(std::shared_ptr<Node> node);
 
     std::shared_ptr<Camera> CreateCamera();
@@ -23,7 +19,7 @@ class Scene
 
     std::shared_ptr<AreaLight> CreateAreaLight();
 
-    std::shared_ptr<DistantLight> CreateDistantLight();
+    std::shared_ptr<DirectionalLight> CreateDirectionalLight();
 
     std::shared_ptr<EnvironmentLight> CreateEnvironmentLight();
 
@@ -43,10 +39,10 @@ class Scene
 
   private:
 
+    void Initialize();
+
     template <typename T>
     std::shared_ptr<T> CreateObject();
-
-    void Initialize();
 
   protected:
 

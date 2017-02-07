@@ -103,11 +103,6 @@ optix::Transform Context::CreateTransform()
   return m_context->createTransform();
 }
 
-optix::Variable Context::GetVariable(const std::string& name)
-{
-  return m_context[name];
-}
-
 optix::Program Context::GetProgram(const std::string& file,
     const std::string& name)
 {
@@ -254,11 +249,11 @@ void Context::CreateContext()
 {
   m_context = optix::Context::create();
   m_context->setRayTypeCount(RAY_TYPE_COUNT);
+  m_context["sceneEpsilon"]->setFloat(1E-4);
 
 #ifdef DEBUG_BUILD
   m_context->setPrintEnabled(true);
-  // m_context->setPrintBufferSize(512);
-  m_context->setPrintBufferSize(2048);
+  m_context->setPrintBufferSize(512);
   m_context->setExceptionEnabled(RT_EXCEPTION_ALL, true);
 
   const std::string file = PtxUtil::GetFile("Exception");

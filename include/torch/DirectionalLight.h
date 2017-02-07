@@ -2,15 +2,16 @@
 
 #include <torch/Light.h>
 #include <torch/Spectrum.h>
+#include <torch/Vector.h>
 
 namespace torch
 {
 
-class DistantLight : public Light
+class DirectionalLight : public Light
 {
   public:
 
-    DistantLight(std::shared_ptr<Context> context);
+    DirectionalLight(std::shared_ptr<Context> context);
 
     Spectrum GetRadiance() const;
 
@@ -18,9 +19,9 @@ class DistantLight : public Light
 
     void SetRadiance(float r, float g, float b);
 
-    float3 GetDirection() const;
+    Vector GetDirection() const;
 
-    void SetDirection(const float3& direction);
+    void SetDirection(const Vector& direction);
 
     void SetDirection(float x, float y, float z);
 
