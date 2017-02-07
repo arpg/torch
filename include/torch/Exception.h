@@ -3,6 +3,11 @@
 #include <exception>
 #include <string>
 
+#define TORCH_ASSERT(condition, message) \
+{ \
+  if (!(condition)) throw Exception(message); \
+}
+
 namespace torch
 {
 

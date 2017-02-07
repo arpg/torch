@@ -37,6 +37,10 @@ find_package(Assimp REQUIRED)
 list(APPEND REQUIRED_INCLUDE_DIRS ${Assimp_INCLUDE_DIRS})
 list(APPEND REQUIRED_LIBRARIES ${Assimp_LIBRARIES})
 
+find_package(TinyXML2 REQUIRED)
+list(APPEND REQUIRED_INCLUDE_DIRS ${TinyXML2_INCLUDE_DIRS})
+list(APPEND REQUIRED_LIBRARIES ${TinyXML2_LIBRARIES})
+
 list(APPEND REQUIRED_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/include)
 list(APPEND REQUIRED_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/include)
 include_directories(${REQUIRED_INCLUDE_DIRS})
@@ -89,9 +93,10 @@ set(CPP_HEADERS
   ${CPP_HEADER_DIR}/PointLight.h
   ${CPP_HEADER_DIR}/PointLightSampler.h
   ${CPP_HEADER_DIR}/Primitive.h
-  ${CPP_HEADER_DIR}/SceneGeometrySampler.h
   ${CPP_HEADER_DIR}/Scene.h
+  ${CPP_HEADER_DIR}/SceneGeometrySampler.h
   ${CPP_HEADER_DIR}/SceneLightSampler.h
+  ${CPP_HEADER_DIR}/SceneLoader.h
   ${CPP_HEADER_DIR}/SingleGeometry.h
   ${CPP_HEADER_DIR}/Spectrum.h
   ${CPP_HEADER_DIR}/Sphere.h
@@ -141,6 +146,7 @@ set(CPP_SOURCES
   ${CPP_SOURCE_DIR}/Scene.cpp
   ${CPP_SOURCE_DIR}/SceneGeometrySampler.cpp
   ${CPP_SOURCE_DIR}/SceneLightSampler.cpp
+  ${CPP_SOURCE_DIR}/SceneLoader.cpp
   ${CPP_SOURCE_DIR}/SingleGeometry.cpp
   ${CPP_SOURCE_DIR}/Spectrum.cpp
   ${CPP_SOURCE_DIR}/Sphere.cpp

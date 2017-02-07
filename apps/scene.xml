@@ -1,0 +1,85 @@
+<?xml version="1.0" ?>
+
+<scene>
+
+  <!-- camera -->
+  <camera>
+    <image_size>640 480</image_size>
+    <focal_length>320 320</focal_length>
+    <center_point>320 240</center_point>
+    <sample_count>128</sample_count>
+  </camera>
+
+  <!-- area light -->
+  <area_light>
+
+    <position>1 1 0</position>
+    <radiance>5 5 5</radiance>
+
+    <sphere>
+      <scale>1 1 1</scale>
+    </sphere>
+
+  </area_light>
+
+  <!-- bunny mesh -->
+  <primitive>
+
+    <mesh>
+      <file>bunny.ply</file>
+      <orientation>0 2.51 3.14</orientation>
+      <position>-0.75 1.5 3.5</position>
+      <scale>10 10 10</scale>
+    </mesh>
+
+    <matte_material>
+      <albedo>1 1 1</albedo>
+    </matte_material>
+
+  </primitive>
+
+  <!-- red sphere -->
+  <primitive>
+
+    <orientation>0 0 0.4</orientation>
+    <position>0 0 5</position>
+
+    <sphere>
+      <scale>4 2 3</scale>
+    </sphere>
+
+    <matte_material>
+      <albedo>0.7 0.1 0.1</albedo>
+    </matte_material>
+
+  </primitive>
+
+  <!-- white sphere -->
+  <primitive>
+
+    <position>1.5 -0.5 3.5</position>
+
+    <sphere/>
+
+    <matte_material>
+      <albedo>0.25 0.25 0.25</albedo>
+    </matte_material>
+
+  </primitive>
+
+  <!-- yellow sphere -->
+  <primitive>
+
+    <position>2.5 0 0</position>
+
+    <sphere>
+      <scale>0.1 4 10</scale>
+    </sphere>
+
+    <matte_material>
+      <albedo>0.1 0.1 0.05</albedo>
+    </matte_material>
+
+  </primitive>
+
+</scene>
