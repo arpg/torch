@@ -50,31 +50,35 @@ RT_PROGRAM void ClosestHit()
   sample.origin = ray.origin + hitDist * ray.direction;
   sample.tmin = sceneEpsilon;
   sample.seed = rayData.seed;
+  const unsigned int lightSamples = 16;
 
-  SampleLights(sample);
-  rayData.seed = sample.seed;
-
-  float theta = dot(geometricNormal, sample.direction);
-
-  if (theta > 0.0f)
+  for (unsigned int i = 0; i < lightSamples; ++i)
   {
-    optix::Ray shadowRay;
-    shadowRay.origin = sample.origin;
-    shadowRay.direction = sample.direction;
-    shadowRay.ray_type = torch::RAY_TYPE_SHADOW;
-    shadowRay.tmin = sample.tmin;
-    shadowRay.tmax = sample.tmax;
+    SampleLights(sample);
+    rayData.seed = sample.seed;
 
-    torch::ShadowData shadowData;
-    shadowData.occluded = false;
+    float theta = dot(geometricNormal, sample.direction);
 
-    rtTrace(sceneRoot, shadowRay, shadowData);
-
-    if (!shadowData.occluded)
+    if (theta > 0.0f)
     {
-      float3 brdf = albedo / M_PIf;
-      theta = dot(shadingNormal, sample.direction);
-      rayData.radiance += rayData.throughput * brdf * sample.radiance * theta / sample.pdf;
+      optix::Ray shadowRay;
+      shadowRay.origin = sample.origin;
+      shadowRay.direction = sample.direction;
+      shadowRay.ray_type = torch::RAY_TYPE_SHADOW;
+      shadowRay.tmin = sample.tmin;
+      shadowRay.tmax = sample.tmax;
+
+      torch::ShadowData shadowData;
+      shadowData.occluded = false;
+
+      rtTrace(sceneRoot, shadowRay, shadowData);
+
+      if (!shadowData.occluded)
+      {
+        float3 brdf = albedo / M_PIf;
+        theta = dot(shadingNormal, sample.direction);
+        rayData.radiance += (rayData.throughput * brdf * sample.radiance * theta / sample.pdf) / lightSamples;
+      }
     }
   }
 
@@ -83,7 +87,7 @@ RT_PROGRAM void ClosestHit()
   brdfSample.seed = rayData.seed;
   SampleBrdf(brdfSample);
 
-  theta = dot(shadingNormal, brdfSample.direction);
+  float theta = dot(shadingNormal, brdfSample.direction);
   rayData.bounce.origin = sample.origin;
   rayData.bounce.direction = brdfSample.direction;
   rayData.bounce.throughput = theta * rayData.throughput * brdfSample.throughput / brdfSample.pdf;

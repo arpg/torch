@@ -15,10 +15,13 @@ rtDeclareVariable(torch::CameraData, camera, , );
 rtBuffer<float3, 2> buffer;
 
 static __inline__ __device__
-void GetDirection(float3& direction, unsigned int& seed)
+void GetDirection(float3& direction, unsigned int& seed, unsigned int i)
 {
+  const float xo = floorf(i / sampleCount) / sampleCount + torch::randf(seed) / sampleCount;
+  const float yo = float(i % sampleCount) / sampleCount + torch::randf(seed) / sampleCount;
+
   const float2 size = make_float2(imageSize);
-  const float2 pixel = make_float2(pixelIndex) + torch::randf2(seed);
+  const float2 pixel = make_float2(pixelIndex) + make_float2(xo, yo);
   const float2 ratio = (pixel / size) - camera.center;
   direction = ratio.x * camera.u + ratio.y * camera.v + camera.w;
   direction = normalize(direction);
@@ -53,15 +56,16 @@ RT_PROGRAM void Capture()
   seed = InitializeSeed();
   InitializeRay(ray, data);
   data.radiance = make_float3(0, 0, 0);
+  const unsigned int totalSamples = sampleCount * sampleCount;
 
-  for (unsigned int i = 0; i < sampleCount; ++i)
+  for (unsigned int i = 0; i < totalSamples; ++i)
   {
     InitializeRay(ray, data);
-    GetDirection(ray.direction, seed);
+    GetDirection(ray.direction, seed, i);
     data.bounce.origin = make_float3(0, 0, 0);
     data.bounce.direction = make_float3(0, 0, 0);
     data.bounce.throughput = make_float3(0, 0, 0);
-    data.throughput = make_float3(1.0f / sampleCount);
+    data.throughput = make_float3(1.0f / totalSamples);
 
     for (unsigned int depth = 0; depth < 8; ++depth)
     {

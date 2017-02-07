@@ -1,4 +1,4 @@
-<?xml version="1.0" ?>
+<?xml version="1.0"?>
 
 <scene>
 
@@ -7,7 +7,7 @@
     <image_size>640 480</image_size>
     <focal_length>320 320</focal_length>
     <center_point>320 240</center_point>
-    <sample_count>128</sample_count>
+    <sample_count>2</sample_count>
   </camera>
 
   <!-- area light -->
