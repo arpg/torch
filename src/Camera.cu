@@ -120,7 +120,7 @@ RT_PROGRAM void CaptureDepth()
   unsigned int seed;
 
   seed = InitializeSeed();
-  depthBuffer[pixelIndex] = 0;
+  depthBuffer[pixelIndex] = RT_DEFAULT_MAX;
   const unsigned int totalSamples = sampleCount * sampleCount;
 
   for (unsigned int i = 0; i < totalSamples; ++i)
@@ -131,7 +131,7 @@ RT_PROGRAM void CaptureDepth()
     data.sample = i;
     GetDirection(ray.direction, seed, i);
     rtTrace(sceneRoot, ray, data);
-    depthBuffer[pixelIndex] = fmaxf(depthBuffer[pixelIndex], data.depth);
+    depthBuffer[pixelIndex] = fminf(depthBuffer[pixelIndex], data.depth);
   }
 
   buffer[pixelIndex] = make_float3(depthBuffer[pixelIndex]);

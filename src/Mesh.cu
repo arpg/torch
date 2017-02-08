@@ -16,34 +16,6 @@ rtBuffer<uint3, 1> faces;
 
 rtDeclareVariable(uint2, launchIndex, rtLaunchIndex, );
 
-TORCH_DEVICE bool IntersectTriangle(const optix::Ray& ray,
-  const float3& p0, const float3& p1, const float3& p2, float3& n, float& t,
-  float& beta, float& gamma)
-{
-  const float3 e0 = p1 - p0;
-  const float3 e1 = p0 - p2;
-  n  = cross( e1, e0 );
-
-  const float3 e2 = ( 1.0f / dot( n, ray.direction ) ) * ( p0 - ray.origin );
-  const float3 i  = cross( ray.direction, e2 );
-
-  beta  = dot( i, e1 );
-  gamma = dot( i, e0 );
-  t     = dot( n, e2 );
-
-  if (beta > -1E-4) beta = 0.0f;
-  if (gamma > -1E-4) gamma = 0.0f;
-  const float alpha = 1 - (beta + gamma);
-
-  if (alpha < 0 && alpha > -1E-4)
-  {
-    if (beta > gamma) beta -= alpha;
-    else gamma -= alpha;
-  }
-
-  return ( (t<ray.tmax) & (t>ray.tmin) & (beta>=0.0f) & (gamma>=0.0f) & (beta+gamma<=1) );
-}
-
 RT_PROGRAM void Intersect(int index)
 {
   const uint3& face = faces[index];
@@ -63,7 +35,8 @@ RT_PROGRAM void Intersect(int index)
   float beta;
   float gamma;
 
-  bool hit = IntersectTriangle(triRay, v0, v1, v2, n, t, beta, gamma);
+  // bool hit = IntersectTriangle(triRay, v0, v1, v2, n, t, beta, gamma);
+  bool hit = intersect_triangle(triRay, v0, v1, v2, n, t, beta, gamma);
   n = normalize(n);
   if (dot(n, -ray.direction) < 0.0f) n = -n;
 
