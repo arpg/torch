@@ -4,10 +4,12 @@
 
   <!-- camera 0 -->
   <camera>
+    <orientation>2.49978 2.69522 -2.78359</orientation>
+    <position>-0.4752 -0.476978 0.342274</position>
     <image_size>640 480</image_size>
-    <focal_length>320 320</focal_length>
-    <center_point>320 240</center_point>
-    <sample_count>4</sample_count>
+    <focal_length>535.7239 536.2900</focal_length>
+    <center_point>320.2685 240.2924</center_point>
+    <sample_count>3</sample_count>
   </camera>
 
   <!-- area light -->

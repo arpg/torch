@@ -30,6 +30,7 @@ void Camera::SetImageSize(unsigned int w, unsigned int h)
 {
   m_imageSize = make_uint2(w, h);
   m_buffer->setSize(m_imageSize.x, m_imageSize.y);
+  m_depthBuffer->setSize(m_imageSize.x, m_imageSize.y);
   m_context->MarkDirty();
 }
 
@@ -49,11 +50,20 @@ void Camera::SetSampleCount(unsigned int count)
 {
   m_sampleCount = count;
   m_program["sampleCount"]->setUint(m_sampleCount);
+  m_depthProgram["sampleCount"]->setUint(m_sampleCount);
+  m_maskProgram["sampleCount"]->setUint(m_sampleCount);
 }
 
 void Camera::Capture(Image& image)
 {
   m_context->Launch(m_programId, m_imageSize);
+  CopyBuffer(image);
+}
+
+void Camera::CaptureMask(Image& image)
+{
+  m_context->Launch(m_depthProgramId, m_imageSize);
+  m_context->Launch(m_maskProgramId, m_imageSize);
   CopyBuffer(image);
 }
 
@@ -88,6 +98,8 @@ void Camera::UploadCamera(const Transform& transform)
   CameraData data;
   GetData(transform, data);
   m_program["camera"]->setUserData(sizeof(CameraData), &data);
+  m_depthProgram["camera"]->setUserData(sizeof(CameraData), &data);
+  m_maskProgram["camera"]->setUserData(sizeof(CameraData), &data);
 }
 
 void Camera::GetData(const Transform& transform, CameraData& data) const
@@ -99,12 +111,29 @@ void Camera::GetData(const Transform& transform, CameraData& data) const
   data.v = (m_imageSize.y / m_focalLength.y) * matrix.getCol(1);
   data.w = matrix.getCol(2);
   data.position = matrix.getCol(3);
+
+  std::cout << std::endl;
+  std::cout << std::endl;
+  std::cout << "p: " << data.position.x << " " << data.position.y << " " << data.position.z << std::endl;
+  std::cout << "u: " << data.u.x << " " << data.u.y << " " << data.u.z << std::endl;
+  std::cout << "v: " << data.v.x << " " << data.v.y << " " << data.v.z << std::endl;
+  std::cout << "w: " << data.w.x << " " << data.w.y << " " << data.w.z << std::endl;
+  // std::cout << std::endl;
+  // std::cout << "0: " << matrix.getCol(0).x << " " << matrix.getCol(0).y << " " << matrix.getCol(0).z << std::endl;
+  // std::cout << "1: " << matrix.getCol(1).x << " " << matrix.getCol(1).y << " " << matrix.getCol(1).z << std::endl;
+  // std::cout << "2: " << matrix.getCol(2).x << " " << matrix.getCol(2).y << " " << matrix.getCol(2).z << std::endl;
+  // std::cout << "3: " << matrix.getCol(3).x << " " << matrix.getCol(3).y << " " << matrix.getCol(3).z << std::endl;
+  std::cout << std::endl;
+  std::cout << std::endl;
 }
 
 void Camera::Initialize()
 {
   CreateBuffer();
   CreateProgram();
+  CreateDepthBuffer();
+  CreateDepthProgram();
+  CreateMaskProgram();
 }
 
 void Camera::CreateBuffer()
@@ -121,6 +150,33 @@ void Camera::CreateProgram()
   m_programId = m_context->RegisterLaunchProgram(m_program);
   m_program["sampleCount"]->setUint(m_sampleCount);
   m_program["buffer"]->setBuffer(m_buffer);
+}
+
+void Camera::CreateDepthBuffer()
+{
+  m_depthBuffer = m_context->CreateBuffer(RT_BUFFER_OUTPUT);
+  m_depthBuffer->setFormat(RT_FORMAT_FLOAT);
+  m_depthBuffer->setSize(m_imageSize.x, m_imageSize.y);
+}
+
+void Camera::CreateDepthProgram()
+{
+  const std::string file = PtxUtil::GetFile("Camera");
+  m_depthProgram = m_context->CreateProgram(file, "CaptureDepth");
+  m_depthProgramId = m_context->RegisterLaunchProgram(m_depthProgram);
+  m_depthProgram["sampleCount"]->setUint(m_sampleCount);
+  m_depthProgram["depthBuffer"]->setBuffer(m_depthBuffer);
+  m_depthProgram["buffer"]->setBuffer(m_buffer);
+}
+
+void Camera::CreateMaskProgram()
+{
+  const std::string file = PtxUtil::GetFile("Camera");
+  m_maskProgram = m_context->CreateProgram(file, "CaptureMask");
+  m_maskProgramId = m_context->RegisterLaunchProgram(m_maskProgram);
+  m_maskProgram["sampleCount"]->setUint(m_sampleCount);
+  m_maskProgram["depthBuffer"]->setBuffer(m_depthBuffer);
+  m_maskProgram["buffer"]->setBuffer(m_buffer);
 }
 
 } // namespace torch

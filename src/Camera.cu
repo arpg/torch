@@ -13,6 +13,7 @@ rtDeclareVariable(float, sceneEpsilon, , );
 rtDeclareVariable(unsigned int, sampleCount, , );
 rtDeclareVariable(torch::CameraData, camera, , );
 rtBuffer<float3, 2> buffer;
+rtBuffer<float, 2> depthBuffer;
 
 static __inline__ __device__
 void GetDirection(float3& direction, unsigned int& seed, unsigned int i)
@@ -27,7 +28,7 @@ void GetDirection(float3& direction, unsigned int& seed, unsigned int i)
   direction = normalize(direction);
 }
 
-TORCH_DEVICE void InitializeRay(optix::Ray& ray, torch::RadianceData& data)
+TORCH_DEVICE void InitializeRay(optix::Ray& ray)
 {
   ray.origin = camera.position;
   ray.tmin = sceneEpsilon;
@@ -42,10 +43,10 @@ TORCH_DEVICE unsigned int InitializeSeed()
   return torch::init_seed<16>(a, b);
 }
 
-TORCH_DEVICE float GetY(const float3& L)
-{
-  return 0.212671f * L.x + 0.715160f * L.y + 0.072169f * L.z;
-}
+// TORCH_DEVICE float GetY(const float3& L)
+// {
+//   return 0.212671f * L.x + 0.715160f * L.y + 0.072169f * L.z;
+// }
 
 RT_PROGRAM void Capture()
 {
@@ -54,16 +55,14 @@ RT_PROGRAM void Capture()
   unsigned int seed;
 
   seed = InitializeSeed();
-  InitializeRay(ray, data);
+  InitializeRay(ray);
   data.radiance = make_float3(0, 0, 0);
   const unsigned int totalSamples = sampleCount * sampleCount;
-
-  const unsigned int N = 5;
 
   for (unsigned int i = 0; i < totalSamples; ++i)
   {
     data.sample = i;
-    InitializeRay(ray, data);
+    InitializeRay(ray);
     GetDirection(ray.direction, seed, i);
     data.bounce.origin = make_float3(0, 0, 0);
     data.bounce.direction = make_float3(0, 0, 0);
@@ -75,7 +74,7 @@ RT_PROGRAM void Capture()
       data.depth = depth;
       data.seed = seed;
       rtTrace(sceneRoot, ray, data);
-      InitializeRay(ray, data);
+      InitializeRay(ray);
       seed = data.seed;
 
       torch::RayBounce& bounce = data.bounce;
@@ -111,4 +110,61 @@ RT_PROGRAM void Capture()
   }
 
   buffer[pixelIndex] = data.radiance;
+}
+
+RT_PROGRAM void CaptureDepth()
+{
+  optix::Ray ray;
+  torch::DepthData data;
+  unsigned int seed;
+
+  seed = InitializeSeed();
+  depthBuffer[pixelIndex] = 0;
+  const unsigned int totalSamples = sampleCount * sampleCount;
+
+  for (unsigned int i = 0; i < totalSamples; ++i)
+  {
+    InitializeRay(ray);
+    ray.ray_type = torch::RAY_TYPE_DEPTH;
+    data.depth = RT_DEFAULT_MAX;
+    GetDirection(ray.direction, seed, i);
+    rtTrace(sceneRoot, ray, data);
+    depthBuffer[pixelIndex] = fmaxf(depthBuffer[pixelIndex], data.depth);
+  }
+
+  buffer[pixelIndex] = make_float3(depthBuffer[pixelIndex]);
+}
+
+RT_PROGRAM void CaptureMask()
+{
+  const int pad = 3;
+  float depth = depthBuffer[pixelIndex];
+
+  for (int i = pixelIndex.x - pad; i < pixelIndex.x + pad; ++i)
+  {
+    for (int j = pixelIndex.y - pad; j < pixelIndex.y + pad; ++j)
+    {
+      if (i < 0 || i >= imageSize.x || j < 0 || j > imageSize.y ||
+          (i == 0 && j == 0))
+      {
+        continue;
+      }
+
+      const float otherDepth = depthBuffer[make_uint2(i, j)];
+
+      if (fabs(depth - otherDepth) > 0.025)
+      {
+        depth = RT_DEFAULT_MAX;
+        break;
+      }
+    }
+
+    if (depth == RT_DEFAULT_MAX)
+    {
+      break;
+    }
+  }
+
+  depth = (depth == RT_DEFAULT_MAX) ? 0 : 1;
+  buffer[pixelIndex] = make_float3(depth);
 }

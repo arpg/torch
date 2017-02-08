@@ -22,8 +22,24 @@ int main(int argc, char** argv)
   {
     std::cout << "Rendering image " << i << "..." << std::endl;
     const std::string file = "image" + std::to_string(i) + ".png";
+    // cameras[i]->CaptureMask(image);
     cameras[i]->Capture(image);
     image.Save(file);
+
+    // Image refImage;
+    // refImage.Load("/home/mike/Desktop/image.png");
+
+    // float* maskData = reinterpret_cast<float*>(image.GetData());
+    // float* refData = reinterpret_cast<float*>(refImage.GetData());
+
+    // const unsigned int elemCount = 3 * refImage.GetHeight() * refImage.GetWidth();
+
+    // for (uint i = 0; i < elemCount; ++i)
+    // {
+    //   refData[i] *= maskData[i];
+    // }
+
+    // refImage.Save("/home/mike/Desktop/masked_image.png");
   }
 
   const clock_t stop = clock();

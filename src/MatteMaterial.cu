@@ -63,7 +63,7 @@ RT_PROGRAM void ClosestHit()
   sample.origin = ray.origin + hitDist * ray.direction;
   sample.tmin = sceneEpsilon;
   sample.seed = rayData.seed;
-  const unsigned int lightSamples = 16;
+  const unsigned int lightSamples = 1;
 
   for (unsigned int i = 0; i < lightSamples; ++i)
   {

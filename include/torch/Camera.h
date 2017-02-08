@@ -23,6 +23,8 @@ class Camera : public Node
 
     void Capture(Image& image);
 
+    void CaptureMask(Image& image);
+
     void PreBuildScene() override;
 
     void BuildScene(Link& link) override;
@@ -45,6 +47,12 @@ class Camera : public Node
 
     void CreateProgram();
 
+    void CreateDepthBuffer();
+
+    void CreateDepthProgram();
+
+    void CreateMaskProgram();
+
   protected:
 
     uint2 m_imageSize;
@@ -57,9 +65,19 @@ class Camera : public Node
 
     optix::Buffer m_buffer;
 
+    optix::Buffer m_depthBuffer;
+
     optix::Program m_program;
 
     unsigned int m_programId;
+
+    optix::Program m_depthProgram;
+
+    unsigned int m_depthProgramId;
+
+    optix::Program m_maskProgram;
+
+    unsigned int m_maskProgramId;
 
     bool m_detached;
 };

@@ -23,6 +23,12 @@ class Material : public Object
 
     void Initialize();
 
+    void CreateMaterial();
+
+    void CreateSharedPrograms();
+
+    void CreateUniquePrograms();
+
   protected:
 
     const std::string m_name;

@@ -34,14 +34,35 @@ void Material::PostBuildScene()
 
 void Material::Initialize()
 {
+  CreateMaterial();
+  CreateSharedPrograms();
+  CreateUniquePrograms();
+}
+
+void Material::CreateMaterial()
+{
   m_material = m_context->CreateMaterial();
+}
+
+void Material::CreateSharedPrograms()
+{
+  optix::Program program;
+  const std::string file = PtxUtil::GetFile("Material");
+
+  program = m_context->GetProgram(file, "ClosestHitDepth");
+  m_material->setClosestHitProgram(RAY_TYPE_DEPTH, program);
+}
+
+void Material::CreateUniquePrograms()
+{
+  optix::Program program;
   const std::string file = PtxUtil::GetFile(m_name);
 
-  optix::Program closestHitProgram = m_context->GetProgram(file, "ClosestHit");
-  m_material->setClosestHitProgram(RAY_TYPE_RADIANCE, closestHitProgram);
+  program = m_context->GetProgram(file, "ClosestHit");
+  m_material->setClosestHitProgram(RAY_TYPE_RADIANCE, program);
 
-  optix::Program anyHitProgram = m_context->GetProgram(file, "AnyHit");
-  m_material->setAnyHitProgram(RAY_TYPE_SHADOW, anyHitProgram);
+  program = m_context->GetProgram(file, "AnyHit");
+  m_material->setAnyHitProgram(RAY_TYPE_SHADOW, program);
 }
 
 } // namespace torch

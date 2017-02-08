@@ -188,6 +188,7 @@ set(CUDA_SOURCES
   ${CUDA_SOURCE_DIR}/EnvironmentLightSampler.cu
   ${CUDA_SOURCE_DIR}/Exception.cu
   ${CUDA_SOURCE_DIR}/GeometryGroupSampler.cu
+  ${CUDA_SOURCE_DIR}/Material.cu
   ${CUDA_SOURCE_DIR}/MatteMaterial.cu
   ${CUDA_SOURCE_DIR}/Mesh.cu
   ${CUDA_SOURCE_DIR}/MeshSampler.cu

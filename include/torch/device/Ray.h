@@ -9,6 +9,7 @@ enum RayType
 {
   RAY_TYPE_RADIANCE,
   RAY_TYPE_SHADOW,
+  RAY_TYPE_DEPTH,
   RAY_TYPE_COUNT,
 };
 
@@ -32,6 +33,11 @@ struct RadianceData
 struct ShadowData
 {
   bool occluded;
+};
+
+struct DepthData
+{
+  float depth;
 };
 
 } // namespace torch

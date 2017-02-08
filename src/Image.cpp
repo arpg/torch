@@ -36,7 +36,7 @@ void Image::Load(const std::string& file)
 {
   cv::Mat temp = cv::imread(file);
   cv::cvtColor(temp, temp, CV_RGB2BGR);
-  temp.convertTo(temp, CV_32FC3, 1 / 255.0);
+  temp.convertTo(m_image, CV_32FC3, 1 / 255.0);
 }
 
 void Image::Save(const std::string& file)

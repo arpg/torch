@@ -81,9 +81,9 @@ void Transform::SetRotation(const optix::Matrix3x3& rotation)
 void Transform::SetRotation(float x, float y, float z)
 {
   const optix::Matrix4x4 R =
-      optix::Matrix4x4::rotate(-z, make_float3(0, 0, 1)) *
-      optix::Matrix4x4::rotate(-y, make_float3(0, 1, 0)) *
-      optix::Matrix4x4::rotate(-x, make_float3(1, 0, 0));
+      optix::Matrix4x4::rotate(x, make_float3(1, 0, 0)) *
+      optix::Matrix4x4::rotate(y, make_float3(0, 1, 0)) *
+      optix::Matrix4x4::rotate(z, make_float3(0, 0, 1));
 
   const optix::Matrix4x4 T = GetTranslationMatrix();
   const optix::Matrix4x4 S = GetScaleMatrix();
