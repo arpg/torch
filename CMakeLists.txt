@@ -94,6 +94,7 @@ set(CPP_HEADERS
   ${CPP_HEADER_DIR}/PointLight.h
   ${CPP_HEADER_DIR}/PointLightSampler.h
   ${CPP_HEADER_DIR}/Primitive.h
+  ${CPP_HEADER_DIR}/Problem.h
   ${CPP_HEADER_DIR}/Scene.h
   ${CPP_HEADER_DIR}/SceneGeometrySampler.h
   ${CPP_HEADER_DIR}/SceneLightSampler.h
@@ -145,6 +146,7 @@ set(CPP_SOURCES
   ${CPP_SOURCE_DIR}/PointLight.cpp
   ${CPP_SOURCE_DIR}/PointLightSampler.cpp
   ${CPP_SOURCE_DIR}/Primitive.cpp
+  ${CPP_SOURCE_DIR}/Problem.cpp
   ${CPP_SOURCE_DIR}/Scene.cpp
   ${CPP_SOURCE_DIR}/SceneGeometrySampler.cpp
   ${CPP_SOURCE_DIR}/SceneLightSampler.cpp

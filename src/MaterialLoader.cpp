@@ -7,8 +7,6 @@
 #include <torch/MatteMaterial.h>
 #include <torch/Spectrum.h>
 
-#include <iostream>
-
 namespace torch
 {
 
@@ -46,8 +44,6 @@ std::shared_ptr<Material> MaterialLoader::Load(const std::string& file)
     hasColors &= mesh->HasVertexColors(0);
     if (!hasColors) return material;
   }
-
-  std::cout << "Has Colors: " << hasColors << std::endl;
 
   std::vector<Spectrum> colors(colorCount);
   unsigned int colorIndex = 0;

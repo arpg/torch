@@ -12,6 +12,8 @@ class MatteMaterial : public Material
 
     MatteMaterial(std::shared_ptr<Context> context);
 
+    size_t GetAlbedoCount() const;
+
     void SetAlbedo(const Spectrum& albedo);
 
     void SetAlbedo(float r, float g, float b);

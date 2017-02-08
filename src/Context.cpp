@@ -167,6 +167,11 @@ float Context::GetSceneRadius() const
   return m_bounds.GetRadius();
 }
 
+optix::Context Context::GetContext()
+{
+  return m_context;
+}
+
 void Context::PrepareLaunch()
 {
   if (m_dirty)

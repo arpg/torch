@@ -10,6 +10,11 @@ MatteMaterial::MatteMaterial(std::shared_ptr<Context> context) :
   Initialize();
 }
 
+size_t MatteMaterial::GetAlbedoCount() const
+{
+  return m_albedos.size();
+}
+
 void MatteMaterial::SetAlbedo(const Spectrum& albedo)
 {
   m_albedos.resize(1);

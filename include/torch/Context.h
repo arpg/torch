@@ -59,6 +59,8 @@ class Context : public std::enable_shared_from_this<Context>
 
     float GetSceneRadius() const;
 
+    optix::Context GetContext();
+
   protected:
 
     void PrepareLaunch();

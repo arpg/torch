@@ -43,6 +43,8 @@ class Scene
 
     std::shared_ptr<MatteMaterial> CreateMatteMaterial();
 
+    optix::Context GetContext();
+
   private:
 
     void Initialize();

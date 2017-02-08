@@ -11,6 +11,8 @@ class Camera : public Node
 
     Camera(std::shared_ptr<Context> context);
 
+    void GetImageSize(unsigned int& w, unsigned int& h) const;
+
     void SetImageSize(unsigned int w, unsigned int h);
 
     void SetFocalLength(float fx, float fy);

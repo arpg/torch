@@ -20,6 +20,12 @@ Camera::Camera(std::shared_ptr<Context> context) :
   Initialize();
 }
 
+void Camera::GetImageSize(unsigned int& w, unsigned int& h) const
+{
+  w = m_imageSize.x;
+  h = m_imageSize.y;
+}
+
 void Camera::SetImageSize(unsigned int w, unsigned int h)
 {
   m_imageSize = make_uint2(w, h);
