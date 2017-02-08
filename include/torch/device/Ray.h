@@ -26,6 +26,7 @@ struct RadianceData
   unsigned int seed;
   RayBounce bounce;
   unsigned int depth;
+  unsigned int sample;
 };
 
 struct ShadowData

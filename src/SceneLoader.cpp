@@ -149,9 +149,20 @@ std::shared_ptr<Node> SceneLoader::ParsePointLight(Element* elem)
 std::shared_ptr<Node> SceneLoader::ParsePrimitive(Element* elem)
 {
   std::shared_ptr<Primitive> primitive;
-  primitive = m_scene->CreatePrimitive();
-  primitive->SetGeometry(ParseGeometry(elem));
-  primitive->SetMaterial(ParseMaterial(elem));
+  Element* childElem = elem->FirstChildElement("file");
+
+  if (childElem)
+  {
+    const std::string file(childElem->GetText());
+    primitive = m_scene->CreatePrimitive(file);
+  }
+  else
+  {
+    primitive = m_scene->CreatePrimitive();
+    primitive->SetGeometry(ParseGeometry(elem));
+    primitive->SetMaterial(ParseMaterial(elem));
+  }
+
   return primitive;
 }
 

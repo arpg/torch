@@ -4,6 +4,9 @@
 
 rtDeclareVariable(float3, geometricNormal, attribute geometricNormal, );
 rtDeclareVariable(float3, shadingNormal, attribute shadingNormal, );
+rtDeclareVariable(float2, triScales, attribute triScales, );
+rtDeclareVariable(uint3, triFace, attribute triFace, );
+
 rtDeclareVariable(optix::Ray, ray, rtCurrentRay, );
 rtBuffer<float3, 1> vertices;
 rtBuffer<float3, 1> normals;
@@ -30,6 +33,7 @@ RT_PROGRAM void Intersect(int index)
 
   bool hit = intersect_triangle(triRay, v0, v1, v2, n, t, beta, gamma);
   n = normalize(n);
+  if (dot(n, -ray.direction) < 0.0f) n = -n;
 
   if (hit)
   {
@@ -47,16 +51,21 @@ RT_PROGRAM void Intersect(int index)
     {
       // compute scaled surface normal
       geometricNormal = NormalToWorld(n);
+      triScales = make_float2(beta, gamma);
+      triFace = face;
 
       if (normals.size())
       {
         const float alpha = 1.0f - beta - gamma;
         shadingNormal = alpha * normals[face.x] + beta * normals[face.y] + gamma * normals[face.z];
+        shadingNormal = faceforward(shadingNormal, -ray.direction, geometricNormal);
+        shadingNormal = normalize(shadingNormal);
       }
       else
       {
         shadingNormal = geometricNormal;
       }
+
       rtReportIntersection(0);
     }
   }

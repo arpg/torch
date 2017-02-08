@@ -12,19 +12,25 @@ class MatteMaterial : public Material
 
     MatteMaterial(std::shared_ptr<Context> context);
 
-    Spectrum GetAlbedo() const;
-
     void SetAlbedo(const Spectrum& albedo);
 
     void SetAlbedo(float r, float g, float b);
+
+    void SetAlbedos(const std::vector<Spectrum>& albedos);
 
   private:
 
     void Initialize();
 
+    void CreateAlbedoBuffer();
+
+    void UploadAlbedos();
+
   protected:
 
-    Spectrum m_albedo;
+    optix::Buffer m_albedoBuffer;
+
+    std::vector<Spectrum> m_albedos;
 };
 
 } // namespace torch

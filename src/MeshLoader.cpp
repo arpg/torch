@@ -2,6 +2,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
+#include <torch/Exception.h>
 #include <torch/Mesh.h>
 #include <torch/Normal.h>
 #include <torch/Point.h>
@@ -22,12 +23,12 @@ void MeshLoader::Load(const std::string& file)
   flags |= aiProcess_JoinIdenticalVertices;
   flags |= aiProcess_RemoveRedundantMaterials;
   flags |= aiProcess_FindInstances;
-  flags |= aiProcess_FixInfacingNormals;
-  flags |= aiProcess_FlipWindingOrder;
   flags |= aiProcess_Debone;
 
   Assimp::Importer importer;
   const aiScene* scene = importer.ReadFile(file.c_str(), flags);
+  TORCH_ASSERT(scene, "unable to read mesh file: " + file);
+
   const unsigned int meshCount = scene->mNumMeshes;
   unsigned int vertexCount = 0;
   unsigned int faceCount = 0;

@@ -82,6 +82,7 @@ set(CPP_HEADERS
   ${CPP_HEADER_DIR}/LightSampler.h
   ${CPP_HEADER_DIR}/Link.h
   ${CPP_HEADER_DIR}/Material.h
+  ${CPP_HEADER_DIR}/MaterialLoader.h
   ${CPP_HEADER_DIR}/MatteMaterial.h
   ${CPP_HEADER_DIR}/Mesh.h
   ${CPP_HEADER_DIR}/MeshLoader.h
@@ -132,6 +133,7 @@ set(CPP_SOURCES
   ${CPP_SOURCE_DIR}/LightSampler.cpp
   ${CPP_SOURCE_DIR}/Link.cpp
   ${CPP_SOURCE_DIR}/Material.cpp
+  ${CPP_SOURCE_DIR}/MaterialLoader.cpp
   ${CPP_SOURCE_DIR}/MatteMaterial.cpp
   ${CPP_SOURCE_DIR}/Mesh.cpp
   ${CPP_SOURCE_DIR}/MeshLoader.cpp

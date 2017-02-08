@@ -29,6 +29,8 @@ class Scene
 
     std::shared_ptr<Primitive> CreatePrimitive();
 
+    std::shared_ptr<Primitive> CreatePrimitive(const std::string& file);
+
     std::shared_ptr<GeometryGroup> CreateGeometryGroup();
 
     std::shared_ptr<Mesh> CreateMesh();
@@ -36,6 +38,8 @@ class Scene
     std::shared_ptr<Mesh> CreateMesh(const std::string& file);
 
     std::shared_ptr<Sphere> CreateSphere();
+
+    std::shared_ptr<Material> CreateMaterial(const std::string& file);
 
     std::shared_ptr<MatteMaterial> CreateMatteMaterial();
 

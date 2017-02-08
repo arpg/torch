@@ -4,6 +4,8 @@
 
 rtDeclareVariable(float3, geometricNormal, attribute geometricNormal, );
 rtDeclareVariable(float3, shadingNormal, attribute shadingNormal, );
+rtDeclareVariable(float2, triScales, attribute triScales, );
+rtDeclareVariable(uint3, triFace, attribute triFace, );
 rtDeclareVariable(optix::Ray, ray, rtCurrentRay, );
 
 TORCH_DEVICE bool ReportIntersect(float t)
@@ -27,6 +29,8 @@ TORCH_DEVICE bool ReportIntersect(float t)
     // compute scaled surface normal
     geometricNormal = NormalToWorld(localPoint);
     shadingNormal = geometricNormal;
+    triScales = make_float2(1, 0);
+    triFace = make_uint3(0, 0, 0);
     rtReportIntersection(0);
     return true;
   }

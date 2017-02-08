@@ -250,10 +250,12 @@ void Context::CreateContext()
   m_context = optix::Context::create();
   m_context->setRayTypeCount(RAY_TYPE_COUNT);
   m_context["sceneEpsilon"]->setFloat(1E-4);
+  m_context->setStackSize(2048);
 
 #ifdef DEBUG_BUILD
   m_context->setPrintEnabled(true);
-  m_context->setPrintBufferSize(512);
+  // m_context->setPrintBufferSize(512);
+  m_context->setPrintBufferSize(8192);
   m_context->setExceptionEnabled(RT_EXCEPTION_ALL, true);
 
   const std::string file = PtxUtil::GetFile("Exception");

@@ -58,8 +58,11 @@ RT_PROGRAM void Capture()
   data.radiance = make_float3(0, 0, 0);
   const unsigned int totalSamples = sampleCount * sampleCount;
 
+  const unsigned int N = 5;
+
   for (unsigned int i = 0; i < totalSamples; ++i)
   {
+    data.sample = i;
     InitializeRay(ray, data);
     GetDirection(ray.direction, seed, i);
     data.bounce.origin = make_float3(0, 0, 0);
@@ -67,7 +70,7 @@ RT_PROGRAM void Capture()
     data.bounce.throughput = make_float3(0, 0, 0);
     data.throughput = make_float3(1.0f / totalSamples);
 
-    for (unsigned int depth = 0; depth < 8; ++depth)
+    for (unsigned int depth = 0; depth < 6; ++depth)
     {
       data.depth = depth;
       data.seed = seed;
@@ -84,7 +87,10 @@ RT_PROGRAM void Capture()
 
       if (depth > 3)
       {
-        const float continueProb = min(0.5f, GetY(bounce.throughput));
+        // const float continueProb = fminf(0.5f, GetY(bounce.throughput));
+        const float continueProb = 0.5f;
+        // const float continueProb = fmaxf(0.05f, fminf(0.5f, GetY(bounce.throughput)));
+        // const float continueProb = fminf(0.5f, fminf(bounce.throughput.z, fminf(bounce.throughput.x, bounce.throughput.y)));
 
         if (torch::randf(seed) > continueProb)
         {
@@ -97,6 +103,10 @@ RT_PROGRAM void Capture()
       ray.origin = data.bounce.origin;
       ray.direction = data.bounce.direction;
       data.throughput = data.bounce.throughput;
+
+      data.bounce.origin = make_float3(0, 0, 0);
+      data.bounce.direction = make_float3(0, 0, 0);
+      data.bounce.throughput = make_float3(0, 0, 0);
     }
   }
 

@@ -6,6 +6,7 @@
 #include <torch/EnvironmentLight.h>
 #include <torch/GeometryGroup.h>
 #include <torch/Group.h>
+#include <torch/MaterialLoader.h>
 #include <torch/MatteMaterial.h>
 #include <torch/Mesh.h>
 #include <torch/MeshLoader.h>
@@ -84,6 +85,14 @@ std::shared_ptr<Primitive> Scene::CreatePrimitive()
   return CreateObject<Primitive>();
 }
 
+std::shared_ptr<Primitive> Scene::CreatePrimitive(const std::string& file)
+{
+  std::shared_ptr<Primitive> primitive = CreatePrimitive();
+  primitive->SetGeometry(CreateMesh(file));
+  primitive->SetMaterial(CreateMaterial(file));
+  return primitive;
+}
+
 std::shared_ptr<GeometryGroup> Scene::CreateGeometryGroup()
 {
   return CreateObject<GeometryGroup>();
@@ -94,7 +103,7 @@ std::shared_ptr<Mesh> Scene::CreateMesh()
   return CreateObject<Mesh>();
 }
 
-std::shared_ptr<Mesh> Scene::CreateMesh(const std::__cxx11::string& file)
+std::shared_ptr<Mesh> Scene::CreateMesh(const std::string& file)
 {
   std::shared_ptr<Mesh> mesh = CreateMesh();
   MeshLoader loader(mesh);
@@ -105,6 +114,12 @@ std::shared_ptr<Mesh> Scene::CreateMesh(const std::__cxx11::string& file)
 std::shared_ptr<Sphere> Scene::CreateSphere()
 {
   return CreateObject<Sphere>();
+}
+
+std::shared_ptr<Material> Scene::CreateMaterial(const std::string& file)
+{
+  MaterialLoader loader(m_context);
+  return loader.Load(file);
 }
 
 std::shared_ptr<MatteMaterial> Scene::CreateMatteMaterial()
