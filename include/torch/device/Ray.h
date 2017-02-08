@@ -38,6 +38,7 @@ struct ShadowData
 struct DepthData
 {
   float depth;
+  unsigned int sample;
 };
 
 } // namespace torch

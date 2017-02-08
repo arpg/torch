@@ -111,20 +111,6 @@ void Camera::GetData(const Transform& transform, CameraData& data) const
   data.v = (m_imageSize.y / m_focalLength.y) * matrix.getCol(1);
   data.w = matrix.getCol(2);
   data.position = matrix.getCol(3);
-
-  std::cout << std::endl;
-  std::cout << std::endl;
-  std::cout << "p: " << data.position.x << " " << data.position.y << " " << data.position.z << std::endl;
-  std::cout << "u: " << data.u.x << " " << data.u.y << " " << data.u.z << std::endl;
-  std::cout << "v: " << data.v.x << " " << data.v.y << " " << data.v.z << std::endl;
-  std::cout << "w: " << data.w.x << " " << data.w.y << " " << data.w.z << std::endl;
-  // std::cout << std::endl;
-  // std::cout << "0: " << matrix.getCol(0).x << " " << matrix.getCol(0).y << " " << matrix.getCol(0).z << std::endl;
-  // std::cout << "1: " << matrix.getCol(1).x << " " << matrix.getCol(1).y << " " << matrix.getCol(1).z << std::endl;
-  // std::cout << "2: " << matrix.getCol(2).x << " " << matrix.getCol(2).y << " " << matrix.getCol(2).z << std::endl;
-  // std::cout << "3: " << matrix.getCol(3).x << " " << matrix.getCol(3).y << " " << matrix.getCol(3).z << std::endl;
-  std::cout << std::endl;
-  std::cout << std::endl;
 }
 
 void Camera::Initialize()

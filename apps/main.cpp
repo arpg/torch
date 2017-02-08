@@ -27,16 +27,21 @@ int main(int argc, char** argv)
     image.Save(file);
 
     // Image refImage;
-    // refImage.Load("/home/mike/Desktop/image.png");
+    // refImage.Load("/home/mike/Desktop/research/reference.png");
+
+    // Image difImage;
+    // difImage.Load("/home/mike/Desktop/research/bounces.png");
 
     // float* maskData = reinterpret_cast<float*>(image.GetData());
     // float* refData = reinterpret_cast<float*>(refImage.GetData());
+    // float* difData = reinterpret_cast<float*>(difImage.GetData());
 
     // const unsigned int elemCount = 3 * refImage.GetHeight() * refImage.GetWidth();
 
     // for (uint i = 0; i < elemCount; ++i)
     // {
-    //   refData[i] *= maskData[i];
+    //   // refData[i] *= maskData[i];
+    //   refData[i] = maskData[i] * (refData[i] - difData[i]);
     // }
 
     // refImage.Save("/home/mike/Desktop/masked_image.png");

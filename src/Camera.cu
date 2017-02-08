@@ -1,4 +1,5 @@
 #include <optix.h>
+#include <cfloat>
 #include <torch/device/Core.h>
 #include <torch/device/Camera.h>
 #include <torch/device/Random.h>
@@ -127,6 +128,7 @@ RT_PROGRAM void CaptureDepth()
     InitializeRay(ray);
     ray.ray_type = torch::RAY_TYPE_DEPTH;
     data.depth = RT_DEFAULT_MAX;
+    data.sample = i;
     GetDirection(ray.direction, seed, i);
     rtTrace(sceneRoot, ray, data);
     depthBuffer[pixelIndex] = fmaxf(depthBuffer[pixelIndex], data.depth);
@@ -139,20 +141,22 @@ RT_PROGRAM void CaptureMask()
 {
   const int pad = 3;
   float depth = depthBuffer[pixelIndex];
+  float minDepth = FLT_MAX;
+  float maxDepth = FLT_MIN;
 
   for (int i = pixelIndex.x - pad; i < pixelIndex.x + pad; ++i)
   {
     for (int j = pixelIndex.y - pad; j < pixelIndex.y + pad; ++j)
     {
-      if (i < 0 || i >= imageSize.x || j < 0 || j > imageSize.y ||
-          (i == 0 && j == 0))
+      if (i < 0 || i >= imageSize.x || j < 0 || j > imageSize.y)
       {
         continue;
       }
 
-      const float otherDepth = depthBuffer[make_uint2(i, j)];
+      minDepth = fminf(minDepth, depthBuffer[make_uint2(i, j)]);
+      maxDepth = fmaxf(maxDepth, depthBuffer[make_uint2(i, j)]);
 
-      if (fabs(depth - otherDepth) > 0.025)
+      if (fabs(maxDepth - minDepth) > 0.05)
       {
         depth = RT_DEFAULT_MAX;
         break;
