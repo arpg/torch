@@ -1,10 +1,12 @@
 #include <torch/Problem.h>
+#include <torch/AlbedoResidualBlock.h>
 #include <torch/Camera.h>
 #include <torch/EnvironmentLight.h>
 #include <torch/Image.h>
 #include <torch/MatteMaterial.h>
 #include <torch/Mesh.h>
 #include <torch/Primitive.h>
+#include <torch/ReferenceImage.h>
 #include <torch/Scene.h>
 
 namespace torch
@@ -79,7 +81,7 @@ CUdeviceptr Problem::GetAlbedoDerivatives()
 
 CUdeviceptr Problem::GetReferenceImages()
 {
-  return m_referenceImages->getDevicePointer(0);
+  return m_referenceImageBuffer->getDevicePointer(0);
 }
 
 CUdeviceptr Problem::GetRenderedImages()
@@ -145,11 +147,13 @@ void Problem::Initialize()
   CreatePrimitive();
   CreateLight();
   CreateCameras();
+  CreateReferenceImages();
   CreateLightDerivBuffer();
   CreateAlbedoDerivBuffer();
   CreateReferenceImageBuffer();
   CreateRenderedImageBuffer();
   CreateBounceImageBuffer();
+  CreateAlbedoBlocks();
 }
 
 void Problem::CreateScene()
@@ -184,9 +188,23 @@ void Problem::CreateCameras()
   std::shared_ptr<Camera> camera;
   camera = m_scene->CreateCamera();
   camera->SetImageSize(640, 480);
-  camera->SetFocalLength(320, 320);
-  camera->SetCenterPoint(320, 240);
+  camera->SetFocalLength(535.7239, 536.2900);
+  camera->SetCenterPoint(320.2685, 240.2924);
+  camera->SetOrientation(2.49978, 2.69522, -2.78359);
+  camera->SetPosition(-0.4752, -0.476978, 0.342274);
+  camera->SetSampleCount(2);
   m_cameras.push_back(camera);
+}
+
+void Problem::CreateReferenceImages()
+{
+  std::shared_ptr<Image> image;
+  image = std::make_shared<Image>();
+  image->Load("reference.png");
+
+  std::shared_ptr<ReferenceImage> refImage;
+  refImage = std::make_shared<ReferenceImage>(m_cameras[0], image);
+  m_referenceImages.push_back(refImage);
 }
 
 void Problem::CreateLightDerivBuffer()
@@ -212,10 +230,10 @@ void Problem::CreateAlbedoDerivBuffer()
 void Problem::CreateReferenceImageBuffer()
 {
   optix::Context context = m_scene->GetContext();
-  m_referenceImages = context->createBuffer(RT_BUFFER_INPUT_OUTPUT);
-  m_referenceImages->setFormat(RT_FORMAT_FLOAT3);
-  context["referenceImages"]->setBuffer(m_referenceImages);
-  m_referenceImages->setSize(GetResidualCount());
+  m_referenceImageBuffer = context->createBuffer(RT_BUFFER_INPUT_OUTPUT);
+  m_referenceImageBuffer->setFormat(RT_FORMAT_FLOAT3);
+  context["referenceImages"]->setBuffer(m_referenceImageBuffer);
+  m_referenceImageBuffer->setSize(GetResidualCount());
 }
 
 void Problem::CreateRenderedImageBuffer()
@@ -234,6 +252,16 @@ void Problem::CreateBounceImageBuffer()
   m_bounceImages->setFormat(RT_FORMAT_FLOAT3);
   context["bounceImages"]->setBuffer(m_bounceImages);
   m_bounceImages->setSize(0u);
+}
+
+void Problem::CreateAlbedoBlocks()
+{
+  for (std::shared_ptr<ReferenceImage> refImage : m_referenceImages)
+  {
+    std::shared_ptr<AlbedoResidualBlock> block;
+    block = std::make_shared<AlbedoResidualBlock>(m_mesh, refImage);
+    m_albedoBlocks.push_back(block);
+  }
 }
 
 } // namespace torch

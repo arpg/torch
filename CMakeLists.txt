@@ -59,6 +59,7 @@ set(CONFIG_HEADERS
 set(CPP_HEADER_DIR include/${LIBRARY_NAME})
 
 set(CPP_HEADERS
+  ${CPP_HEADER_DIR}/AlbedoResidualBlock.h
   ${CPP_HEADER_DIR}/AreaLight.h
   ${CPP_HEADER_DIR}/AreaLightSampler.h
   ${CPP_HEADER_DIR}/BoundingBox.h
@@ -95,6 +96,7 @@ set(CPP_HEADERS
   ${CPP_HEADER_DIR}/PointLightSampler.h
   ${CPP_HEADER_DIR}/Primitive.h
   ${CPP_HEADER_DIR}/Problem.h
+  ${CPP_HEADER_DIR}/ReferenceImage.h
   ${CPP_HEADER_DIR}/Scene.h
   ${CPP_HEADER_DIR}/SceneGeometrySampler.h
   ${CPP_HEADER_DIR}/SceneLightSampler.h
@@ -113,6 +115,7 @@ set(CPP_HEADERS
 set(CPP_SOURCE_DIR src)
 
 set(CPP_SOURCES
+  ${CPP_SOURCE_DIR}/AlbedoResidualBlock.cpp
   ${CPP_SOURCE_DIR}/AreaLight.cpp
   ${CPP_SOURCE_DIR}/AreaLightSampler.cpp
   ${CPP_SOURCE_DIR}/BoundingBox.cpp
@@ -147,6 +150,7 @@ set(CPP_SOURCES
   ${CPP_SOURCE_DIR}/PointLightSampler.cpp
   ${CPP_SOURCE_DIR}/Primitive.cpp
   ${CPP_SOURCE_DIR}/Problem.cpp
+  ${CPP_SOURCE_DIR}/ReferenceImage.cpp
   ${CPP_SOURCE_DIR}/Scene.cpp
   ${CPP_SOURCE_DIR}/SceneGeometrySampler.cpp
   ${CPP_SOURCE_DIR}/SceneLightSampler.cpp
@@ -180,6 +184,7 @@ set(CUDA_HEADERS
 set(CUDA_SOURCE_DIR src)
 
 set(CUDA_SOURCES
+  ${CUDA_SOURCE_DIR}/AlbedoResidualBlock.cu
   ${CUDA_SOURCE_DIR}/AreaLightSampler.cu
   ${CUDA_SOURCE_DIR}/Camera.cu
   ${CUDA_SOURCE_DIR}/DirectionalLightSampler.cu

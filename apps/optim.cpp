@@ -5,7 +5,8 @@ using namespace torch;
 
 int main(int argc, char** argv)
 {
+  std::cout << "Starting..." << std::endl;
   Problem problem;
-  std::cout << "Success" << std::endl;
+  std::cout << "Finished." << std::endl;
   return 0;
 }

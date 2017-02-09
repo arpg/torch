@@ -57,6 +57,8 @@ class Problem
 
     void CreateCameras();
 
+    void CreateReferenceImages();
+
     void CreateLightDerivBuffer();
 
     void CreateAlbedoDerivBuffer();
@@ -66,6 +68,8 @@ class Problem
     void CreateRenderedImageBuffer();
 
     void CreateBounceImageBuffer();
+
+    void CreateAlbedoBlocks();
 
   protected:
 
@@ -77,13 +81,17 @@ class Problem
 
     std::shared_ptr<EnvironmentLight> m_light;
 
+    std::vector<std::shared_ptr<AlbedoResidualBlock>> m_albedoBlocks;
+
     std::vector<std::shared_ptr<Camera>> m_cameras;
+
+    std::vector<std::shared_ptr<ReferenceImage>> m_referenceImages;
 
     optix::Buffer m_lightDerivs;
 
     optix::Buffer m_albedoDerivs;
 
-    optix::Buffer m_referenceImages;
+    optix::Buffer m_referenceImageBuffer;
 
     optix::Buffer m_renderedImages;
 

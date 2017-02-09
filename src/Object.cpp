@@ -8,4 +8,9 @@ Object::Object(std::shared_ptr<Context> context) :
 {
 }
 
+std::shared_ptr<Context> Object::GetContext() const
+{
+  return m_context;
+}
+
 } // namespace torch

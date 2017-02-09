@@ -14,6 +14,7 @@ namespace torch
 
 const float infinity = std::numeric_limits<float>::infinity();
 
+class AlbedoResidualBlock;
 class AreaLight;
 class AreaLightData;
 class AreaLightSampler;
@@ -59,6 +60,7 @@ class PointLightSampler;
 class Primitive;
 class Random;
 class Ray;
+class ReferenceImage;
 class Scene;
 class SceneGeometrySampler;
 class SceneLightSampler;

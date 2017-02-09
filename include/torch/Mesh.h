@@ -12,11 +12,27 @@ class Mesh : public SingleGeometry
 
     Mesh(std::shared_ptr<Context> context);
 
+    ~Mesh();
+
+    size_t GetVertexCount() const;
+
+    void GetVertices(std::vector<Point>& vertices) const;
+
     void SetVertices(const std::vector<Point>& vertices);
+
+    void GetNormals(std::vector<Normal>& normals) const;
 
     void SetNormals(const std::vector<Normal>& normals);
 
+    void GetFaces(std::vector<uint3>& faces) const;
+
     void SetFaces(const std::vector<uint3>& faces);
+
+    optix::Buffer GetVertexBuffer() const;
+
+    optix::Buffer GetNormalBuffer() const;
+
+    optix::Buffer GetFaceBuffer() const;
 
     BoundingBox GetBounds(const Transform& transform) override;
 
@@ -39,11 +55,17 @@ class Mesh : public SingleGeometry
 
   protected:
 
-    optix::Buffer m_vertices;
+    std::vector<Point> m_vertices;
 
-    optix::Buffer m_normals;
+    std::vector<Normal> m_normals;
 
-    optix::Buffer m_faces;
+    std::vector<uint3> m_faces;
+
+    optix::Buffer m_vertexBuffer;
+
+    optix::Buffer m_normalBuffer;
+
+    optix::Buffer m_faceBuffer;
 
     BoundingBox m_bounds;
 };

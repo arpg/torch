@@ -84,6 +84,11 @@ void Camera::PostBuildScene()
   if (m_detached) UploadCamera(m_transform);
 }
 
+void Camera::GetData(CameraData& data) const
+{
+  return GetData(m_transform, data);
+}
+
 void Camera::CopyBuffer(Image& image)
 {
   image.Resize(m_imageSize.x, m_imageSize.y);

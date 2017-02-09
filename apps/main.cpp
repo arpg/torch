@@ -22,8 +22,8 @@ int main(int argc, char** argv)
   {
     std::cout << "Rendering image " << i << "..." << std::endl;
     const std::string file = "image" + std::to_string(i) + ".png";
-    // cameras[i]->CaptureMask(image);
-    cameras[i]->Capture(image);
+    cameras[i]->CaptureMask(image);
+    // cameras[i]->Capture(image);
     image.Save(file);
 
     // Image refImage;

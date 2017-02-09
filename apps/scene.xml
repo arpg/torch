@@ -9,7 +9,7 @@
     <image_size>640 480</image_size>
     <focal_length>535.7239 536.2900</focal_length>
     <center_point>320.2685 240.2924</center_point>
-    <sample_count>8</sample_count>
+    <sample_count>2</sample_count>
   </camera>
 
   <!-- area light -->

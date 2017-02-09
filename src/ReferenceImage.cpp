@@ -1,0 +1,47 @@
+#include <torch/ReferenceImage.h>
+#include <torch/Camera.h>
+#include <torch/Image.h>
+
+namespace torch
+{
+
+ReferenceImage::ReferenceImage(std::shared_ptr<Camera> camera,
+    std::shared_ptr<Image> image) :
+  m_camera(camera),
+  m_image(image)
+{
+  Initialize();
+}
+
+void ReferenceImage::GetCamera(CameraData& camera) const
+{
+  m_camera->GetData(camera);
+}
+
+std::shared_ptr<const Camera> ReferenceImage::GetCamera() const
+{
+  return m_camera;
+}
+
+std::shared_ptr<const Image> ReferenceImage::GetImage() const
+{
+  return m_image;
+}
+
+std::shared_ptr<const Image> ReferenceImage::GetMask() const
+{
+  return m_mask;
+}
+
+void ReferenceImage::Initialize()
+{
+  CreateImageMask();
+}
+
+void ReferenceImage::CreateImageMask()
+{
+  m_mask = std::make_shared<Image>();
+  m_camera->CaptureMask(*m_mask);
+}
+
+} // namespace torch

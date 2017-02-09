@@ -31,6 +31,8 @@ class Camera : public Node
 
     void PostBuildScene() override;
 
+    void GetData(CameraData& data) const;
+
   protected:
 
     void CopyBuffer(Image& image);

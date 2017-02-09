@@ -11,6 +11,8 @@ class Object
 
     Object(std::shared_ptr<Context> context);
 
+    std::shared_ptr<Context> GetContext() const;
+
     virtual void PreBuildScene() = 0;
 
     virtual void BuildScene(Link& link) = 0;
