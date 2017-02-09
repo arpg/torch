@@ -144,6 +144,13 @@ RT_PROGRAM void CaptureMask()
   float minDepth = FLT_MAX;
   float maxDepth = FLT_MIN;
 
+  if (pixelIndex.x <= pad || pixelIndex.x >= (imageSize.x - 1 - pad) ||
+      pixelIndex.y <= pad || pixelIndex.y >= (imageSize.y - 1 - pad))
+  {
+    buffer[pixelIndex] = make_float3(0);
+    return;
+  }
+
   for (int i = pixelIndex.x - pad; i < pixelIndex.x + pad; ++i)
   {
     for (int j = pixelIndex.y - pad; j < pixelIndex.y + pad; ++j)
