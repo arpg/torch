@@ -21,6 +21,7 @@ struct LightSample
   float3 origin;
   float3 radiance;
   float3 direction;
+  float3 normal;
   float tmin;
   float tmax;
   float pdf;

@@ -66,6 +66,7 @@ RT_PROGRAM void ClosestHit()
   sample.origin = ray.origin + hitDist * ray.direction;
   sample.tmin = sceneEpsilon;
   sample.seed = rayData.seed;
+  sample.normal = geometricNormal;
   const unsigned int lightSamples = 16;
 
   for (unsigned int i = 0; i < lightSamples; ++i)
@@ -73,28 +74,11 @@ RT_PROGRAM void ClosestHit()
     SampleLights(sample);
     rayData.seed = sample.seed;
 
-    float theta = dot(geometricNormal, sample.direction);
-
-    if (theta > 0.0f)
+    if (sample.radiance.x > 0 || sample.radiance.y > 0 || sample.radiance.z > 0)
     {
-      optix::Ray shadowRay;
-      shadowRay.origin = sample.origin;
-      shadowRay.direction = sample.direction;
-      shadowRay.ray_type = torch::RAY_TYPE_SHADOW;
-      shadowRay.tmin = sample.tmin;
-      shadowRay.tmax = sample.tmax;
-
-      torch::ShadowData shadowData;
-      shadowData.occluded = false;
-
-      rtTrace(sceneRoot, shadowRay, shadowData);
-
-      if (!shadowData.occluded)
-      {
-        float3 brdf = GetAlbedo() / M_PIf;
-        theta = dot(shadingNormal, sample.direction);
-        rayData.radiance += (rayData.throughput * brdf * sample.radiance * theta / sample.pdf) / lightSamples;
-      }
+      const float3 brdf = GetAlbedo() / M_PIf;
+      const float theta = dot(shadingNormal, sample.direction);
+      rayData.radiance += (rayData.throughput * brdf * sample.radiance * theta / sample.pdf) / lightSamples;
     }
   }
 

@@ -179,6 +179,7 @@ set(CUDA_HEADERS
   ${CUDA_HEADER_DIR}/Ray.h
   ${CUDA_HEADER_DIR}/Sampling.h
   ${CUDA_HEADER_DIR}/Transform.h
+  ${CUDA_HEADER_DIR}/Visibility.h
 )
 
 # define cuda sources

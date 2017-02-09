@@ -3,6 +3,7 @@
 #include <torch/device/Light.h>
 #include <torch/device/Geometry.h>
 #include <torch/device/Random.h>
+#include <torch/device/Visibility.h>
 
 typedef rtCallableProgramX<unsigned int(float, float&)> SampleLightFunction;
 typedef rtCallableProgramX<void(torch::GeometrySample&)> SampleGeomFunction;
@@ -29,4 +30,6 @@ RT_CALLABLE_PROGRAM void Sample(torch::LightSample& sample)
   sample.tmax = geomSample.tmax;
   sample.pdf *= geomSample.pdf;
   sample.seed = geomSample.seed;
+
+  if (!torch::IsVisible(sample)) sample.radiance = make_float3(0, 0, 0);
 }

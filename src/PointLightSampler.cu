@@ -2,6 +2,7 @@
 #include <optix_math.h>
 #include <torch/device/Light.h>
 #include <torch/device/Random.h>
+#include <torch/device/Visibility.h>
 
 typedef rtCallableProgramX<unsigned int(float, float&)> SampleFunction;
 rtDeclareVariable(SampleFunction, GetLightIndex, , );
@@ -19,4 +20,6 @@ RT_CALLABLE_PROGRAM void Sample(torch::LightSample& sample)
   sample.radiance = light.intensity / distanceSquared;
   sample.direction = normalize(difference);
   sample.tmax = sqrt(distanceSquared);
+
+  if (!torch::IsVisible(sample)) sample.radiance = make_float3(0, 0, 0);
 }

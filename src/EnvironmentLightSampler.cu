@@ -1,5 +1,6 @@
 #include <torch/device/Light.h>
 #include <torch/device/Random.h>
+#include <torch/device/Visibility.h>
 
 typedef rtCallableProgramX<uint(float, float&)> Distribution1D;
 typedef rtCallableProgramId<uint2(const float2&, float&)> Distribution2D;
@@ -59,4 +60,6 @@ RT_CALLABLE_PROGRAM void Sample(torch::LightSample& sample)
 
   sample.tmax = RT_DEFAULT_MAX;
   sample.pdf *= dirPdf;
+
+  if (!torch::IsVisible(sample)) sample.radiance = make_float3(0, 0, 0);
 }
