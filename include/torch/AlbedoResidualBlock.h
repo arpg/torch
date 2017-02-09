@@ -12,6 +12,8 @@ class AlbedoResidualBlock
     AlbedoResidualBlock(std::shared_ptr<Mesh> mesh,
         std::shared_ptr<ReferenceImage> reference);
 
+    optix::Program GetAddProgram() const;
+
   private:
 
     void Initialize();
@@ -22,13 +24,17 @@ class AlbedoResidualBlock
 
     void CreateBoundingBoxBuffer();
 
-    void GetBoundingBoxes(std::vector<uint4>& boxes);
+    void GetBoundingBoxes(std::vector<uint4>& bboxes);
+
+    void CreateJacobian(const std::vector<uint4>& bboxes);
 
   protected:
 
     std::shared_ptr<Mesh> m_mesh;
 
     std::shared_ptr<ReferenceImage> m_reference;
+
+    std::shared_ptr<SparseMatrix> m_jacobian;
 
     optix::Buffer m_neighborOffsets;
 

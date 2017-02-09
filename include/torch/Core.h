@@ -65,6 +65,7 @@ class Scene;
 class SceneGeometrySampler;
 class SceneLightSampler;
 class SingleGeometry;
+class SparseMatrix;
 class Spectrum;
 class Sphere;
 class SphereData;

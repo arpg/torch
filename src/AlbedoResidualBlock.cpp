@@ -1,9 +1,11 @@
 #include <torch/AlbedoResidualBlock.h>
 #include <torch/Camera.h>
 #include <torch/Context.h>
+#include <torch/Image.h>
 #include <torch/Mesh.h>
 #include <torch/PtxUtil.h>
 #include <torch/ReferenceImage.h>
+#include <torch/SparseMatrix.h>
 #include <torch/device/Camera.h>
 
 #include <iostream>
@@ -17,6 +19,11 @@ AlbedoResidualBlock::AlbedoResidualBlock(std::shared_ptr<Mesh> mesh,
   m_reference(reference)
 {
   Initialize();
+}
+
+optix::Program AlbedoResidualBlock::GetAddProgram() const
+{
+  return m_jacobian->GetAddProgram();
 }
 
 void AlbedoResidualBlock::Initialize()
@@ -153,14 +160,56 @@ void AlbedoResidualBlock::CreateBoundingBoxBuffer()
   m_bboxBuffer = context->CreateBuffer(RT_BUFFER_OUTPUT);
   m_bboxBuffer->setFormat(RT_FORMAT_UNSIGNED_INT4);
   m_bboxBuffer->setSize(m_mesh->GetVertexCount());
-  m_bboxProgram["boundBoxes"]->setBuffer(m_bboxBuffer);
+  m_bboxProgram["boundingBoxes"]->setBuffer(m_bboxBuffer);
 }
 
-void AlbedoResidualBlock::GetBoundingBoxes(std::vector<uint4>& boxes)
+void AlbedoResidualBlock::GetBoundingBoxes(std::vector<uint4>& bboxes)
 {
   std::shared_ptr<Context> context;
   context = m_mesh->GetContext();
   context->Launch(m_bboxProgramId, m_mesh->GetVertexCount());
+
+  bboxes.resize(m_mesh->GetVertexCount());
+  uint4* device = reinterpret_cast<uint4*>(m_bboxBuffer->map());
+  std::copy(device, device + bboxes.size(), bboxes.data());
+  m_bboxBuffer->unmap();
+}
+
+void AlbedoResidualBlock::CreateJacobian(const std::vector<uint4>& bboxes)
+{
+  std::shared_ptr<const Image> mask = m_reference->GetMask();
+  const unsigned int width = mask->GetWidth();
+  float3* data = reinterpret_cast<float3*>(mask->GetData());
+
+  std::vector<unsigned int> rowOffsets(bboxes.size() + 1);
+  std::vector<unsigned int> colIndices;
+  rowOffsets[0] = 0;
+
+  for (size_t i = 0; i < bboxes.size(); ++i)
+  {
+    const uint4& bbox = bboxes[i];
+
+    for (unsigned int y = bbox.y; y < bbox.w; ++y)
+    {
+      for (unsigned int x = bbox.x; x < bbox.z; ++x)
+      {
+        const size_t pixelIndex = y * width + x;
+
+        if (data[pixelIndex].x == 1)
+        {
+          const size_t pixelIndex = y * width + x;
+          colIndices.push_back(pixelIndex);
+        }
+      }
+    }
+
+    rowOffsets[i + 1] = colIndices.size() + rowOffsets[i];
+  }
+
+  std::shared_ptr<Context> context;
+  context = m_mesh->GetContext();
+  m_jacobian = std::make_shared<SparseMatrix>(context);
+  m_jacobian->Allocate(rowOffsets, colIndices);
 }
 
 } // namespace torch

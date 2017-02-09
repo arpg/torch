@@ -13,6 +13,8 @@ struct CameraData
   float3 u;
   float3 v;
   float3 w;
+  optix::Matrix3x3 K;
+  optix::Matrix3x3 Kinv;
   unsigned int samples;
   unsigned int minDepth;
   unsigned int maxDepth;

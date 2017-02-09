@@ -27,7 +27,7 @@ size_t Image::GetByteCount() const
   return m_image.total() * m_image.elemSize();
 }
 
-unsigned char*Image::GetData() const
+unsigned char* Image::GetData() const
 {
   return m_image.data;
 }

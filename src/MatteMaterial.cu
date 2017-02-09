@@ -22,6 +22,9 @@ rtDeclareVariable(torch::ShadowData, srayData, rtPayload, );
 typedef rtCallableProgramX<void(torch::LightSample&)> SampleLightFunction;
 rtDeclareVariable(SampleLightFunction, SampleLights, , );
 
+typedef rtCallableProgramId<void(uint, uint, float)> JacobianAddFunction;
+rtBuffer<JacobianAddFunction, 1> AddToAlbedoJacobian;
+
 TORCH_DEVICE float3 GetAlbedo()
 {
   const uint x = (triFace.x >= albedos.size()) ? albedos.size() - 1 : triFace.x;

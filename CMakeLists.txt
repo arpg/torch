@@ -102,6 +102,7 @@ set(CPP_HEADERS
   ${CPP_HEADER_DIR}/SceneLightSampler.h
   ${CPP_HEADER_DIR}/SceneLoader.h
   ${CPP_HEADER_DIR}/SingleGeometry.h
+  ${CPP_HEADER_DIR}/SparseMatrix.h
   ${CPP_HEADER_DIR}/Spectrum.h
   ${CPP_HEADER_DIR}/Sphere.h
   ${CPP_HEADER_DIR}/SphereSampler.h
@@ -156,6 +157,7 @@ set(CPP_SOURCES
   ${CPP_SOURCE_DIR}/SceneLightSampler.cpp
   ${CPP_SOURCE_DIR}/SceneLoader.cpp
   ${CPP_SOURCE_DIR}/SingleGeometry.cpp
+  ${CPP_SOURCE_DIR}/SparseMatrix.cpp
   ${CPP_SOURCE_DIR}/Spectrum.cpp
   ${CPP_SOURCE_DIR}/Sphere.cpp
   ${CPP_SOURCE_DIR}/SphereSampler.cpp
@@ -200,6 +202,7 @@ set(CUDA_SOURCES
   ${CUDA_SOURCE_DIR}/PointLightSampler.cu
   ${CUDA_SOURCE_DIR}/SceneGeometrySampler.cu
   ${CUDA_SOURCE_DIR}/SceneLightSampler.cu
+  ${CUDA_SOURCE_DIR}/SparseMatrix.cu
   ${CUDA_SOURCE_DIR}/Sphere.cu
   ${CUDA_SOURCE_DIR}/SphereSampler.cu
 )

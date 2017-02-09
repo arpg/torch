@@ -116,6 +116,14 @@ void Camera::GetData(const Transform& transform, CameraData& data) const
   data.v = (m_imageSize.y / m_focalLength.y) * matrix.getCol(1);
   data.w = matrix.getCol(2);
   data.position = matrix.getCol(3);
+
+  data.K.setRow(0, make_float3(m_focalLength.x, 0, m_centerPoint.x));
+  data.K.setRow(1, make_float3(0, m_focalLength.y, m_centerPoint.y));
+  data.K.setRow(2, make_float3(0, 0, 1));
+
+  data.Kinv.setRow(0, make_float3(1 / m_focalLength.x, 0, -m_centerPoint.x / m_focalLength.x));
+  data.Kinv.setRow(1, make_float3(0, 1 / m_focalLength.y, -m_centerPoint.y / m_focalLength.x));
+  data.Kinv.setRow(2, make_float3(0, 0, 1));
 }
 
 void Camera::Initialize()
