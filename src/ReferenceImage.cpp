@@ -65,6 +65,32 @@ void ReferenceImage::GetValidPixels(std::vector<uint2>& pixels) const
   }
 }
 
+size_t ReferenceImage::GetValidPixelIndex(unsigned int u, unsigned int v) const
+{
+  float3* data = reinterpret_cast<float3*>(m_mask->GetData());
+  size_t count = 0;
+
+  for (unsigned int y = 0; y < m_mask->GetHeight(); ++y)
+  {
+    for (unsigned int x = 0; x < m_mask->GetWidth(); ++x)
+    {
+      const size_t index = y * m_mask->GetWidth() + x;
+
+      if (x == u && y == v)
+      {
+        if (data[index].x == 0)
+          throw "pixel is not valid";
+
+        return count;
+      }
+
+      if (data[index].x == 1) ++count;
+    }
+  }
+
+  throw "pixel is not valid";
+}
+
 void ReferenceImage::Initialize()
 {
   CreateImageMask();

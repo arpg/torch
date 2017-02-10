@@ -46,6 +46,11 @@ void Camera::SetCenterPoint(float cx, float cy)
   m_context->MarkDirty();
 }
 
+unsigned int Camera::GetSampleCount() const
+{
+  return m_sampleCount;
+}
+
 void Camera::SetSampleCount(unsigned int count)
 {
   m_sampleCount = count;
@@ -116,6 +121,8 @@ void Camera::GetData(const Transform& transform, CameraData& data) const
   data.v = (m_imageSize.y / m_focalLength.y) * matrix.getCol(1);
   data.w = matrix.getCol(2);
   data.position = matrix.getCol(3);
+  data.samples = m_sampleCount;
+  data.imageSize = m_imageSize;
 
   data.K.setRow(0, make_float3(m_focalLength.x, 0, m_centerPoint.x));
   data.K.setRow(1, make_float3(0, m_focalLength.y, m_centerPoint.y));

@@ -24,6 +24,10 @@ class Problem
 
     void ComputeAlbedoDerivatives();
 
+    optix::Buffer GetRenderBuffer() const;
+
+    void GetRenderValues(std::vector<float3>& values);
+
     std::shared_ptr<SparseMatrix> GetAlbedoJacobian(size_t index) const;
 
     CUdeviceptr GetLightDerivatives();
@@ -68,6 +72,8 @@ class Problem
 
     void CreatePixelBuffer();
 
+    void CreateRenderBuffer();
+
     void CreateProgram();
 
   protected:
@@ -99,6 +105,8 @@ class Problem
     optix::Buffer m_cameraBuffer;
 
     optix::Buffer m_pixelBuffer;
+
+    optix::Buffer m_renderBuffer;
 
     optix::Program m_program;
 

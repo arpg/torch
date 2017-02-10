@@ -11,9 +11,10 @@ namespace torch
 TORCH_DEVICE bool IsVisible(const LightSample& sample)
 {
   ShadowData payload;
-  payload.occluded = false;
+  payload.occluded = true;
 
-  if (dot(sample.direction, sample.normal) > 0)
+  if (dot(sample.direction, sample.normal) > 0 &&
+      dot(sample.direction, sample.snormal) > 0)
   {
     optix::Ray ray;
     ray.origin = sample.origin;
@@ -21,6 +22,7 @@ TORCH_DEVICE bool IsVisible(const LightSample& sample)
     ray.ray_type = RAY_TYPE_SHADOW;
     ray.tmin = sample.tmin;
     ray.tmax = sample.tmax;
+    payload.occluded = false;
     rtTrace(sceneRoot, ray, payload);
   }
 

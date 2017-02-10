@@ -191,6 +191,7 @@ void AlbedoResidualBlock::CreateJacobian(const std::vector<uint4>& bboxes)
   std::vector<unsigned int> colIndices;
   rowOffsets[0] = 0;
 
+  // for each vertex
   for (size_t i = 0; i < bboxes.size(); ++i)
   {
     const uint4& bbox = bboxes[i];
@@ -203,13 +204,13 @@ void AlbedoResidualBlock::CreateJacobian(const std::vector<uint4>& bboxes)
 
         if (data[pixelIndex].x == 1)
         {
-          const size_t pixelIndex = y * width + x;
+          const size_t pixelIndex = m_reference->GetValidPixelIndex(x, y);
           colIndices.push_back(pixelIndex);
         }
       }
     }
 
-    rowOffsets[i + 1] = colIndices.size() + rowOffsets[i];
+    rowOffsets[i + 1] = colIndices.size();
   }
 
   std::shared_ptr<Context> context;

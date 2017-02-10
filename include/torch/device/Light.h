@@ -9,7 +9,7 @@ namespace torch
 enum LightType
 {
   LIGHT_TYPE_AREA,
-  LIGHT_TYPE_Directional,
+  LIGHT_TYPE_DIRECTIONAL,
   LIGHT_TYPE_ENVIRONMENT,
   LIGHT_TYPE_POINT,
   LIGHT_TYPE_COUNT
@@ -22,6 +22,8 @@ struct LightSample
   float3 radiance;
   float3 direction;
   float3 normal;
+  float3 snormal;
+  float3 throughput;
   float tmin;
   float tmax;
   float pdf;

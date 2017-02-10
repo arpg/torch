@@ -24,6 +24,39 @@ optix::Program SparseMatrix::GetAddProgram() const
   return m_program;
 }
 
+void SparseMatrix::GetValues(std::vector<float3>& values)
+{
+  RTsize size;
+  m_values->getSize(size);
+  values.resize(size);
+
+  float3* device = reinterpret_cast<float3*>(m_values->map());
+  std::copy(device, device + size, values.data());
+  m_values->unmap();
+}
+
+void SparseMatrix::GetRowOffsets(std::vector<unsigned int>& offsets)
+{
+  RTsize size;
+  m_rowOffsets->getSize(size);
+  offsets.resize(size);
+
+  unsigned int* device = reinterpret_cast<unsigned int*>(m_rowOffsets->map());
+  std::copy(device, device + size, offsets.data());
+  m_rowOffsets->unmap();
+}
+
+void SparseMatrix::GetColumnIndices(std::vector<unsigned int>& indices)
+{
+  RTsize size;
+  m_colIndices->getSize(size);
+  indices.resize(size);
+
+  unsigned int* device = reinterpret_cast<unsigned int*>(m_colIndices->map());
+  std::copy(device, device + size, indices.data());
+  m_colIndices->unmap();
+}
+
 void SparseMatrix::AllocateValues(size_t size)
 {
   m_values->setSize(size);

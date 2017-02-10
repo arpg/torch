@@ -30,7 +30,7 @@ void SceneLightSampler::Add(const AreaLightData& light)
 
 void SceneLightSampler::Add(const DirectionalLightData& light)
 {
-  LightSampler* sampler = m_samplers[LIGHT_TYPE_Directional].get();
+  LightSampler* sampler = m_samplers[LIGHT_TYPE_DIRECTIONAL].get();
   static_cast<DirectionalLightSampler*>(sampler)->Add(light);
 }
 
@@ -111,7 +111,7 @@ void SceneLightSampler::CreateLightSamplers()
 
   sampler = std::make_unique<DirectionalLightSampler>(m_context);
   m_program["SampleDirectionalLights"]->set(sampler.get()->GetProgram());
-  m_samplers[LIGHT_TYPE_Directional] = std::move(sampler);
+  m_samplers[LIGHT_TYPE_DIRECTIONAL] = std::move(sampler);
 
   sampler = std::make_unique<EnvironmentLightSampler>(m_context);
   m_program["SampleEnvironmentLights"]->set(sampler.get()->GetProgram());

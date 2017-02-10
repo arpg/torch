@@ -19,6 +19,8 @@ class Camera : public Node
 
     void SetCenterPoint(float cx, float cy);
 
+    unsigned int GetSampleCount() const;
+
     void SetSampleCount(unsigned int count);
 
     void Capture(Image& image);

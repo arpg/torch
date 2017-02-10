@@ -73,6 +73,22 @@ void Problem::ComputeAlbedoDerivatives()
   context->Launch(m_programId, m_launchSize);
 }
 
+optix::Buffer Problem::GetRenderBuffer() const
+{
+  return m_renderBuffer;
+}
+
+void Problem::GetRenderValues(std::vector<float3>& values)
+{
+  RTsize size;
+  m_renderBuffer->getSize(size);
+  values.resize(size);
+
+  const float3* device = reinterpret_cast<const float3*>(m_renderBuffer->map());
+  std::copy(device, device + size, values.data());
+  m_renderBuffer->unmap();;
+}
+
 std::shared_ptr<SparseMatrix> Problem::GetAlbedoJacobian(size_t index) const
 {
   return m_albedoBlocks[index]->GetJacobian();
@@ -149,6 +165,7 @@ void Problem::Initialize()
   CreateAlbedoBlocks();
   CreateCameraBuffer();
   CreatePixelBuffer();
+  CreateRenderBuffer();
   CreateProgram();
 }
 
@@ -263,6 +280,14 @@ void Problem::CreatePixelBuffer()
   m_launchSize = samples.size();
 }
 
+void Problem::CreateRenderBuffer()
+{
+  optix::Context context = m_scene->GetContext();
+  m_renderBuffer = context->createBuffer(RT_BUFFER_OUTPUT);
+  m_renderBuffer->setFormat(RT_FORMAT_FLOAT3);
+  m_renderBuffer->setSize(GetResidualCount() / 3);
+}
+
 void Problem::CreateProgram()
 {
   std::shared_ptr<Context> context;
@@ -271,6 +296,7 @@ void Problem::CreateProgram()
   const std::string file = PtxUtil::GetFile("Problem");
   m_program = context->CreateProgram(file, "Capture");
   m_programId = context->RegisterLaunchProgram(m_program);
+  m_program["render"]->setBuffer(m_renderBuffer);
 }
 
 } // namespace torch

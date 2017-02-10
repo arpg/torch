@@ -262,6 +262,13 @@ void Context::Initialize()
   pixelSamples->setElementSize(sizeof(PixelSample));
   pixelSamples->setSize(0);
   m_context["pixelSamples"]->setBuffer(pixelSamples);
+
+  optix::Buffer cameras;
+  cameras = m_context->createBuffer(RT_BUFFER_INPUT);
+  cameras->setFormat(RT_FORMAT_USER);
+  cameras->setElementSize(sizeof(CameraData));
+  cameras->setSize(0);
+  m_context["cameras"]->setBuffer(cameras);
 }
 
 void Context::CreateContext()

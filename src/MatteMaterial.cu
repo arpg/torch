@@ -73,6 +73,7 @@ RT_PROGRAM void ClosestHit()
   sample.tmin = sceneEpsilon;
   sample.seed = rayData.seed;
   sample.normal = geometricNormal;
+  sample.snormal = shadingNormal;
   const unsigned int lightSamples = 16;
 
   for (unsigned int i = 0; i < lightSamples; ++i)
@@ -91,15 +92,16 @@ RT_PROGRAM void ClosestHit()
       {
         const torch::PixelSample& pixel = pixelSamples[launchIndex.x];
         const unsigned int imageIndex = pixel.camera;
-        const uint2 uv = pixel.uv;
+        const torch::CameraData& camera = cameras[imageIndex];
 
         const float beta = fminf(1, triScales.x);
         const float gamma = fminf(1 - beta, triScales.y);
         const float alpha = 1 - beta - gamma;
 
-        AddToAlbedoJacobian[triFace.x](uv.x, uv.y, alpha * throughput);
-        AddToAlbedoJacobian[triFace.y](uv.x, uv.y,  beta * throughput);
-        AddToAlbedoJacobian[triFace.z](uv.x, uv.y, gamma * throughput);
+        const unsigned int col = launchIndex.x;
+        AddToAlbedoJacobian[imageIndex](triFace.x, col, alpha * throughput);
+        AddToAlbedoJacobian[imageIndex](triFace.y, col,  beta * throughput);
+        AddToAlbedoJacobian[imageIndex](triFace.z, col, gamma * throughput);
       }
     }
   }

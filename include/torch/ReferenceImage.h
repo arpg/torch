@@ -24,6 +24,8 @@ class ReferenceImage
 
     void GetValidPixels(std::vector<uint2>& pixels) const;
 
+    size_t GetValidPixelIndex(unsigned int u, unsigned int v) const;
+
   private:
 
     void Initialize();

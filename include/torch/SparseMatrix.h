@@ -16,6 +16,12 @@ class SparseMatrix
 
     optix::Program GetAddProgram() const;
 
+    void GetValues(std::vector<float3>& values);
+
+    void GetRowOffsets(std::vector<unsigned int>& offsets);
+
+    void GetColumnIndices(std::vector<unsigned int>& indices);
+
   protected:
 
     void AllocateValues(size_t size);

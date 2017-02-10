@@ -1,5 +1,8 @@
 #include <gtest/gtest.h>
 #include <torch/Torch.h>
+#include <Eigen/Eigen>
+
+#include <fstream>
 
 namespace torch
 {
@@ -20,6 +23,21 @@ class Problem : public ::testing::Test
     {
       m_problem = std::make_shared<torch::Problem>(m_scene,
           m_mesh, m_material, m_light, m_references);
+    }
+
+    void SetAlbedos(const std::vector<float>& albedos)
+    {
+      std::vector<Spectrum> spectrum(albedos.size() / 3);
+
+      for (size_t i = 0; i < spectrum.size(); ++i)
+      {
+        const size_t r = 3 * i + 0;
+        const size_t g = 3 * i + 1;
+        const size_t b = 3 * i + 2;
+        spectrum[i] = Spectrum::FromRGB(albedos[r], albedos[g], albedos[b]);
+      }
+
+      m_material->SetAlbedos(spectrum);
     }
 
   private:
@@ -48,8 +66,8 @@ class Problem : public ::testing::Test
       std::vector<Point> vertices;
       vertices.push_back(Point(-2.0, -1.5, 2));
       vertices.push_back(Point(-2.0, +1.5, 2));
-      vertices.push_back(Point(+2.0, +1.5, 2));
-      vertices.push_back(Point(+2.0, -1.5, 2));
+      vertices.push_back(Point(+1.5, +1.25, 2));
+      vertices.push_back(Point(+1.5, -1.25, 2));
 
       std::vector<Normal> normals;
       normals.push_back(Normal(0, 0, -1));
@@ -91,7 +109,8 @@ class Problem : public ::testing::Test
     {
       m_light = m_scene->CreateEnvironmentLight();
       m_light->SetRowCount(21);
-      m_light->SetRadiance(1E-4, 1E-4, 1E-4);
+      m_light->SetRadiance(0.01, 0.01, 0.01);
+      m_scene->Add(m_light);
     }
 
     void CreateCameras()
@@ -100,10 +119,10 @@ class Problem : public ::testing::Test
       camera = m_scene->CreateCamera();
       camera->SetOrientation(0, 0, 0);
       camera->SetPosition(0, 0, 0);
-      camera->SetImageSize(320, 240);
-      camera->SetFocalLength(160, 160);
-      camera->SetCenterPoint(160, 120);
-      camera->SetSampleCount(4);
+      camera->SetImageSize(160, 120);
+      camera->SetFocalLength(80, 80);
+      camera->SetCenterPoint(80, 60);
+      camera->SetSampleCount(6);
       m_cameras.push_back(camera);
     }
 
@@ -152,15 +171,120 @@ class Problem : public ::testing::Test
     std::shared_ptr<torch::Problem> m_problem;
 };
 
+float3 GetSparseValue(unsigned int row, unsigned int col,
+  const std::vector<float3>& values,
+  const std::vector<unsigned int>& rowOffsets,
+  const std::vector<unsigned int>& colIndices)
+{
+  unsigned int begin = rowOffsets[row];
+  unsigned int end = rowOffsets[row + 1];
+
+  if (begin < end)
+  {
+    unsigned int index = begin;
+
+    while (begin < end)
+    {
+      index = (begin + end) / 2;
+
+      if (col == colIndices[index])
+      {
+        return values[index];
+      }
+
+      (col < colIndices[index]) ? end = index : begin = index + 1;
+    }
+  }
+
+  return make_float3(0, 0, 0);
+}
+
 TEST_F(Problem, AlbedoDerivatives)
 {
   CreateProblem();
-  // m_problem->ComputeAlbedoDerivatives();
 
-  // Problem problem;
-  // problem.ComputeAlbedoDerivatives();
-  // std::shared_ptr<SparseMatrix> jacobian;
-  // jacobian = problem.GetAlbedoJacobian(0);
+  std::vector<uint2> validPixels;
+  m_references[0]->GetValidPixels(validPixels);
+
+  std::vector<float> channels =
+  {
+    0.5, 0.1, 0.2,
+    0.4, 0.8, 0.3,
+    0.8, 0.2, 0.7,
+    0.2, 0.8, 0.1
+  };
+
+  SetAlbedos(channels);
+  m_problem->ComputeAlbedoDerivatives();
+
+  std::vector<float3> r0;
+  m_problem->GetRenderValues(r0);
+
+  std::shared_ptr<SparseMatrix> jacobian;
+  jacobian = m_problem->GetAlbedoJacobian(0);
+
+  std::vector<float3> values;
+  std::vector<unsigned int> rowOffsets;
+  std::vector<unsigned int> colIndices;
+  jacobian->GetValues(values);
+  jacobian->GetRowOffsets(rowOffsets);
+  jacobian->GetColumnIndices(colIndices);
+
+  const uint rowCount = channels.size();
+  const uint colCount = 3 * m_references[0]->GetValidPixelCount();
+  Eigen::MatrixXf analJacobian(rowCount, colCount);
+  analJacobian.setZero();
+
+  for (uint col = 0; col < colCount / 3; ++col)
+  {
+    for (uint row = 0; row < rowCount / 3; ++row)
+    {
+      const float3 value = GetSparseValue(row, col, values,
+          rowOffsets, colIndices);
+
+      analJacobian(3 * row + 0, 3 * col + 0) = value.x;
+      analJacobian(3 * row + 1, 3 * col + 1) = value.y;
+      analJacobian(3 * row + 2, 3 * col + 2) = value.z;
+    }
+  }
+
+  const float delta = 0.05;
+  Eigen::MatrixXf finiteJacobian(rowCount, colCount);
+  finiteJacobian.setZero();
+
+  for (size_t i = 0; i < channels.size(); ++i)
+  {
+    std::cout << (i + 1) << " / " << channels.size() << std::endl;
+
+    const float orig = channels[i];
+    channels[i] += delta;
+    SetAlbedos(channels);
+    m_problem->ComputeAlbedoDerivatives();
+
+    std::vector<float3> r1;
+    m_problem->GetRenderValues(r1);
+
+    for (size_t col = 0; col < r1.size(); ++col)
+    {
+      r1[col] = (r1[col] - r0[col]) / delta;
+      finiteJacobian(i, 3 * col + 0) = r1[col].x;
+      finiteJacobian(i, 3 * col + 1) = r1[col].y;
+      finiteJacobian(i, 3 * col + 2) = r1[col].z;
+    }
+
+    channels[i] = orig;
+  }
+
+
+  for (uint col = 0; col < colCount; ++col)
+  {
+    for (uint row = 0; row < rowCount; ++row)
+    {
+      const float expected = finiteJacobian(row, col);
+      const float found = analJacobian(row, col);
+      ASSERT_NEAR(expected, found, 1E-4);
+    }
+  }
 }
 
 } // namespace testing

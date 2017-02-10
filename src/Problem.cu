@@ -7,7 +7,7 @@ rtDeclareVariable(float, sceneEpsilon, , );
 rtDeclareVariable(uint, launchIndex, rtLaunchIndex, );
 rtBuffer<torch::CameraData> cameras;
 rtBuffer<torch::PixelSample> pixelSamples;
-// rtBuffer<float3> render;
+rtBuffer<float3> render;
 
 static __inline__ __device__
 void GetDirection(float3& direction, unsigned int& seed, unsigned int i)
@@ -109,5 +109,7 @@ RT_PROGRAM void Capture()
     }
   }
 
-  // render[launchIndex] = data.radiance;
+  // if (data.radiance.x < 0)
+  //   rtPrintf("Radiance: %f %f %f\n", data.radiance.x, data.radiance.y, data.radiance.z);
+  render[launchIndex] = data.radiance;
 }

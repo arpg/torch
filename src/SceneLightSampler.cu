@@ -17,13 +17,19 @@ RT_CALLABLE_PROGRAM void Sample(torch::LightSample& sample)
   const float rand = torch::randf(sample.seed);
   const unsigned int type = GetLightType(rand, pdf);
 
+  if (isnan(pdf))
+  {
+    rtPrintf("Warning: no lights have been added to scene\n");
+    return;
+  }
+
   switch (type)
   {
     case torch::LIGHT_TYPE_AREA:
       SampleAreaLights(sample);
       break;
 
-    case torch::LIGHT_TYPE_Directional:
+    case torch::LIGHT_TYPE_DIRECTIONAL:
       SampleDirectionalLights(sample);
       break;
 
