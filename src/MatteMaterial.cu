@@ -92,7 +92,14 @@ RT_PROGRAM void ClosestHit()
         const torch::PixelSample& pixel = pixelSamples[launchIndex.x];
         const unsigned int imageIndex = pixel.camera;
         const uint2 uv = pixel.uv;
-        AddToAlbedoJacobian[imageIndex](uv.x, uv.y, throughput);
+
+        const float beta = fminf(1, triScales.x);
+        const float gamma = fminf(1 - beta, triScales.y);
+        const float alpha = 1 - beta - gamma;
+
+        AddToAlbedoJacobian[triFace.x](uv.x, uv.y, alpha * throughput);
+        AddToAlbedoJacobian[triFace.y](uv.x, uv.y,  beta * throughput);
+        AddToAlbedoJacobian[triFace.z](uv.x, uv.y, gamma * throughput);
       }
     }
   }
