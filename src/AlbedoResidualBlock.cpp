@@ -26,6 +26,11 @@ optix::Program AlbedoResidualBlock::GetAddProgram() const
   return m_jacobian->GetAddProgram();
 }
 
+std::shared_ptr<SparseMatrix> AlbedoResidualBlock::GetJacobian() const
+{
+  return m_jacobian;
+}
+
 void AlbedoResidualBlock::Initialize()
 {
   CreateAdjacencyMap();

@@ -21,6 +21,8 @@ class Problem
 
     void ComputeAlbedoDerivatives();
 
+    std::shared_ptr<SparseMatrix> GetAlbedoJacobian(size_t index) const;
+
     CUdeviceptr GetLightDerivatives();
 
     CUdeviceptr GetAlbedoDerivatives();

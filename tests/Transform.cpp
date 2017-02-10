@@ -33,30 +33,30 @@ TEST(Transform, Translation)
 
   expected = Vector(0, 0, 0);
   found = transform.GetTranslation();
-  EXPECT_NEAR(expected.x, found.x, epsilon);
-  EXPECT_NEAR(expected.y, found.y, epsilon);
-  EXPECT_NEAR(expected.z, found.z, epsilon);
+  ASSERT_NEAR(expected.x, found.x, epsilon);
+  ASSERT_NEAR(expected.y, found.y, epsilon);
+  ASSERT_NEAR(expected.z, found.z, epsilon);
 
   expected = Vector(1, 2, 3);
   transform.SetTranslation(expected);
   found = transform.GetTranslation();
-  EXPECT_NEAR(expected.x, found.x, epsilon);
-  EXPECT_NEAR(expected.y, found.y, epsilon);
-  EXPECT_NEAR(expected.z, found.z, epsilon);
+  ASSERT_NEAR(expected.x, found.x, epsilon);
+  ASSERT_NEAR(expected.y, found.y, epsilon);
+  ASSERT_NEAR(expected.z, found.z, epsilon);
 
   expected = Vector(0, -1, 2);
   transform.SetTranslation(expected);
   found = transform.GetTranslation();
-  EXPECT_NEAR(expected.x, found.x, epsilon);
-  EXPECT_NEAR(expected.y, found.y, epsilon);
-  EXPECT_NEAR(expected.z, found.z, epsilon);
+  ASSERT_NEAR(expected.x, found.x, epsilon);
+  ASSERT_NEAR(expected.y, found.y, epsilon);
+  ASSERT_NEAR(expected.z, found.z, epsilon);
 
   expected = Vector(0, 0, 0);
   transform.SetTranslation(expected);
   found = transform.GetTranslation();
-  EXPECT_NEAR(expected.x, found.x, epsilon);
-  EXPECT_NEAR(expected.y, found.y, epsilon);
-  EXPECT_NEAR(expected.z, found.z, epsilon);
+  ASSERT_NEAR(expected.x, found.x, epsilon);
+  ASSERT_NEAR(expected.y, found.y, epsilon);
+  ASSERT_NEAR(expected.z, found.z, epsilon);
 }
 
 TEST(Transform, Rotation)
@@ -72,7 +72,7 @@ TEST(Transform, Rotation)
 
   for (unsigned int i = 0; i < 16; ++i)
   {
-    EXPECT_NEAR(expected.data()[i], found.data()[i], epsilon);
+    ASSERT_NEAR(expected.data()[i], found.data()[i], epsilon);
   }
 
   rotation = Vector(0.5, 0, 0);
@@ -82,7 +82,7 @@ TEST(Transform, Rotation)
 
   for (unsigned int i = 0; i < 16; ++i)
   {
-    EXPECT_NEAR(expected.data()[i], found.data()[i], epsilon);
+    ASSERT_NEAR(expected.data()[i], found.data()[i], epsilon);
   }
 
   rotation = Vector(0, 0.5, 0);
@@ -92,7 +92,7 @@ TEST(Transform, Rotation)
 
   for (unsigned int i = 0; i < 16; ++i)
   {
-    EXPECT_NEAR(expected.data()[i], found.data()[i], epsilon);
+    ASSERT_NEAR(expected.data()[i], found.data()[i], epsilon);
   }
 
   rotation = Vector(0, 0, 0.5);
@@ -102,7 +102,7 @@ TEST(Transform, Rotation)
 
   for (unsigned int i = 0; i < 16; ++i)
   {
-    EXPECT_NEAR(expected.data()[i], found.data()[i], epsilon);
+    ASSERT_NEAR(expected.data()[i], found.data()[i], epsilon);
   }
 
   rotation = Vector(0.1, 0.2, 0.3);
@@ -112,7 +112,7 @@ TEST(Transform, Rotation)
 
   for (unsigned int i = 0; i < 16; ++i)
   {
-    EXPECT_NEAR(expected.data()[i], found.data()[i], epsilon);
+    ASSERT_NEAR(expected.data()[i], found.data()[i], epsilon);
   }
 
   rotation = Vector(1, 2, 3);
@@ -122,7 +122,7 @@ TEST(Transform, Rotation)
 
   for (unsigned int i = 0; i < 16; ++i)
   {
-    EXPECT_NEAR(expected.data()[i], found.data()[i], epsilon);
+    ASSERT_NEAR(expected.data()[i], found.data()[i], epsilon);
   }
 
   rotation = Vector(-1, 2, -3);
@@ -132,7 +132,7 @@ TEST(Transform, Rotation)
 
   for (unsigned int i = 0; i < 16; ++i)
   {
-    EXPECT_NEAR(expected.data()[i], found.data()[i], epsilon);
+    ASSERT_NEAR(expected.data()[i], found.data()[i], epsilon);
   }
 
   rotation = Vector(0.1, 0.2, 0.3);
@@ -143,7 +143,7 @@ TEST(Transform, Rotation)
 
   for (unsigned int i = 0; i < 16; ++i)
   {
-    EXPECT_NEAR(expected.data()[i], found.data()[i], epsilon);
+    ASSERT_NEAR(expected.data()[i], found.data()[i], epsilon);
   }
 
   rotation = Vector(-1, 2, -3);
@@ -154,7 +154,7 @@ TEST(Transform, Rotation)
 
   for (unsigned int i = 0; i < 16; ++i)
   {
-    EXPECT_NEAR(expected.data()[i], found.data()[i], epsilon);
+    ASSERT_NEAR(expected.data()[i], found.data()[i], epsilon);
   }
 }
 
@@ -166,44 +166,44 @@ TEST(Transform, Scale)
 
   expected = Vector(1, 1, 1);
   found = transform.GetScale();
-  EXPECT_NEAR(expected.x, found.x, epsilon);
-  EXPECT_NEAR(expected.y, found.y, epsilon);
-  EXPECT_NEAR(expected.z, found.z, epsilon);
+  ASSERT_NEAR(expected.x, found.x, epsilon);
+  ASSERT_NEAR(expected.y, found.y, epsilon);
+  ASSERT_NEAR(expected.z, found.z, epsilon);
 
   expected = Vector(1, 2, 3);
   transform.SetScale(expected);
   found = transform.GetScale();
-  EXPECT_NEAR(expected.x, found.x, epsilon);
-  EXPECT_NEAR(expected.y, found.y, epsilon);
-  EXPECT_NEAR(expected.z, found.z, epsilon);
+  ASSERT_NEAR(expected.x, found.x, epsilon);
+  ASSERT_NEAR(expected.y, found.y, epsilon);
+  ASSERT_NEAR(expected.z, found.z, epsilon);
 
   expected = Vector(2, 2, 2);
   transform.SetScale(expected);
   found = transform.GetScale();
-  EXPECT_NEAR(expected.x, found.x, epsilon);
-  EXPECT_NEAR(expected.y, found.y, epsilon);
-  EXPECT_NEAR(expected.z, found.z, epsilon);
+  ASSERT_NEAR(expected.x, found.x, epsilon);
+  ASSERT_NEAR(expected.y, found.y, epsilon);
+  ASSERT_NEAR(expected.z, found.z, epsilon);
 
   expected = Vector(0.1, 0.2, 0.3);
   transform.SetScale(expected);
   found = transform.GetScale();
-  EXPECT_NEAR(expected.x, found.x, epsilon);
-  EXPECT_NEAR(expected.y, found.y, epsilon);
-  EXPECT_NEAR(expected.z, found.z, epsilon);
+  ASSERT_NEAR(expected.x, found.x, epsilon);
+  ASSERT_NEAR(expected.y, found.y, epsilon);
+  ASSERT_NEAR(expected.z, found.z, epsilon);
 
   transform.SetRotation(0.1, 0.2, 0.3);
   expected = Vector(0.1, 0.2, 0.3);
   transform.SetScale(expected);
   found = transform.GetScale();
-  EXPECT_NEAR(expected.x, found.x, epsilon);
-  EXPECT_NEAR(expected.y, found.y, epsilon);
-  EXPECT_NEAR(expected.z, found.z, epsilon);
+  ASSERT_NEAR(expected.x, found.x, epsilon);
+  ASSERT_NEAR(expected.y, found.y, epsilon);
+  ASSERT_NEAR(expected.z, found.z, epsilon);
 
   transform.SetRotation(0.3, 0.2, 0.1);
   expected = Vector(1, 2, 3);
   transform.SetScale(expected);
   found = transform.GetScale();
-  EXPECT_NEAR(expected.x, found.x, epsilon);
-  EXPECT_NEAR(expected.y, found.y, epsilon);
-  EXPECT_NEAR(expected.z, found.z, epsilon);
+  ASSERT_NEAR(expected.x, found.x, epsilon);
+  ASSERT_NEAR(expected.y, found.y, epsilon);
+  ASSERT_NEAR(expected.z, found.z, epsilon);
 }

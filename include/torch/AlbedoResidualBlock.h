@@ -14,6 +14,8 @@ class AlbedoResidualBlock
 
     optix::Program GetAddProgram() const;
 
+    std::shared_ptr<SparseMatrix> GetJacobian() const;
+
   private:
 
     void Initialize();

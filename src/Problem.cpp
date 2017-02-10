@@ -64,6 +64,11 @@ void Problem::ComputeAlbedoDerivatives()
   context->Launch(m_programId, m_launchSize);
 }
 
+std::shared_ptr<SparseMatrix> Problem::GetAlbedoJacobian(size_t index) const
+{
+  return m_albedoBlocks[index]->GetJacobian();
+}
+
 CUdeviceptr  Problem::GetLightDerivatives()
 {
   return m_lightDerivs->getDevicePointer(0);
