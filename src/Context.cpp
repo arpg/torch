@@ -269,6 +269,15 @@ void Context::Initialize()
   cameras->setElementSize(sizeof(CameraData));
   cameras->setSize(0);
   m_context["cameras"]->setBuffer(cameras);
+
+  optix::Buffer lightDerivatives;
+  lightDerivatives = m_context->createBuffer(RT_BUFFER_OUTPUT);
+  lightDerivatives->setFormat(RT_FORMAT_FLOAT3);
+  lightDerivatives->setSize(1, 1);
+  m_context["lightDerivatives"]->setBuffer(lightDerivatives);
+
+  m_context["computeLightDerivs"]->setUint(0);
+  m_context["computeAlbedoDerivs"]->setUint(0);
 }
 
 void Context::CreateContext()

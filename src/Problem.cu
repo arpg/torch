@@ -8,6 +8,7 @@ rtDeclareVariable(uint, launchIndex, rtLaunchIndex, );
 rtBuffer<torch::CameraData> cameras;
 rtBuffer<torch::PixelSample> pixelSamples;
 rtBuffer<float3> render;
+rtBuffer<float3, 2> lightDerivatives;
 
 static __inline__ __device__
 void GetDirection(float3& direction, unsigned int& seed, unsigned int i)
@@ -62,6 +63,12 @@ RT_PROGRAM void Capture()
   data.radiance = make_float3(0, 0, 0);
   const unsigned int totalSamples = sampleCount * sampleCount;
 
+  for (size_t i = 0; i < lightDerivatives.size().x; ++i)
+  {
+    const uint2 derivIndex = make_uint2(i, launchIndex);
+    lightDerivatives[derivIndex] = make_float3(0, 0, 0);
+  }
+
   for (unsigned int i = 0; i < totalSamples; ++i)
   {
     data.sample = i;
@@ -109,7 +116,5 @@ RT_PROGRAM void Capture()
     }
   }
 
-  // if (data.radiance.x < 0)
-  //   rtPrintf("Radiance: %f %f %f\n", data.radiance.x, data.radiance.y, data.radiance.z);
   render[launchIndex] = data.radiance;
 }

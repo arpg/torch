@@ -16,6 +16,12 @@ int main(int argc, char** argv)
   std::shared_ptr<Material> material;
   material = scene->CreateMaterial("shark.ply");
 
+  std::shared_ptr<Primitive> primitive;
+  primitive = scene->CreatePrimitive();
+  primitive->SetGeometry(mesh);
+  primitive->SetMaterial(material);
+  scene->Add(primitive);
+
   std::shared_ptr<MatteMaterial> matteMaterial;
   matteMaterial = std::static_pointer_cast<MatteMaterial>(material);
 
@@ -23,6 +29,7 @@ int main(int argc, char** argv)
   light = scene->CreateEnvironmentLight();
   light->SetRowCount(21);
   light->SetRadiance(1E-4, 1E-4, 1E-4);
+  scene->Add(light);
 
   std::shared_ptr<Camera> camera;
   camera = scene->CreateCamera();
@@ -41,7 +48,8 @@ int main(int argc, char** argv)
   references.push_back(std::make_shared<ReferenceImage>(camera, image));
 
   Problem problem(scene, mesh, matteMaterial, light, references);
-  problem.ComputeAlbedoDerivatives();
+  // problem.ComputeAlbedoDerivatives();
+  problem.ComputeLightDerivatives();
   std::cout << "Finished." << std::endl;
   return 0;
 }

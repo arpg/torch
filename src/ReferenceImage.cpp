@@ -35,19 +35,7 @@ std::shared_ptr<const Image> ReferenceImage::GetMask() const
 
 size_t ReferenceImage::GetValidPixelCount() const
 {
-  float3* data = reinterpret_cast<float3*>(m_mask->GetData());
-  size_t count = 0;
-
-  for (unsigned int y = 0; y < m_mask->GetHeight(); ++y)
-  {
-    for (unsigned int x = 0; x < m_mask->GetWidth(); ++x)
-    {
-      const size_t index = y * m_mask->GetWidth() + x;
-      if (data[index].x == 1) ++count;
-    }
-  }
-
-  return count;
+  return m_validPixelCount;
 }
 
 void ReferenceImage::GetValidPixels(std::vector<uint2>& pixels) const
@@ -65,35 +53,47 @@ void ReferenceImage::GetValidPixels(std::vector<uint2>& pixels) const
   }
 }
 
-size_t ReferenceImage::GetValidPixelIndex(unsigned int u, unsigned int v) const
+size_t ReferenceImage::GetValidPixelIndex(unsigned int x, unsigned int y) const
 {
-  float3* data = reinterpret_cast<float3*>(m_mask->GetData());
-  size_t count = 0;
+  const size_t index = y * m_mask->GetWidth() + x;
+  const size_t validIndex = m_validPixelMap[index];
+  const size_t totalPixels = m_mask->GetHeight() * m_mask->GetWidth();
 
-  for (unsigned int y = 0; y < m_mask->GetHeight(); ++y)
+  if (validIndex == totalPixels)
   {
-    for (unsigned int x = 0; x < m_mask->GetWidth(); ++x)
-    {
-      const size_t index = y * m_mask->GetWidth() + x;
-
-      if (x == u && y == v)
-      {
-        if (data[index].x == 0)
-          throw "pixel is not valid";
-
-        return count;
-      }
-
-      if (data[index].x == 1) ++count;
-    }
+    throw "pixel is not valid";
   }
 
-  throw "pixel is not valid";
+  return validIndex;
+
+  // float3* data = reinterpret_cast<float3*>(m_mask->GetData());
+  // size_t count = 0;
+
+  // for (unsigned int y = 0; y < m_mask->GetHeight(); ++y)
+  // {
+  //   for (unsigned int x = 0; x < m_mask->GetWidth(); ++x)
+  //   {
+  //     const size_t index = y * m_mask->GetWidth() + x;
+
+  //     if (x == u && y == v)
+  //     {
+  //       if (data[index].x == 0)
+  //         throw "pixel is not valid";
+
+  //       return count;
+  //     }
+
+  //     if (data[index].x == 1) ++count;
+  //   }
+  // }
+
+  // throw "pixel is not valid";
 }
 
 void ReferenceImage::Initialize()
 {
   CreateImageMask();
+  CreateValidPixelMap();
 }
 
 void ReferenceImage::CreateImageMask()
@@ -101,6 +101,33 @@ void ReferenceImage::CreateImageMask()
   m_mask = std::make_shared<Image>();
   m_camera->CaptureMask(*m_mask);
   m_mask->Save("temp.png");
+}
+
+void ReferenceImage::CreateValidPixelMap()
+{
+  const size_t totalPixels = m_mask->GetHeight() * m_mask->GetWidth();
+  m_validPixelMap.resize(totalPixels);
+
+  float3* data = reinterpret_cast<float3*>(m_mask->GetData());
+  m_validPixelCount = 0;
+
+  for (unsigned int y = 0; y < m_mask->GetHeight(); ++y)
+  {
+    for (unsigned int x = 0; x < m_mask->GetWidth(); ++x)
+    {
+      const size_t index = y * m_mask->GetWidth() + x;
+
+      if (data[index].x == 1)
+      {
+        m_validPixelMap[index] = m_validPixelCount;
+        ++m_validPixelCount;
+      }
+      else
+      {
+        m_validPixelMap[index] = totalPixels;
+      }
+    }
+  }
 }
 
 } // namespace torch

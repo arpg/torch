@@ -59,6 +59,7 @@ void Problem::ComputeLightDerivatives()
 
   std::shared_ptr<Context> context;
   context = m_mesh->GetContext();
+
   context->Launch(m_programId, m_launchSize);
 }
 
@@ -118,8 +119,8 @@ void Problem::SetLightBufferSize()
 {
   optix::Context context = m_scene->GetContext();
   context["computeLightDerivs"]->setUint(1);
-  const size_t w = GetLightParameterCount();
-  const size_t h = GetResidualCount();
+  const size_t w = GetLightParameterCount() / 3;
+  const size_t h = GetResidualCount() / 3;
   m_lightDerivs->setSize(w, h);
 }
 
@@ -173,9 +174,8 @@ void Problem::CreateLightDerivBuffer()
 {
   optix::Context context = m_scene->GetContext();
   m_lightDerivs = context->createBuffer(RT_BUFFER_INPUT_OUTPUT);
-  m_lightDerivs->setFormat(RT_FORMAT_USER);
-  m_lightDerivs->setElementSize(3 * sizeof(double));
-  context["lightDerivs"]->setBuffer(m_lightDerivs);
+  m_lightDerivs->setFormat(RT_FORMAT_FLOAT3);
+  context["lightDerivatives"]->setBuffer(m_lightDerivs);
   m_lightDerivs->setSize(1, 1);
 }
 

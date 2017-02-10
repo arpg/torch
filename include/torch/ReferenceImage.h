@@ -24,13 +24,15 @@ class ReferenceImage
 
     void GetValidPixels(std::vector<uint2>& pixels) const;
 
-    size_t GetValidPixelIndex(unsigned int u, unsigned int v) const;
+    size_t GetValidPixelIndex(unsigned int x, unsigned int y) const;
 
   private:
 
     void Initialize();
 
     void CreateImageMask();
+
+    void CreateValidPixelMap();
 
   protected:
 
@@ -39,6 +41,10 @@ class ReferenceImage
     std::shared_ptr<Image> m_image;
 
     std::shared_ptr<Image> m_mask;
+
+    std::vector<size_t> m_validPixelMap;
+
+    size_t m_validPixelCount;
 };
 
 } // namespace torch

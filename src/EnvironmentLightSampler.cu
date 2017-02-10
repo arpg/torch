@@ -1,6 +1,7 @@
 #include <torch/device/Light.h>
 #include <torch/device/Random.h>
 #include <torch/device/Visibility.h>
+#include <torch/device/Camera.h>
 
 typedef rtCallableProgramX<uint(float, float&)> Distribution1D;
 typedef rtCallableProgramId<uint2(const float2&, float&)> Distribution2D;
@@ -11,6 +12,12 @@ rtBuffer<optix::Matrix3x3> rotations;
 rtBuffer<uint> lightOffsets;
 rtBuffer<uint> rowOffsets;
 rtBuffer<float3> radiance;
+
+rtDeclareVariable(uint, computeLightDerivs, , );
+rtDeclareVariable(uint2, launchIndex, rtLaunchIndex, );
+rtBuffer<torch::CameraData> cameras;
+rtBuffer<torch::PixelSample> pixelSamples;
+rtBuffer<float3, 2> lightDerivatives;
 
 TORCH_DEVICE uint GetRowCount(uint light)
 {
@@ -61,5 +68,12 @@ RT_CALLABLE_PROGRAM void Sample(torch::LightSample& sample)
   sample.tmax = RT_DEFAULT_MAX;
   sample.pdf *= dirPdf;
 
-  if (!torch::IsVisible(sample)) sample.radiance = make_float3(0, 0, 0);
+  const bool visible = torch::IsVisible(sample);
+  if (!visible) sample.radiance = make_float3(0, 0, 0);
+
+  if (computeLightDerivs)
+  {
+    const uint2 derivIndex = make_uint2(light, launchIndex.x);
+    lightDerivatives[derivIndex] += sample.throughput;
+  }
 }
