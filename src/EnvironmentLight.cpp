@@ -1,6 +1,6 @@
 #include <torch/EnvironmentLight.h>
 #include <torch/Context.h>
-#include <torch/Distribution1D.h>
+#include <torch/Distribution2D.h>
 #include <torch/Link.h>
 #include <torch/SceneLightSampler.h>
 #include <torch/Spectrum.h>
@@ -14,6 +14,10 @@ EnvironmentLight::EnvironmentLight(std::shared_ptr<Context> context) :
   m_rowCount(1)
 {
   Initialize();
+}
+
+EnvironmentLight::~EnvironmentLight()
+{
 }
 
 unsigned int EnvironmentLight::GetRowCount() const
@@ -58,28 +62,59 @@ void EnvironmentLight::SetRadiance(size_t index, const Spectrum& radiance)
 void EnvironmentLight::SetRadiance(const std::vector<Spectrum>& radiance)
 {
   const size_t size = std::min(radiance.size(), m_radiance.size());
-  const auto endIndex = radiance.begin() + size;
-  std::copy(radiance.begin(), endIndex, m_radiance.begin());
+  std::copy(radiance.begin(), radiance.end() + size, m_radiance.data());
   m_context->MarkDirty();
 }
 
 void EnvironmentLight::BuildScene(Link& link)
 {
   Light::BuildScene(link);
+  UpdateDistribution();
+  UpdateRadianceBuffer();
+  UpdateOffsetBuffer();
+  UpdateSampler(link);
+}
 
+optix::Buffer EnvironmentLight::GetRadianceBuffer() const
+{
+  return m_radianceBuffer;
+}
+
+void EnvironmentLight::UpdateDistribution()
+{
+  std::vector<float> luminances(m_radiance.size());
+
+  for (size_t i = 0; i < luminances.size(); ++i)
+  {
+    luminances[i] = m_radiance[i].GetY();
+  }
+
+  m_distribution->SetValues(luminances, m_offsets);
+}
+
+void EnvironmentLight::UpdateRadianceBuffer()
+{
+  m_radianceBuffer->setSize(m_radiance.size());
+  Spectrum* device = reinterpret_cast<Spectrum*>(m_radianceBuffer->map());
+  std::copy(m_radiance.begin(), m_radiance.end(), device);
+  m_radianceBuffer->unmap();
+}
+
+void EnvironmentLight::UpdateOffsetBuffer()
+{
+  m_offsetBuffer->setSize(m_offsets.size());
+  unsigned int* device = reinterpret_cast<unsigned int*>(m_offsetBuffer->map());
+  std::copy(m_offsets.begin(), m_offsets.end(), device);
+  m_offsetBuffer->unmap();
+}
+
+void EnvironmentLight::UpdateSampler(Link& link)
+{
   EnvironmentLightData data;
-  data.rowCount = m_rowCount;
-
+  data.distributionId = m_distribution->GetProgram()->getId();
+  data.offsetsId = m_offsetBuffer->getId();
+  data.radianceId = m_radianceBuffer->getId();
   data.luminance = 1; // TODO: implement
-
-  // TODO: fix both potential memory issues
-  // we are passing a pointer to member variable
-  // EnvironmentLightSampler hold reference to this
-  // if this object (EnvironmentLight) is destroyed, the pointer will be invalid
-  //============================================================================
-  data.radiance = reinterpret_cast<float3*>(m_radiance.data());
-  data.offsets = m_offsets.data();
-  //============================================================================
 
   const optix::Matrix4x4 R =
       (link.GetTransform() * m_transform).GetRotationMatrix().inverse();
@@ -103,7 +138,29 @@ void EnvironmentLight::BuildScene(Link& link)
 
 void EnvironmentLight::Initialize()
 {
+  CreateDistribution();
+  CreateRadianceBuffer();
+  CreateOffsetBuffer();
   UpdateOffsets();
+}
+
+void EnvironmentLight::CreateDistribution()
+{
+  m_distribution = std::make_unique<Distribution2D>(m_context);
+}
+
+void EnvironmentLight::CreateRadianceBuffer()
+{
+  m_radianceBuffer = m_context->CreateBuffer(RT_BUFFER_INPUT_OUTPUT);
+  m_radianceBuffer->setFormat(RT_FORMAT_FLOAT3);
+  m_radianceBuffer->setSize(0);
+}
+
+void EnvironmentLight::CreateOffsetBuffer()
+{
+  m_offsetBuffer = m_context->CreateBuffer(RT_BUFFER_INPUT);
+  m_offsetBuffer->setFormat(RT_FORMAT_UNSIGNED_INT);
+  m_offsetBuffer->setSize(0);
 }
 
 void EnvironmentLight::UpdateOffsets()

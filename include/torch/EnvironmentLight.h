@@ -12,6 +12,8 @@ class EnvironmentLight : public Light
 
     EnvironmentLight(std::shared_ptr<Context> context);
 
+    ~EnvironmentLight();
+
     unsigned int GetRowCount() const;
 
     void SetRowCount(unsigned int count);
@@ -30,9 +32,27 @@ class EnvironmentLight : public Light
 
     void BuildScene(Link& link) override;
 
+    optix::Buffer GetRadianceBuffer() const;
+
+  protected:
+
+    void UpdateDistribution();
+
+    void UpdateRadianceBuffer();
+
+    void UpdateOffsetBuffer();
+
+    void UpdateSampler(Link& link);
+
   private:
 
     void Initialize();
+
+    void CreateDistribution();
+
+    void CreateRadianceBuffer();
+
+    void CreateOffsetBuffer();
 
     void UpdateOffsets();
 
@@ -43,6 +63,12 @@ class EnvironmentLight : public Light
     std::vector<Spectrum> m_radiance;
 
     std::vector<unsigned int> m_offsets;
+
+    std::unique_ptr<Distribution2D> m_distribution;
+
+    optix::Buffer m_radianceBuffer;
+
+    optix::Buffer m_offsetBuffer;
 };
 
 } // namespace torch

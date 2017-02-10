@@ -27,8 +27,6 @@ class EnvironmentLightSampler : public LightSampler
 
     void UpdateDistribution();
 
-    void UpdateLightDistributions();
-
     void UpdateBuffers();
 
     template <typename T>
@@ -42,15 +40,11 @@ class EnvironmentLightSampler : public LightSampler
 
     void CreateDistribution();
 
-    void CreateBuffers();
+    void CreateRotationsBuffer();
 
     void CreateSampleProgramsBuffer();
 
-    void CreateLightOffsetsBuffer();
-
-    void CreateRowOffsetsBuffer();
-
-    void CreateRotationsBuffer();
+    void CreateOffsetBuffer();
 
     void CreateRadianceBuffer();
 
@@ -58,21 +52,17 @@ class EnvironmentLightSampler : public LightSampler
 
     optix::Program m_program;
 
+    optix::Buffer m_rotations;
+
     optix::Buffer m_samplePrograms;
 
-    optix::Buffer m_lightOffsets;
-
-    optix::Buffer m_rowOffsets;
-
-    optix::Buffer m_rotations;
+    optix::Buffer m_offsets;
 
     optix::Buffer m_radiance;
 
     std::vector<EnvironmentLightData> m_lights;
 
     std::unique_ptr<Distribution1D> m_distribution;
-
-    std::vector<std::unique_ptr<Distribution2D>> m_lightDistributions;
 };
 
 } // namespace torch

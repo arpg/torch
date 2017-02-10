@@ -49,7 +49,6 @@ void EnvironmentLightSampler::Clear()
 void EnvironmentLightSampler::Update()
 {
   UpdateDistribution();
-  UpdateLightDistributions();
   UpdateBuffers();
 }
 
@@ -66,89 +65,24 @@ void EnvironmentLightSampler::UpdateDistribution()
   m_distribution->SetValues(luminance);
 }
 
-void EnvironmentLightSampler::UpdateLightDistributions()
-{
-  m_lightDistributions.resize(m_lights.size());
-
-  for (unsigned int i = 0; i < m_lights.size(); ++i)
-  {
-    const EnvironmentLightData& light = m_lights[i];
-    const unsigned int dirCount = light.offsets[light.rowCount];
-    std::vector<float> values(dirCount);
-
-    std::vector<unsigned int> offsets(light.rowCount + 1);
-    std::copy(light.offsets, light.offsets + offsets.size(), offsets.data());
-
-    for (unsigned int j = 0; j < dirCount; ++j)
-    {
-      const float3& a = light.radiance[j];
-      const Spectrum b = Spectrum::FromRGB(a.x, a.y, a.z);
-      values[j] = b.GetY(); // TODO: scale by area
-    }
-
-    m_lightDistributions[i] = std::make_unique<Distribution2D>(m_context);
-    m_lightDistributions[i]->SetValues(values, offsets);
-  }
-}
-
 void EnvironmentLightSampler::UpdateBuffers()
 {
-  unsigned int radianceSize = 0;
-  unsigned int rowOffsetsSize = 0;
-
-  for (unsigned int i = 0; i < m_lights.size(); ++i)
-  {
-    const EnvironmentLightData& light = m_lights[i];
-    radianceSize += light.offsets[light.rowCount];
-    rowOffsetsSize += light.rowCount;
-  }
-
-  // m_samplePrograms->setSize(m_lights.size());
-
-  // optix::callableProgramId<uint2(const float2&, float&)>* programs =
-  //     static_cast<optix::callableProgramId<uint2(const float2&, float&)>*>(m_samplePrograms->map());
-
-  std::vector<unsigned int> samplePrograms(m_lights.size());
-  std::vector<unsigned int> lightOffsets(m_lights.size() + 1);
+  std::vector<int> samplePrograms(m_lights.size());
   std::vector<optix::Matrix3x3> rotations(m_lights.size());
-  std::vector<unsigned int> rowOffsets(rowOffsetsSize);
-  std::vector<float3> radiance(radianceSize);
-  lightOffsets[0] = 0;
+  std::vector<unsigned int> offsets(m_lights.size());
+  std::vector<int> radiance(m_lights.size());
 
-  unsigned int rowIndex = 0;
-  unsigned int radIndex = 0;
-
-  for (unsigned int i = 0; i < m_lights.size(); ++i)
+  for (size_t i = 0; i < m_lights.size(); ++i)
   {
-    const EnvironmentLightData& light = m_lights[i];
-    lightOffsets[i + 1] = light.rowCount;
-    rotations[i] = light.rotation;
-    samplePrograms[i] = m_lightDistributions[i]->GetProgram()->getId();
-
-    // programs[i] = optix::callableProgramId<uint2(const float2&, float&)>(
-    //       m_lightDistributions[i]->GetProgram());
-
-    // m_program["SampleLight2"]->setProgramId(m_lightDistributions[i]->GetProgram());
-
-    const unsigned int dirCount = light.offsets[light.rowCount];
-    float3* first = light.radiance;
-    float3* last = light.radiance + dirCount; // TODO: copy correctly
-    float3* result = &radiance[radIndex];
-    std::copy(first, last, result);
-    radIndex += dirCount;
-
-    for (unsigned int j = 0; j < light.rowCount; ++j)
-    {
-      rowOffsets[rowIndex++] = lightOffsets[i] + light.offsets[j];
-    }
+    samplePrograms[i] = m_lights[i].distributionId;
+    rotations[i] = m_lights[i].rotation;
+    offsets[i] = m_lights[i].offsetsId;
+    radiance[i] = m_lights[i].radianceId;
   }
-
-  // m_samplePrograms->unmap();
 
   WriteBuffer(m_samplePrograms, samplePrograms);
-  WriteBuffer(m_lightOffsets, lightOffsets);
-  WriteBuffer(m_rowOffsets, rowOffsets);
   WriteBuffer(m_rotations, rotations);
+  WriteBuffer(m_offsets, offsets);
   WriteBuffer(m_radiance, radiance);
 }
 
@@ -166,7 +100,10 @@ void EnvironmentLightSampler::Initialize()
 {
   CreateProgram();
   CreateDistribution();
-  CreateBuffers();
+  CreateSampleProgramsBuffer();
+  CreateOffsetBuffer();
+  CreateRotationsBuffer();
+  CreateRadianceBuffer();
 }
 
 void EnvironmentLightSampler::CreateProgram()
@@ -181,15 +118,6 @@ void EnvironmentLightSampler::CreateDistribution()
   m_program["GetLightIndex"]->set(m_distribution->GetProgram());
 }
 
-void EnvironmentLightSampler::CreateBuffers()
-{
-  CreateSampleProgramsBuffer();
-  CreateLightOffsetsBuffer();
-  CreateRowOffsetsBuffer();
-  CreateRotationsBuffer();
-  CreateRadianceBuffer();
-}
-
 void EnvironmentLightSampler::CreateSampleProgramsBuffer()
 {
   m_samplePrograms = m_context->CreateBuffer(RT_BUFFER_INPUT);
@@ -198,20 +126,12 @@ void EnvironmentLightSampler::CreateSampleProgramsBuffer()
   m_samplePrograms->setSize(0);
 }
 
-void EnvironmentLightSampler::CreateLightOffsetsBuffer()
+void EnvironmentLightSampler::CreateOffsetBuffer()
 {
-  m_lightOffsets = m_context->CreateBuffer(RT_BUFFER_INPUT);
-  m_program["lightOffsets"]->setBuffer(m_lightOffsets);
-  m_lightOffsets->setFormat(RT_FORMAT_UNSIGNED_INT);
-  m_lightOffsets->setSize(0);
-}
-
-void EnvironmentLightSampler::CreateRowOffsetsBuffer()
-{
-  m_rowOffsets = m_context->CreateBuffer(RT_BUFFER_INPUT);
-  m_program["rowOffsets"]->setBuffer(m_rowOffsets);
-  m_rowOffsets->setFormat(RT_FORMAT_UNSIGNED_INT);
-  m_rowOffsets->setSize(0);
+  m_offsets = m_context->CreateBuffer(RT_BUFFER_INPUT);
+  m_program["offsets"]->setBuffer(m_offsets);
+  m_offsets->setFormat(RT_FORMAT_BUFFER_ID);
+  m_offsets->setSize(0);
 }
 
 void EnvironmentLightSampler::CreateRotationsBuffer()
@@ -227,7 +147,7 @@ void EnvironmentLightSampler::CreateRadianceBuffer()
 {
   m_radiance = m_context->CreateBuffer(RT_BUFFER_INPUT);
   m_program["radiance"]->setBuffer(m_radiance);
-  m_radiance->setFormat(RT_FORMAT_FLOAT3);
+  m_radiance->setFormat(RT_FORMAT_BUFFER_ID);
   m_radiance->setSize(0);
 }
 

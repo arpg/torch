@@ -47,10 +47,10 @@ struct DirectionalLightData
 
 struct EnvironmentLightData
 {
-  unsigned int rowCount;
-  unsigned int* offsets;
   optix::Matrix3x3 rotation;
-  float3* radiance;
+  int distributionId;
+  int offsetsId;
+  int radianceId;
   float luminance;
 };
 

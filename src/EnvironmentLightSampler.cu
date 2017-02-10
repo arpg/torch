@@ -9,9 +9,8 @@ typedef rtCallableProgramId<uint2(const float2&, float&)> Distribution2D;
 rtDeclareVariable(Distribution1D, GetLightIndex, , );
 rtBuffer<Distribution2D> SampleLight;
 rtBuffer<optix::Matrix3x3> rotations;
-rtBuffer<uint> lightOffsets;
-rtBuffer<uint> rowOffsets;
-rtBuffer<float3> radiance;
+rtBuffer<rtBufferId<uint, 1>, 1> offsets;
+rtBuffer<rtBufferId<float3, 1>, 1> radiance;
 
 rtDeclareVariable(uint, computeLightDerivs, , );
 rtDeclareVariable(uint2, launchIndex, rtLaunchIndex, );
@@ -21,21 +20,18 @@ rtBuffer<float3, 2> lightDerivatives;
 
 TORCH_DEVICE uint GetRowCount(uint light)
 {
-  return lightOffsets[light + 1] - lightOffsets[light];
+  return offsets[light].size() - 1;
 }
 
 TORCH_DEVICE uint GetColumnCount(uint light, uint row)
 {
-  const uint lightOffset = lightOffsets[light];
-  const uint rowOffset = rowOffsets[lightOffset] + row;
-  return rowOffsets[rowOffset + 1] - rowOffsets[rowOffset];
+  return offsets[light][row + 1] - offsets[light][row];
 }
 
 TORCH_DEVICE float3 GetRadiance(uint light, uint row, uint col)
 {
-  const uint lightOffset = lightOffsets[light];
-  const uint rowOffset = rowOffsets[lightOffset + row];
-  return radiance[rowOffset + col];
+  const uint offset = offsets[light][row];
+  return radiance[light][offset + col];
 }
 
 TORCH_DEVICE void GetDirection(uint light, uint row, uint col, float3& dir)

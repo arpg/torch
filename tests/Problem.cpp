@@ -108,7 +108,7 @@ class Problem : public ::testing::Test
     void CreateLight()
     {
       m_light = m_scene->CreateEnvironmentLight();
-      m_light->SetRowCount(21);
+      m_light->SetRowCount(5);
       m_light->SetRadiance(0.01, 0.01, 0.01);
       m_scene->Add(m_light);
     }
@@ -285,6 +285,17 @@ TEST_F(Problem, AlbedoDerivatives)
       ASSERT_NEAR(expected, found, 1E-4);
     }
   }
+}
+
+TEST_F(Problem, LightDerivatives)
+{
+  CreateProblem();
+  m_problem->ComputeLightDerivatives();
+
+  optix::Buffer lightDerivs;
+  lightDerivs = m_problem->GetLightDerivativeBuffer();
+  RTsize cols, rows;
+  lightDerivs->getSize(cols, rows);
 }
 
 } // namespace testing

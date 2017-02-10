@@ -12,17 +12,12 @@
     <sample_count>2</sample_count>
   </camera>
 
-  <!-- area light -->
-  <area_light>
-
+  <!-- environment light -->
+  <environment_light>
+    <row_count>21</row_count>
     <position>1 1 0</position>
-    <radiance>1 1 1</radiance>
-
-    <sphere>
-      <scale>1 1 1</scale>
-    </sphere>
-
-  </area_light>
+    <radiance>0.02 0.02 0.02</radiance>
+  </environment_light>
 
   <!-- table shark mesh -->
   <primitive>

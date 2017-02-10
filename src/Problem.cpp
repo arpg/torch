@@ -79,6 +79,11 @@ optix::Buffer Problem::GetRenderBuffer() const
   return m_renderBuffer;
 }
 
+optix::Buffer Problem::GetLightDerivativeBuffer() const
+{
+  return m_lightDerivs;
+}
+
 void Problem::GetRenderValues(std::vector<float3>& values)
 {
   RTsize size;

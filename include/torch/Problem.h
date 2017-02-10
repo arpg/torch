@@ -26,6 +26,8 @@ class Problem
 
     optix::Buffer GetRenderBuffer() const;
 
+    optix::Buffer GetLightDerivativeBuffer() const;
+
     void GetRenderValues(std::vector<float3>& values);
 
     std::shared_ptr<SparseMatrix> GetAlbedoJacobian(size_t index) const;
