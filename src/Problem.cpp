@@ -15,7 +15,16 @@
 namespace torch
 {
 
-Problem::Problem()
+Problem::Problem(std::shared_ptr<Scene> scene,
+    std::shared_ptr<Mesh> mesh,
+    std::shared_ptr<MatteMaterial> material,
+    std::shared_ptr<EnvironmentLight> light,
+    const std::vector<std::shared_ptr<ReferenceImage>>& references) :
+  m_scene(scene),
+  m_mesh(mesh),
+  m_material(material),
+  m_light(light),
+  m_referenceImages(references)
 {
   Initialize();
 }
@@ -74,11 +83,6 @@ CUdeviceptr  Problem::GetLightDerivatives()
   return m_lightDerivs->getDevicePointer(0);
 }
 
-CUdeviceptr Problem::GetAlbedoDerivatives()
-{
-  return m_albedoDerivs->getDevicePointer(0);
-}
-
 CUdeviceptr Problem::GetReferenceImages()
 {
   return m_referenceImageBuffer->getDevicePointer(0);
@@ -114,17 +118,12 @@ void Problem::SetAlbedoBufferSize()
 {
   optix::Context context = m_scene->GetContext();
   context["computeAlbedoDerivs"]->setUint(1);
-  // TODO: compute sparse matrix
-  // const size_t w = GetAlbedoParameterCount();
-  // const size_t h = GetResidualCount();
-  // m_albedoDerivs->setSize(w, h);
 }
 
 void Problem::ZeroAlbedoBufferSize()
 {
   optix::Context context = m_scene->GetContext();
   context["computeAlbedoDerivs"]->setUint(0);
-  m_albedoDerivs->setSize(1, 1);
 }
 
 void Problem::SetBounceImageSizes()
@@ -143,13 +142,7 @@ void Problem::ZeroBounceImageSizes()
 
 void Problem::Initialize()
 {
-  CreateScene();
-  CreatePrimitive();
-  CreateLight();
-  CreateCameras();
-  CreateReferenceImages();
   CreateLightDerivBuffer();
-  CreateAlbedoDerivBuffer();
   CreateReferenceImageBuffer();
   CreateRenderedImageBuffer();
   CreateBounceImageBuffer();
@@ -157,57 +150,6 @@ void Problem::Initialize()
   CreateCameraBuffer();
   CreatePixelBuffer();
   CreateProgram();
-}
-
-void Problem::CreateScene()
-{
-  m_scene = std::make_shared<Scene>();
-}
-
-void Problem::CreatePrimitive()
-{
-  std::shared_ptr<Primitive> primitive;
-  primitive = m_scene->CreatePrimitive();
-
-  m_mesh = m_scene->CreateMesh("shark.ply");
-
-  m_material = std::static_pointer_cast<MatteMaterial>(
-        m_scene->CreateMaterial("shark.ply"));
-
-  primitive->SetGeometry(m_mesh);
-  primitive->SetMaterial(m_material);
-  m_scene->Add(primitive);
-}
-
-void Problem::CreateLight()
-{
-  m_light = m_scene->CreateEnvironmentLight();
-  m_light->SetRowCount(21);
-  m_light->SetRadiance(1E-5, 1E-5, 1E-5);
-}
-
-void Problem::CreateCameras()
-{
-  std::shared_ptr<Camera> camera;
-  camera = m_scene->CreateCamera();
-  camera->SetImageSize(640, 480);
-  camera->SetFocalLength(535.7239, 536.2900);
-  camera->SetCenterPoint(320.2685, 240.2924);
-  camera->SetOrientation(2.49978, 2.69522, -2.78359);
-  camera->SetPosition(-0.4752, -0.476978, 0.342274);
-  camera->SetSampleCount(1);
-  m_cameras.push_back(camera);
-}
-
-void Problem::CreateReferenceImages()
-{
-  std::shared_ptr<Image> image;
-  image = std::make_shared<Image>();
-  image->Load("reference.png");
-
-  std::shared_ptr<ReferenceImage> refImage;
-  refImage = std::make_shared<ReferenceImage>(m_cameras[0], image);
-  m_referenceImages.push_back(refImage);
 }
 
 void Problem::CreateLightDerivBuffer()
@@ -218,16 +160,6 @@ void Problem::CreateLightDerivBuffer()
   m_lightDerivs->setElementSize(3 * sizeof(double));
   context["lightDerivs"]->setBuffer(m_lightDerivs);
   m_lightDerivs->setSize(1, 1);
-}
-
-void Problem::CreateAlbedoDerivBuffer()
-{
-  optix::Context context = m_scene->GetContext();
-  m_albedoDerivs = context->createBuffer(RT_BUFFER_INPUT_OUTPUT);
-  m_albedoDerivs->setFormat(RT_FORMAT_USER);
-  m_albedoDerivs->setElementSize(3 * sizeof(double));
-  context["albedoDerivs"]->setBuffer(m_albedoDerivs);
-  m_albedoDerivs->setSize(1, 1);
 }
 
 void Problem::CreateReferenceImageBuffer()

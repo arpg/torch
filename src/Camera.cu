@@ -123,7 +123,8 @@ RT_PROGRAM void CaptureDepth()
     data.sample = i;
     GetDirection(ray.direction, seed, i);
     rtTrace(sceneRoot, ray, data);
-    depthBuffer[pixelIndex] = fminf(depthBuffer[pixelIndex], data.depth);
+    float depth = data.depth * ray.direction.z;
+    depthBuffer[pixelIndex] = fminf(depthBuffer[pixelIndex], depth);
   }
 
   buffer[pixelIndex] = make_float3(depthBuffer[pixelIndex]);

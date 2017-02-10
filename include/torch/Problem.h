@@ -9,7 +9,10 @@ class Problem
 {
   public:
 
-    Problem();
+    Problem(std::shared_ptr<Scene> scene, std::shared_ptr<Mesh> mesh,
+        std::shared_ptr<MatteMaterial> material,
+        std::shared_ptr<EnvironmentLight> light,
+        const std::vector<std::shared_ptr<ReferenceImage>>& references);
 
     size_t GetResidualCount() const;
 
@@ -51,19 +54,7 @@ class Problem
 
     void Initialize();
 
-    void CreateScene();
-
-    void CreatePrimitive();
-
-    void CreateLight();
-
-    void CreateCameras();
-
-    void CreateReferenceImages();
-
     void CreateLightDerivBuffer();
-
-    void CreateAlbedoDerivBuffer();
 
     void CreateReferenceImageBuffer();
 
@@ -96,8 +87,6 @@ class Problem
     std::vector<std::shared_ptr<ReferenceImage>> m_referenceImages;
 
     optix::Buffer m_lightDerivs;
-
-    optix::Buffer m_albedoDerivs;
 
     optix::Buffer m_referenceImageBuffer;
 

@@ -74,6 +74,7 @@ void ReferenceImage::CreateImageMask()
 {
   m_mask = std::make_shared<Image>();
   m_camera->CaptureMask(*m_mask);
+  m_mask->Save("temp.png");
 }
 
 } // namespace torch
