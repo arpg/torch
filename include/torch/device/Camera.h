@@ -20,4 +20,10 @@ struct CameraData
   unsigned int maxDepth;
 };
 
+struct PixelSample
+{
+  uint camera;
+  uint2 uv;
+};
+
 } // namespace torch

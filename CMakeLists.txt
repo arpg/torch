@@ -201,6 +201,7 @@ set(CUDA_SOURCES
   ${CUDA_SOURCE_DIR}/Mesh.cu
   ${CUDA_SOURCE_DIR}/MeshSampler.cu
   ${CUDA_SOURCE_DIR}/PointLightSampler.cu
+  ${CUDA_SOURCE_DIR}/Problem.cu
   ${CUDA_SOURCE_DIR}/SceneGeometrySampler.cu
   ${CUDA_SOURCE_DIR}/SceneLightSampler.cu
   ${CUDA_SOURCE_DIR}/SparseMatrix.cu

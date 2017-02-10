@@ -20,6 +20,10 @@ class ReferenceImage
 
     std::shared_ptr<const Image> GetMask() const;
 
+    size_t GetValidPixelCount() const;
+
+    void GetValidPixels(std::vector<uint2>& pixels) const;
+
   private:
 
     void Initialize();

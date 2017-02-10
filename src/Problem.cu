@@ -1,24 +1,23 @@
-#include <optix.h>
-#include <cfloat>
-#include <torch/device/Core.h>
 #include <torch/device/Camera.h>
 #include <torch/device/Random.h>
 #include <torch/device/Ray.h>
 
-rtDeclareVariable(uint2, pixelIndex, rtLaunchIndex, );
-rtDeclareVariable(uint2, imageSize, rtLaunchDim, );
-
 rtDeclareVariable(rtObject, sceneRoot, , );
 rtDeclareVariable(float, sceneEpsilon, , );
-
-rtDeclareVariable(unsigned int, sampleCount, , );
-rtDeclareVariable(torch::CameraData, camera, , );
-rtBuffer<float3, 2> buffer;
-rtBuffer<float, 2> depthBuffer;
+rtDeclareVariable(uint, launchIndex, rtLaunchIndex, );
+rtBuffer<torch::CameraData> cameras;
+rtBuffer<torch::PixelSample> pixelSamples;
+// rtBuffer<float3> render;
 
 static __inline__ __device__
 void GetDirection(float3& direction, unsigned int& seed, unsigned int i)
 {
+  const unsigned int cameraIndex = pixelSamples[launchIndex].camera;
+  const torch::CameraData& camera = cameras[cameraIndex];
+  const unsigned int sampleCount = camera.samples;
+  const uint2& imageSize = camera.imageSize;
+  const uint2& pixelIndex = pixelSamples[launchIndex].uv;
+
   const float xo = floorf(i / sampleCount) / sampleCount + torch::randf(seed) / sampleCount;
   const float yo = float(i % sampleCount) / sampleCount + torch::randf(seed) / sampleCount;
 
@@ -31,6 +30,8 @@ void GetDirection(float3& direction, unsigned int& seed, unsigned int i)
 
 TORCH_DEVICE void InitializeRay(optix::Ray& ray)
 {
+  const unsigned int cameraIndex = pixelSamples[launchIndex].camera;
+  const torch::CameraData camera = cameras[cameraIndex];
   ray.origin = camera.position;
   ray.tmin = sceneEpsilon;
   ray.tmax = RT_DEFAULT_MAX;
@@ -39,6 +40,7 @@ TORCH_DEVICE void InitializeRay(optix::Ray& ray)
 
 TORCH_DEVICE unsigned int InitializeSeed()
 {
+  const uint2& pixelIndex = pixelSamples[launchIndex].uv;
   unsigned int a = pixelIndex.x;
   unsigned int b = pixelIndex.y;
   return torch::init_seed<16>(a, b);
@@ -46,6 +48,11 @@ TORCH_DEVICE unsigned int InitializeSeed()
 
 RT_PROGRAM void Capture()
 {
+  const unsigned int cameraIndex = pixelSamples[launchIndex].camera;
+  const torch::CameraData& camera = cameras[cameraIndex];
+  const unsigned int sampleCount = camera.samples;
+  const uint2& pixelIndex = pixelSamples[launchIndex].uv;
+
   optix::Ray ray;
   torch::RadianceData data;
   unsigned int seed;
@@ -102,72 +109,5 @@ RT_PROGRAM void Capture()
     }
   }
 
-  buffer[pixelIndex] = data.radiance;
-}
-
-RT_PROGRAM void CaptureDepth()
-{
-  optix::Ray ray;
-  torch::DepthData data;
-  unsigned int seed;
-
-  seed = InitializeSeed();
-  depthBuffer[pixelIndex] = RT_DEFAULT_MAX;
-  const unsigned int totalSamples = sampleCount * sampleCount;
-
-  for (unsigned int i = 0; i < totalSamples; ++i)
-  {
-    InitializeRay(ray);
-    ray.ray_type = torch::RAY_TYPE_DEPTH;
-    data.depth = RT_DEFAULT_MAX;
-    data.sample = i;
-    GetDirection(ray.direction, seed, i);
-    rtTrace(sceneRoot, ray, data);
-    depthBuffer[pixelIndex] = fminf(depthBuffer[pixelIndex], data.depth);
-  }
-
-  buffer[pixelIndex] = make_float3(depthBuffer[pixelIndex]);
-}
-
-RT_PROGRAM void CaptureMask()
-{
-  const int pad = 3;
-  float depth = depthBuffer[pixelIndex];
-  float minDepth = FLT_MAX;
-  float maxDepth = FLT_MIN;
-
-  if (pixelIndex.x <= pad || pixelIndex.x >= (imageSize.x - 1 - pad) ||
-      pixelIndex.y <= pad || pixelIndex.y >= (imageSize.y - 1 - pad))
-  {
-    buffer[pixelIndex] = make_float3(0);
-    return;
-  }
-
-  for (int i = pixelIndex.x - pad; i < pixelIndex.x + pad; ++i)
-  {
-    for (int j = pixelIndex.y - pad; j < pixelIndex.y + pad; ++j)
-    {
-      if (i < 0 || i >= imageSize.x || j < 0 || j > imageSize.y)
-      {
-        continue;
-      }
-
-      minDepth = fminf(minDepth, depthBuffer[make_uint2(i, j)]);
-      maxDepth = fmaxf(maxDepth, depthBuffer[make_uint2(i, j)]);
-
-      if (fabs(maxDepth - minDepth) > 0.05)
-      {
-        depth = RT_DEFAULT_MAX;
-        break;
-      }
-    }
-
-    if (depth == RT_DEFAULT_MAX)
-    {
-      break;
-    }
-  }
-
-  depth = (depth == RT_DEFAULT_MAX) ? 0 : 1;
-  buffer[pixelIndex] = make_float3(depth);
+  // render[launchIndex] = data.radiance;
 }

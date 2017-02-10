@@ -1,13 +1,16 @@
 #include <torch/Problem.h>
 #include <torch/AlbedoResidualBlock.h>
 #include <torch/Camera.h>
+#include <torch/Context.h>
 #include <torch/EnvironmentLight.h>
 #include <torch/Image.h>
 #include <torch/MatteMaterial.h>
 #include <torch/Mesh.h>
 #include <torch/Primitive.h>
+#include <torch/PtxUtil.h>
 #include <torch/ReferenceImage.h>
 #include <torch/Scene.h>
+#include <torch/device/Camera.h>
 
 namespace torch
 {
@@ -20,12 +23,10 @@ Problem::Problem()
 size_t Problem::GetResidualCount() const
 {
   size_t count = 0;
-  unsigned int w, h;
 
-  for (std::shared_ptr<Camera> camera : m_cameras)
+  for (std::shared_ptr<ReferenceImage> image : m_referenceImages)
   {
-    camera->GetImageSize(w, h);
-    count += 3 * w * h;
+    count += 3 * image->GetValidPixelCount();
   }
 
   return count;
@@ -47,12 +48,9 @@ void Problem::ComputeLightDerivatives()
   ZeroBounceImageSizes();
   SetLightBufferSize();
 
-  Image image;
-
-  for (std::shared_ptr<Camera> camera : m_cameras)
-  {
-    camera->Capture(image);
-  }
+  std::shared_ptr<Context> context;
+  context = m_mesh->GetContext();
+  context->Launch(m_programId, m_launchSize);
 }
 
 void Problem::ComputeAlbedoDerivatives()
@@ -61,12 +59,9 @@ void Problem::ComputeAlbedoDerivatives()
   SetAlbedoBufferSize();
   SetBounceImageSizes();
 
-  Image image;
-
-  for (std::shared_ptr<Camera> camera : m_cameras)
-  {
-    camera->Capture(image);
-  }
+  std::shared_ptr<Context> context;
+  context = m_mesh->GetContext();
+  context->Launch(m_programId, m_launchSize);
 }
 
 CUdeviceptr  Problem::GetLightDerivatives()
@@ -154,6 +149,9 @@ void Problem::Initialize()
   CreateRenderedImageBuffer();
   CreateBounceImageBuffer();
   CreateAlbedoBlocks();
+  CreateCameraBuffer();
+  CreatePixelBuffer();
+  CreateProgram();
 }
 
 void Problem::CreateScene()
@@ -192,7 +190,7 @@ void Problem::CreateCameras()
   camera->SetCenterPoint(320.2685, 240.2924);
   camera->SetOrientation(2.49978, 2.69522, -2.78359);
   camera->SetPosition(-0.4752, -0.476978, 0.342274);
-  camera->SetSampleCount(2);
+  camera->SetSampleCount(1);
   m_cameras.push_back(camera);
 }
 
@@ -256,12 +254,86 @@ void Problem::CreateBounceImageBuffer()
 
 void Problem::CreateAlbedoBlocks()
 {
-  for (std::shared_ptr<ReferenceImage> refImage : m_referenceImages)
+  optix::Context context = m_scene->GetContext();
+  m_addToAlbedoBuffer = context->createBuffer(RT_BUFFER_INPUT);
+  m_addToAlbedoBuffer->setFormat(RT_FORMAT_PROGRAM_ID);
+  std::vector<int> ids(m_referenceImages.size());
+
+  for (size_t i = 0; i < m_referenceImages.size(); ++i)
   {
+    std::shared_ptr<ReferenceImage> refImage = m_referenceImages[i];
     std::shared_ptr<AlbedoResidualBlock> block;
     block = std::make_shared<AlbedoResidualBlock>(m_mesh, refImage);
     m_albedoBlocks.push_back(block);
+    ids[i] = block->GetAddProgram()->getId();
   }
+
+  m_addToAlbedoBuffer->setSize(ids.size());
+  int* device = reinterpret_cast<int*>(m_addToAlbedoBuffer->map());
+  std::copy(ids.begin(), ids.end(), device);
+  m_addToAlbedoBuffer->unmap();
+  context["AddToAlbedoJacobian"]->setBuffer(m_addToAlbedoBuffer);
+}
+
+void Problem::CreateCameraBuffer()
+{
+  optix::Context context = m_scene->GetContext();
+  m_cameraBuffer = context->createBuffer(RT_BUFFER_INPUT);
+  m_cameraBuffer->setFormat(RT_FORMAT_USER);
+  m_cameraBuffer->setElementSize(sizeof(CameraData));
+  std::vector<CameraData> cameras(m_referenceImages.size());
+
+  for (size_t i = 0; i < m_referenceImages.size(); ++i)
+  {
+    m_referenceImages[i]->GetCamera(cameras[i]);
+  }
+
+  m_cameraBuffer->setSize(m_referenceImages.size());
+  CameraData* device = reinterpret_cast<CameraData*>(m_cameraBuffer->map());
+  std::copy(cameras.begin(), cameras.end(), device);
+  m_cameraBuffer->unmap();
+  context["cameras"]->setBuffer(m_cameraBuffer);
+}
+
+void Problem::CreatePixelBuffer()
+{
+  std::vector<uint2> pixels;
+  std::vector<PixelSample> samples;
+  PixelSample sample;
+
+  for (size_t i = 0; i < m_referenceImages.size(); ++i)
+  {
+    std::shared_ptr<ReferenceImage> refImage = m_referenceImages[i];
+    refImage->GetValidPixels(pixels);
+    sample.camera = i;
+
+    for (size_t j = 0; j < pixels.size(); ++j)
+    {
+      sample.uv = pixels[j];
+      samples.push_back(sample);
+    }
+  }
+
+  optix::Context context = m_scene->GetContext();
+  m_pixelBuffer = context->createBuffer(RT_BUFFER_INPUT);
+  m_pixelBuffer->setFormat(RT_FORMAT_USER);
+  m_pixelBuffer->setElementSize(sizeof(PixelSample));
+  m_pixelBuffer->setSize(samples.size());
+  PixelSample* device = reinterpret_cast<PixelSample*>(m_pixelBuffer->map());
+  std::copy(samples.begin(), samples.end(), device);
+  m_pixelBuffer->unmap();
+  context["pixelSamples"]->setBuffer(m_pixelBuffer);
+  m_launchSize = samples.size();
+}
+
+void Problem::CreateProgram()
+{
+  std::shared_ptr<Context> context;
+  context = m_mesh->GetContext();
+
+  const std::string file = PtxUtil::GetFile("Problem");
+  m_program = context->CreateProgram(file, "Capture");
+  m_programId = context->RegisterLaunchProgram(m_program);
 }
 
 } // namespace torch

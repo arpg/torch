@@ -71,6 +71,12 @@ class Problem
 
     void CreateAlbedoBlocks();
 
+    void CreateCameraBuffer();
+
+    void CreatePixelBuffer();
+
+    void CreateProgram();
+
   protected:
 
     std::shared_ptr<Scene> m_scene;
@@ -96,6 +102,18 @@ class Problem
     optix::Buffer m_renderedImages;
 
     optix::Buffer m_bounceImages;
+
+    optix::Buffer m_addToAlbedoBuffer;
+
+    optix::Buffer m_cameraBuffer;
+
+    optix::Buffer m_pixelBuffer;
+
+    optix::Program m_program;
+
+    unsigned int m_programId;
+
+    RTsize m_launchSize;
 };
 
 } // namespace torch

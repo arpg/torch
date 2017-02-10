@@ -34,6 +34,7 @@ void AlbedoResidualBlock::Initialize()
 
   std::vector<uint4> boxes;
   GetBoundingBoxes(boxes);
+  CreateJacobian(boxes);
 }
 
 void AlbedoResidualBlock::CreateAdjacencyMap()

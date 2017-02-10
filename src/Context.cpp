@@ -5,6 +5,7 @@
 #include <torch/LightSampler.h>
 #include <torch/SceneGeometrySampler.h>
 #include <torch/SceneLightSampler.h>
+#include <torch/device/Camera.h>
 #include <torch/device/Ray.h>
 
 #include <string.h>
@@ -248,6 +249,19 @@ void Context::Initialize()
   CreateSceneRoot();
   CreateLightSampler();
   CreateGeometrySampler();
+
+  optix::Buffer addToAlbedoBuffer;
+  addToAlbedoBuffer = m_context->createBuffer(RT_BUFFER_INPUT);
+  addToAlbedoBuffer->setFormat(RT_FORMAT_PROGRAM_ID);
+  addToAlbedoBuffer->setSize(0);
+  m_context["AddToAlbedoJacobian"]->setBuffer(addToAlbedoBuffer);
+
+  optix::Buffer pixelSamples;
+  pixelSamples = m_context->createBuffer(RT_BUFFER_INPUT);
+  pixelSamples->setFormat(RT_FORMAT_USER);
+  pixelSamples->setElementSize(sizeof(PixelSample));
+  pixelSamples->setSize(0);
+  m_context["pixelSamples"]->setBuffer(pixelSamples);
 }
 
 void Context::CreateContext()

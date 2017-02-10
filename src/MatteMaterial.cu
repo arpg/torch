@@ -1,4 +1,5 @@
 #include <optix.h>
+#include <torch/device/Camera.h>
 #include <torch/device/Light.h>
 #include <torch/device/Random.h>
 #include <torch/device/Ray.h>
@@ -22,8 +23,13 @@ rtDeclareVariable(torch::ShadowData, srayData, rtPayload, );
 typedef rtCallableProgramX<void(torch::LightSample&)> SampleLightFunction;
 rtDeclareVariable(SampleLightFunction, SampleLights, , );
 
-typedef rtCallableProgramId<void(uint, uint, float)> JacobianAddFunction;
-rtBuffer<JacobianAddFunction, 1> AddToAlbedoJacobian;
+typedef rtCallableProgramId<void(uint, uint, float3)> JacobianAddFunction;
+rtBuffer<JacobianAddFunction> AddToAlbedoJacobian;
+rtDeclareVariable(uint, computeAlbedoDerivs, , );
+
+rtDeclareVariable(uint2, launchIndex, rtLaunchIndex, );
+rtBuffer<torch::CameraData> cameras;
+rtBuffer<torch::PixelSample> pixelSamples;
 
 TORCH_DEVICE float3 GetAlbedo()
 {
@@ -76,9 +82,18 @@ RT_PROGRAM void ClosestHit()
 
     if (sample.radiance.x > 0 || sample.radiance.y > 0 || sample.radiance.z > 0)
     {
-      const float3 brdf = GetAlbedo() / M_PIf;
+      const float3 albedo = GetAlbedo();
       const float theta = dot(shadingNormal, sample.direction);
-      rayData.radiance += (rayData.throughput * brdf * sample.radiance * theta / sample.pdf) / lightSamples;
+      const float3 throughput = (rayData.throughput * sample.radiance * theta / sample.pdf) / (lightSamples * M_PIf);
+      rayData.radiance += albedo * throughput;
+
+      if (computeAlbedoDerivs == 1 && rayData.depth == 0)
+      {
+        const torch::PixelSample& pixel = pixelSamples[launchIndex.x];
+        const unsigned int imageIndex = pixel.camera;
+        const uint2 uv = pixel.uv;
+        AddToAlbedoJacobian[imageIndex](uv.x, uv.y, throughput);
+      }
     }
   }
 

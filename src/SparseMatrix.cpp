@@ -27,8 +27,8 @@ optix::Program SparseMatrix::GetAddProgram() const
 void SparseMatrix::AllocateValues(size_t size)
 {
   m_values->setSize(size);
-  float* device = reinterpret_cast<float*>(m_values->map());
-  std::fill(device, device + size, 0.0f);
+  float3* device = reinterpret_cast<float3*>(m_values->map());
+  std::fill(device, device + size, make_float3(0, 0, 0));
   m_values->unmap();
 }
 
@@ -59,7 +59,7 @@ void SparseMatrix::Initialize()
 void SparseMatrix::CreateValueBuffer()
 {
   m_values = m_context->CreateBuffer(RT_BUFFER_INPUT_OUTPUT);
-  m_values->setFormat(RT_FORMAT_FLOAT);
+  m_values->setFormat(RT_FORMAT_FLOAT3);
   m_values->setSize(0);
 }
 

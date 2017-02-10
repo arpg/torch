@@ -33,6 +33,38 @@ std::shared_ptr<const Image> ReferenceImage::GetMask() const
   return m_mask;
 }
 
+size_t ReferenceImage::GetValidPixelCount() const
+{
+  float3* data = reinterpret_cast<float3*>(m_mask->GetData());
+  size_t count = 0;
+
+  for (unsigned int y = 0; y < m_mask->GetHeight(); ++y)
+  {
+    for (unsigned int x = 0; x < m_mask->GetWidth(); ++x)
+    {
+      const size_t index = y * m_mask->GetWidth() + x;
+      if (data[index].x == 1) ++count;
+    }
+  }
+
+  return count;
+}
+
+void ReferenceImage::GetValidPixels(std::vector<uint2>& pixels) const
+{
+  float3* data = reinterpret_cast<float3*>(m_mask->GetData());
+  pixels.clear();
+
+  for (unsigned int y = 0; y < m_mask->GetHeight(); ++y)
+  {
+    for (unsigned int x = 0; x < m_mask->GetWidth(); ++x)
+    {
+      const size_t index = y * m_mask->GetWidth() + x;
+      if (data[index].x == 1) pixels.push_back(make_uint2(x, y));
+    }
+  }
+}
+
 void ReferenceImage::Initialize()
 {
   CreateImageMask();

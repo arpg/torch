@@ -1,10 +1,10 @@
 #include <torch/device/Core.h>
 
-rtBuffer<float, 1> values;
+rtBuffer<float3, 1> values;
 rtBuffer<unsigned int, 1> rowOffsets;
 rtBuffer<unsigned int, 1> colIndices;
 
-RT_CALLABLE_PROGRAM void Add(size_t row, size_t col, float value)
+RT_CALLABLE_PROGRAM void Add(size_t row, size_t col, float3 value)
 {
   size_t begin = rowOffsets[row];
   size_t end = rowOffsets[row + 1];
