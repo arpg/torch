@@ -184,7 +184,7 @@ void Context::PrepareLaunch()
     BuildScene();
     PostBuildScene();
     m_lightSampler->Update();
-    m_dirty = true;
+    m_dirty = false;
 
 #ifdef DEBUG_BUILD
     m_context->validate();

@@ -40,6 +40,14 @@ class Problem : public ::testing::Test
       m_material->SetAlbedos(spectrum);
     }
 
+    void SetRadiance(const std::vector<Spectrum>& radiance)
+    {
+      optix::Buffer buffer = m_light->GetRadianceBuffer();
+      Spectrum* device = reinterpret_cast<Spectrum*>(buffer->map());
+      std::copy(radiance.begin(), radiance.end(), device);
+      buffer->unmap();
+    }
+
   private:
 
     void Initialize()
@@ -108,7 +116,7 @@ class Problem : public ::testing::Test
     void CreateLight()
     {
       m_light = m_scene->CreateEnvironmentLight();
-      m_light->SetRowCount(5);
+      m_light->SetRowCount(4);
       m_light->SetRadiance(0.01, 0.01, 0.01);
       m_scene->Add(m_light);
     }
@@ -275,7 +283,6 @@ TEST_F(Problem, AlbedoDerivatives)
     channels[i] = orig;
   }
 
-
   for (uint col = 0; col < colCount; ++col)
   {
     for (uint row = 0; row < rowCount; ++row)
@@ -290,12 +297,88 @@ TEST_F(Problem, AlbedoDerivatives)
 TEST_F(Problem, LightDerivatives)
 {
   CreateProblem();
+
+  const unsigned int dirCount = m_light->GetDirectionCount();
+  std::vector<Spectrum> radiance(dirCount);
+  const Spectrum defaultRadiance = Spectrum::FromRGB(0.1, 0.1, 0.1);
+  std::fill(radiance.begin(), radiance.end(), defaultRadiance);
+
+  const unsigned int paramCount = 3 * dirCount;
+  float* parameters = reinterpret_cast<float*>(radiance.data());
+
   m_problem->ComputeLightDerivatives();
+  SetRadiance(radiance);
+  m_problem->ComputeLightDerivatives();
+
+  std::vector<float3> r0;
+  m_problem->GetRenderValues(r0);
 
   optix::Buffer lightDerivs;
   lightDerivs = m_problem->GetLightDerivativeBuffer();
-  RTsize cols, rows;
-  lightDerivs->getSize(cols, rows);
+
+  RTsize colCount, rowCount;
+  lightDerivs->getSize(colCount, rowCount);
+
+  Eigen::MatrixXf analJacobian(paramCount, 3 * r0.size());
+  analJacobian.setZero();
+
+  float3* device = reinterpret_cast<float3*>(lightDerivs->map());
+  size_t devIndex = 0;
+
+  std::cout << "Eigen Rows: " << analJacobian.rows() << ", Cols: " <<  analJacobian.cols() << std::endl;
+  std::cout << "Optix Rows: " << rowCount << ", Cols: " <<  colCount << std::endl;
+
+  for (uint row = 0; row < rowCount; ++row)
+  {
+    for (uint col = 0; col < colCount; ++col)
+    {
+      analJacobian(3 * col + 0, 3 * row + 0) = device[devIndex].x;
+      analJacobian(3 * col + 1, 3 * row + 1) = device[devIndex].y;
+      analJacobian(3 * col + 2, 3 * row + 2) = device[devIndex].z;
+      ++devIndex;
+    }
+  }
+
+  lightDerivs->unmap();
+
+  Eigen::MatrixXf finiteJacobian(paramCount, 3 * r0.size());
+  finiteJacobian.setZero();
+
+  const float delta = 0.05;
+
+  for (unsigned int i = 0; i < paramCount; ++i)
+  {
+    std::cout << (i + 1) << " / " << paramCount << std::endl;
+
+    const float orig = parameters[i];
+    parameters[i] += delta;
+
+    SetRadiance(radiance);
+    m_problem->ComputeLightDerivatives();
+
+    std::vector<float3> r1;
+    m_problem->GetRenderValues(r1);
+
+    for (size_t col = 0; col < r1.size(); ++col)
+    {
+      r1[col] = (r1[col] - r0[col]) / delta;
+      finiteJacobian(i, 3 * col + 0) = r1[col].x;
+      finiteJacobian(i, 3 * col + 1) = r1[col].y;
+      finiteJacobian(i, 3 * col + 2) = r1[col].z;
+    }
+
+    parameters[i] = orig;
+  }
+
+  for (uint col = 0; col < finiteJacobian.cols(); ++col)
+  {
+    for (uint row = 0; row < finiteJacobian.rows(); ++row)
+    {
+      const float expected = finiteJacobian(row, col);
+      const float found = analJacobian(row, col);
+      ASSERT_NEAR(expected, found, 1E-4);
+    }
+  }
 }
 
 } // namespace testing

@@ -13,8 +13,8 @@ TORCH_DEVICE bool IsVisible(const LightSample& sample)
   ShadowData payload;
   payload.occluded = true;
 
-  if (dot(sample.direction, sample.normal) > 0 &&
-      dot(sample.direction, sample.snormal) > 0)
+  if (dot(sample.direction, sample.normal) > 1E-7 &&
+      dot(sample.direction, sample.snormal) > 1E-7)
   {
     optix::Ray ray;
     ray.origin = sample.origin;

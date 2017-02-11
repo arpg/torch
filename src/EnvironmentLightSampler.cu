@@ -67,9 +67,11 @@ RT_CALLABLE_PROGRAM void Sample(torch::LightSample& sample)
   const bool visible = torch::IsVisible(sample);
   if (!visible) sample.radiance = make_float3(0, 0, 0);
 
-  if (computeLightDerivs)
+  if (computeLightDerivs && visible)
   {
-    const uint2 derivIndex = make_uint2(light, launchIndex.x);
-    lightDerivatives[derivIndex] += sample.throughput;
+    const float theta = dot(sample.direction, sample.snormal);
+    const uint paramIndex = offsets[light][index.x] + index.y;
+    const uint2 derivIndex = make_uint2(paramIndex, launchIndex.x);
+    lightDerivatives[derivIndex] += theta * sample.throughput;
   }
 }

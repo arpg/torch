@@ -34,6 +34,8 @@ class EnvironmentLight : public Light
 
     optix::Buffer GetRadianceBuffer() const;
 
+    optix::Buffer GetOffsetBuffer() const;
+
   protected:
 
     void UpdateDistribution();

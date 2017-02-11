@@ -80,6 +80,11 @@ optix::Buffer EnvironmentLight::GetRadianceBuffer() const
   return m_radianceBuffer;
 }
 
+optix::Buffer EnvironmentLight::GetOffsetBuffer() const
+{
+  return m_offsetBuffer;
+}
+
 void EnvironmentLight::UpdateDistribution()
 {
   std::vector<float> luminances(m_radiance.size());
