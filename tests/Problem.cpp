@@ -370,6 +370,11 @@ TEST_F(Problem, LightDerivatives)
     parameters[i] = orig;
   }
 
+  std::cout << "Analytical:" << std::endl;
+  std::cout << analJacobian.block<30, 18>(0, 42753 - 18) << std::endl;
+  std::cout << std::endl << "Finite Diff:" << std::endl;
+  std::cout << finiteJacobian.block<30, 18>(0, 42753 - 18) << std::endl;
+
   for (uint col = 0; col < finiteJacobian.cols(); ++col)
   {
     for (uint row = 0; row < finiteJacobian.rows(); ++row)

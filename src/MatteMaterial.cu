@@ -77,7 +77,7 @@ RT_PROGRAM void ClosestHit()
   const unsigned int lightSamples = 16;
 
   const float3 albedo = GetAlbedo();
-  sample.throughput = (albedo * rayData.throughput / sample.pdf) / (lightSamples * M_PIf);
+  sample.throughput = (albedo * rayData.throughput) / (lightSamples * M_PIf);
 
   for (unsigned int i = 0; i < lightSamples; ++i)
   {

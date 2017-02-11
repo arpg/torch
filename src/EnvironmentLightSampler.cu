@@ -72,6 +72,6 @@ RT_CALLABLE_PROGRAM void Sample(torch::LightSample& sample)
     const float theta = dot(sample.direction, sample.snormal);
     const uint paramIndex = offsets[light][index.x] + index.y;
     const uint2 derivIndex = make_uint2(paramIndex, launchIndex.x);
-    lightDerivatives[derivIndex] += theta * sample.throughput;
+    lightDerivatives[derivIndex] += theta * sample.throughput / sample.pdf;
   }
 }
