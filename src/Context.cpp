@@ -131,7 +131,7 @@ unsigned int Context::RegisterLaunchProgram(optix::Program program)
   m_context->setEntryPointCount(id + 1);
   m_context->setRayGenerationProgram(id, program);
 
-#ifdef DEBUG_BUILD
+#ifndef NDEBUG
   m_context->setExceptionProgram(id, m_errorProgram);
 #endif
 
@@ -186,7 +186,7 @@ void Context::PrepareLaunch()
     m_lightSampler->Update();
     m_dirty = false;
 
-#ifdef DEBUG_BUILD
+#ifndef NDEBUG
     m_context->validate();
     m_context->compile();
 #endif
@@ -230,7 +230,7 @@ void Context::PostBuildScene()
 
 void Context::FinishLaunch()
 {
-#ifdef DEBUG_BUILD
+#ifndef NDEBUG
   unsigned char host[128];
   unsigned char* device = reinterpret_cast<unsigned char*>(m_errorBuffer->map());
   std::copy(device, device + 128, host);
@@ -287,7 +287,7 @@ void Context::CreateContext()
   m_context["sceneEpsilon"]->setFloat(1E-4);
   m_context->setStackSize(2048);
 
-#ifdef DEBUG_BUILD
+#ifndef NDEBUG
   m_context->setPrintEnabled(true);
   // m_context->setPrintBufferSize(512);
   m_context->setPrintBufferSize(8192);

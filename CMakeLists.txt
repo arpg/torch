@@ -8,8 +8,9 @@ string(TOLOWER ${PROJECT_NAME} LIBRARY_NAME)
 # set compilers arguments
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+
+set(CMAKE_CXX_FLAGS_CACHED ${CMAKE_CXX_FLAGS})
 
 # find required packages
 
@@ -40,6 +41,13 @@ list(APPEND REQUIRED_LIBRARIES ${Assimp_LIBRARIES})
 find_package(TinyXML2 REQUIRED)
 list(APPEND REQUIRED_INCLUDE_DIRS ${TinyXML2_INCLUDE_DIRS})
 list(APPEND REQUIRED_LIBRARIES ${TinyXML2_LIBRARIES})
+
+find_package(Lynx QUIET)
+
+if(Lynx_FOUND)
+  list(APPEND REQUIRED_INCLUDE_DIRS ${Lynx_INCLUDE_DIRS})
+  list(APPEND REQUIRED_LIBRARIES ${Lynx_LIBRARIES})
+endif()
 
 list(APPEND REQUIRED_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/include)
 list(APPEND REQUIRED_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/include)
@@ -209,10 +217,20 @@ set(CUDA_SOURCES
   ${CUDA_SOURCE_DIR}/SphereSampler.cu
 )
 
-# set project definitions
+# add Lynx-dependent files if possible
 
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-  add_definitions("-DDEBUG_BUILD")
+if(Lynx_FOUND)
+
+list(APPEND CPP_HEADERS
+  ${CPP_HEADER_DIR}/ActivationCostFunction.h
+  ${CPP_HEADER_DIR}/ReflectanceCostFunction.h
+)
+
+list(APPEND CPP_SOURCES
+  ${CPP_SOURCE_DIR}/ActivationCostFunction.cpp
+  ${CPP_SOURCE_DIR}/ReflectanceCostFunction.cpp
+)
+
 endif()
 
 # build project main header
@@ -241,11 +259,15 @@ add_custom_target(PTX_FILES ALL
   SOURCES ${CUDA_SOURCES}
 )
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_CACHED} -std=c++11")
+cuda_add_library(torch_cuda ${CUDA_SOURCE_DIR}/ActivationCostFunction.cu)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_CACHED} -std=c++14")
+
 # build project library
 
 set(LIBRARY_SOURCES ${CPP_SOURCES} ${CPP_HEADERS} ${CUDA_HEADERS})
 add_library(${LIBRARY_NAME} SHARED ${LIBRARY_SOURCES})
-target_link_libraries(${LIBRARY_NAME} ${REQUIRED_LIBRARIES})
+target_link_libraries(${LIBRARY_NAME} ${REQUIRED_LIBRARIES} torch_cuda)
 
 # build applications
 
