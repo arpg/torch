@@ -1,6 +1,6 @@
 #pragma once
 
-#include <lynx/CostFunction.h>
+#include <lynx/lynx.h>
 #include <torch/Core.h>
 
 namespace torch
@@ -14,11 +14,23 @@ class ActivationCostFunction : public lynx::CostFunction
 
     virtual ~ActivationCostFunction();
 
+    float GetBias() const;
+
+    void SetBias(float bias);
+
+    float GetInnerScale() const;
+
+    void SetInnerScale(float scale);
+
+    float GetOuterScale() const;
+
+    void SetOuterScale(float scale);
+
     lynx::Matrix* CreateJacobianMatrix() const override;
 
     void Evaluate(float const* const* parameters, float* residuals) override;
 
-    void Evaluate(size_t block, float const* const* parameters,
+    void Evaluate(size_t offset, size_t size, float const* const* parameters,
         float* residuals, lynx::Matrix* jacobian) override;
 
   private:
@@ -28,6 +40,12 @@ class ActivationCostFunction : public lynx::CostFunction
   protected:
 
     std::shared_ptr<EnvironmentLight> m_light;
+
+    float m_bias;
+
+    float m_innerScale;
+
+    float m_outerScale;
 };
 
-}
+} // namespace torch

@@ -7,10 +7,11 @@ string(TOLOWER ${PROJECT_NAME} LIBRARY_NAME)
 
 # set compilers arguments
 
+set(CUDA_PROPAGATE_HOST_FLAGS off)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -std=c++11")
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
-
-set(CMAKE_CXX_FLAGS_CACHED ${CMAKE_CXX_FLAGS})
 
 # find required packages
 
@@ -259,9 +260,10 @@ add_custom_target(PTX_FILES ALL
   SOURCES ${CUDA_SOURCES}
 )
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_CACHED} -std=c++11")
-cuda_add_library(torch_cuda ${CUDA_SOURCE_DIR}/ActivationCostFunction.cu)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_CACHED} -std=c++14")
+cuda_add_library(torch_cuda SHARED
+  ${CUDA_SOURCE_DIR}/ActivationCostFunction.cu
+  ${CUDA_HEADER_DIR}/ActivationCostFunction.cuh
+)
 
 # build project library
 
