@@ -7,13 +7,13 @@
 namespace torch
 {
 
-class LightCostFunction : public lynx::CostFunction
+class AlbedoCostFunction : public lynx::CostFunction
 {
   public:
 
-    LightCostFunction(std::shared_ptr<EnvironmentLight> light);
+    AlbedoCostFunction(std::shared_ptr<MatteMaterial> material);
 
-    virtual ~LightCostFunction();
+    virtual ~AlbedoCostFunction();
 
     void AddKeyframe(std::shared_ptr<Keyframe> keyframe);
 
@@ -46,7 +46,7 @@ class LightCostFunction : public lynx::CostFunction
 
     bool m_locked;
 
-    std::shared_ptr<EnvironmentLight> m_light;
+    std::shared_ptr<MatteMaterial> m_material;
 
     std::vector<std::shared_ptr<Keyframe>> m_keyframes;
 

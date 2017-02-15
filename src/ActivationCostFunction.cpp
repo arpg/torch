@@ -1,8 +1,6 @@
 #include <torch/ActivationCostFunction.h>
-#include <torch/device/ActivationCostFunction.cuh>
 #include <torch/EnvironmentLight.h>
-
-#include <iostream>
+#include <torch/device/ActivationCostFunction.cuh>
 
 namespace torch
 {
@@ -51,7 +49,7 @@ void ActivationCostFunction::SetOuterScale(float scale)
   m_outerScale = scale;
 }
 
-lynx::Matrix* ActivationCostFunction::CreateJacobianMatrix() const
+lynx::Matrix* ActivationCostFunction::CreateJacobianMatrix()
 {
   const size_t count = m_light->GetDirectionCount();
   return new lynx::BlockDiagonalMatrix(1, 3, count);
@@ -71,11 +69,10 @@ void ActivationCostFunction::Evaluate(size_t offset, size_t size,
 {
   lynx::BlockDiagonalMatrix* matrix;
   matrix = dynamic_cast<lynx::BlockDiagonalMatrix*>(jacobian);
-
   LYNX_ASSERT(matrix, "expected jacobian to be BlockDiagonalMatrix type");
 
   const float* params = parameters[0];
-  float* J = &matrix->GetValues()[offset];
+  float* J = &matrix->GetValues()[3 * offset];
   float* r = &residuals[offset];
 
   torch::Evaluate(params, r, J, size, m_bias, m_innerScale, m_outerScale);

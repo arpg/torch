@@ -199,6 +199,7 @@ set(CUDA_SOURCES
   ${CUDA_SOURCE_DIR}/AlbedoResidualBlock.cu
   ${CUDA_SOURCE_DIR}/AreaLightSampler.cu
   ${CUDA_SOURCE_DIR}/Camera.cu
+  ${CUDA_SOURCE_DIR}/Context.cu
   ${CUDA_SOURCE_DIR}/DirectionalLightSampler.cu
   ${CUDA_SOURCE_DIR}/Distribution1D.cu
   ${CUDA_SOURCE_DIR}/Distribution2D.cu
@@ -224,14 +225,16 @@ if(Lynx_FOUND)
 
 list(APPEND CPP_HEADERS
   ${CPP_HEADER_DIR}/ActivationCostFunction.h
-  ${CPP_HEADER_DIR}/ReflectanceCostFunction.h
+  ${CPP_HEADER_DIR}/AlbedoCostFunction.h
   ${CPP_HEADER_DIR}/LightCostFunction.h
+  ${CPP_HEADER_DIR}/ReflectanceCostFunction.h
 )
 
 list(APPEND CPP_SOURCES
   ${CPP_SOURCE_DIR}/ActivationCostFunction.cpp
-  ${CPP_SOURCE_DIR}/ReflectanceCostFunction.cpp
+  ${CPP_SOURCE_DIR}/AlbedoCostFunction.cpp
   ${CPP_SOURCE_DIR}/LightCostFunction.cpp
+  ${CPP_SOURCE_DIR}/ReflectanceCostFunction.cpp
 )
 
 endif()
@@ -265,8 +268,8 @@ add_custom_target(PTX_FILES ALL
 cuda_add_library(torch_cuda SHARED
   ${CUDA_SOURCE_DIR}/ActivationCostFunction.cu
   ${CUDA_HEADER_DIR}/ActivationCostFunction.cuh
-  ${CUDA_SOURCE_DIR}/LightCostFunction.cu
-  ${CUDA_HEADER_DIR}/LightCostFunction.cuh
+  ${CUDA_SOURCE_DIR}/ReflectanceCostFunction.cu
+  ${CUDA_HEADER_DIR}/ReflectanceCostFunction.cuh
 )
 
 # build project library

@@ -18,10 +18,7 @@ TEST(ActivationCostFunction, Gradient)
   light->SetRadiance(0.1f, 0.1f, 0.1f);
   scene.Add(light);
 
-  Image image;
-  std::shared_ptr<Camera> camera;
-  camera = scene.CreateCamera();
-  camera->Capture(image);
+  light->GetContext()->Compile();
 
   optix::Buffer buffer = light->GetRadianceBuffer();
   CUdeviceptr pointer = buffer->getDevicePointer(0);
@@ -51,10 +48,7 @@ TEST(ActivationCostFunction, Optimization)
   light->SetRadiance(10.1f, 10.1f, 10.1f);
   scene.Add(light);
 
-  Image image;
-  std::shared_ptr<Camera> camera;
-  camera = scene.CreateCamera();
-  camera->Capture(image);
+  light->GetContext()->Compile();
 
   optix::Buffer buffer = light->GetRadianceBuffer();
   CUdeviceptr pointer = buffer->getDevicePointer(0);

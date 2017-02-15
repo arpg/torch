@@ -25,6 +25,13 @@ void Context::MarkDirty()
   m_dirty = true;
 }
 
+void Context::Compile()
+{
+  PrepareLaunch();
+  m_context->launch(m_emptyProgramId, 0);
+  FinishLaunch();
+}
+
 void Context::Launch(unsigned int id, RTsize w)
 {
   PrepareLaunch();
@@ -249,6 +256,7 @@ void Context::Initialize()
   CreateSceneRoot();
   CreateLightSampler();
   CreateGeometrySampler();
+  CreateEmptyProgram();
 
   optix::Buffer addToAlbedoBuffer;
   addToAlbedoBuffer = m_context->createBuffer(RT_BUFFER_INPUT);
@@ -318,6 +326,13 @@ void Context::CreateGeometrySampler()
   std::shared_ptr<Context> sharedThis = shared_from_this();
   m_geometrySampler = std::make_shared<SceneGeometrySampler>(sharedThis);
   m_context["SampleGeometry"]->set(m_geometrySampler->GetProgram());
+}
+
+void Context::CreateEmptyProgram()
+{
+  const std::string file = PtxUtil::GetFile("Context");
+  m_emptyProgram = m_context->createProgramFromPTXFile(file, "DoNothing");
+  m_emptyProgramId = RegisterLaunchProgram(m_emptyProgram);
 }
 
 } // namespace torch

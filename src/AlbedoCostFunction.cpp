@@ -1,6 +1,6 @@
-#include <torch/LightCostFunction.h>
+#include <torch/AlbedoCostFunction.h>
 #include <torch/Context.h>
-#include <torch/EnvironmentLight.h>
+#include <torch/MatteMaterial.h>
 #include <torch/Keyframe.h>
 
 #include <iostream>
@@ -8,21 +8,21 @@
 namespace torch
 {
 
-LightCostFunction::LightCostFunction(
-    std::shared_ptr<EnvironmentLight> light) :
+AlbedoCostFunction::AlbedoCostFunction(
+    std::shared_ptr<MatteMaterial> material) :
   m_dirty(true),
   m_locked(false),
-  m_light(light),
+  m_material(material),
   m_jacobianValues(nullptr)
 {
   Initialize();
 }
 
-LightCostFunction::~LightCostFunction()
+AlbedoCostFunction::~AlbedoCostFunction()
 {
 }
 
-void LightCostFunction::AddKeyframe(std::shared_ptr<Keyframe> keyframe)
+void AlbedoCostFunction::AddKeyframe(std::shared_ptr<Keyframe> keyframe)
 {
   LYNX_ASSERT(!m_locked, "new keyframes cannot be added");
   const size_t residualCount = 3 * keyframe->GetValidPixelCount();
@@ -32,7 +32,7 @@ void LightCostFunction::AddKeyframe(std::shared_ptr<Keyframe> keyframe)
   m_dirty = true;
 }
 
-lynx::Matrix* LightCostFunction::CreateJacobianMatrix()
+lynx::Matrix* AlbedoCostFunction::CreateJacobianMatrix()
 {
   LYNX_ASSERT(!m_dirty, "cost function is out-of-data");
 
@@ -42,7 +42,7 @@ lynx::Matrix* LightCostFunction::CreateJacobianMatrix()
   return new lynx::Matrix3C(m_jacobianValues, rows, cols);
 }
 
-void LightCostFunction::Evaluate(const float* const* parameters,
+void AlbedoCostFunction::Evaluate(const float* const* parameters,
     float* residuals)
 {
   LYNX_ASSERT(!m_dirty, "cost function is out-of-data");
@@ -54,7 +54,7 @@ void LightCostFunction::Evaluate(const float* const* parameters,
   lynx::Sub(m_referenceValues, residuals, residuals, GetResidualCount());
 }
 
-void LightCostFunction::Evaluate(size_t offset, size_t size,
+void AlbedoCostFunction::Evaluate(size_t offset, size_t size,
     const float* const* parameters, float* residuals, lynx::Matrix* jacobian)
 {
   LYNX_ASSERT(!m_dirty, "cost function is out-of-data");
@@ -66,14 +66,14 @@ void LightCostFunction::Evaluate(size_t offset, size_t size,
   lynx::Sub(m_referenceValues, residuals, residuals, GetResidualCount());
 }
 
-void LightCostFunction::UpdateCostFunction()
+void AlbedoCostFunction::UpdateCostFunction()
 {
   ComputeJacobian();
   CreateReferenceBuffer();
   m_dirty = false;
 }
 
-void LightCostFunction::ComputeJacobian()
+void AlbedoCostFunction::ComputeJacobian()
 {
   LYNX_ASSERT(!m_keyframes.empty(), "no keyframes have been added");
 
@@ -82,7 +82,7 @@ void LightCostFunction::ComputeJacobian()
   m_jacobian->setSize(cols, rows);
 
   // set jacobian to zero
-  // update light buffer
+  // update material buffer
   // set "computeDerivs" flag
   // trace scene
   // unset "computeDerivs" flag
@@ -93,29 +93,29 @@ void LightCostFunction::ComputeJacobian()
   throw std::string("function not implemented: ") + __FUNCTION__;
 }
 
-void LightCostFunction::CreateReferenceBuffer()
+void AlbedoCostFunction::CreateReferenceBuffer()
 {
   throw std::string("function not implemented: ") + __FUNCTION__;
 }
 
-void LightCostFunction::Initialize()
+void AlbedoCostFunction::Initialize()
 {
   SetDimensions();
   CreateBuffer();
 }
 
-void LightCostFunction::SetDimensions()
+void AlbedoCostFunction::SetDimensions()
 {
-  const size_t paramCount = 3 * m_light->GetDirectionCount();
+  const size_t paramCount = 3 * m_material->GetAlbedoCount();
   lynx::CostFunction::m_parameterBlockSizes.push_back(paramCount);
   lynx::CostFunction::m_maxEvaluationBlockSize = 0;
   lynx::CostFunction::m_residualCount = 0;
 }
 
-void LightCostFunction::CreateBuffer()
+void AlbedoCostFunction::CreateBuffer()
 {
   std::shared_ptr<Context> context;
-  context = m_light->GetContext();
+  context = m_material->GetContext();
   m_jacobian = context->CreateBuffer(RT_BUFFER_INPUT_OUTPUT);
   m_jacobian->setFormat(RT_FORMAT_FLOAT3);
   m_jacobian->setSize(0u, 0u);

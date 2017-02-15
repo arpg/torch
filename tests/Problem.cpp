@@ -262,8 +262,6 @@ TEST_F(Problem, AlbedoDerivatives)
 
   for (size_t i = 0; i < channels.size(); ++i)
   {
-    std::cout << (i + 1) << " / " << channels.size() << std::endl;
-
     const float orig = channels[i];
     channels[i] += delta;
     SetAlbedos(channels);
@@ -369,11 +367,6 @@ TEST_F(Problem, LightDerivatives)
 
     parameters[i] = orig;
   }
-
-  std::cout << "Analytical:" << std::endl;
-  std::cout << analJacobian.block<30, 18>(0, 42753 - 18) << std::endl;
-  std::cout << std::endl << "Finite Diff:" << std::endl;
-  std::cout << finiteJacobian.block<30, 18>(0, 42753 - 18) << std::endl;
 
   for (uint col = 0; col < finiteJacobian.cols(); ++col)
   {

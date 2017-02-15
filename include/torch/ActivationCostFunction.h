@@ -26,7 +26,7 @@ class ActivationCostFunction : public lynx::CostFunction
 
     void SetOuterScale(float scale);
 
-    lynx::Matrix* CreateJacobianMatrix() const override;
+    lynx::Matrix* CreateJacobianMatrix() override;
 
     void Evaluate(float const* const* parameters, float* residuals) override;
 
