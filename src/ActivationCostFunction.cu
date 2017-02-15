@@ -1,5 +1,6 @@
 #include <torch/device/ActivationCostFunction.cuh>
 #include <lynx/Exception.h>
+#include <iostream>
 
 namespace torch
 {

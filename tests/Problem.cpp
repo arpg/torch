@@ -152,8 +152,8 @@ class Problem : public ::testing::Test
       {
         std::shared_ptr<Camera> cam = m_cameras[i];
         std::shared_ptr<Image> img = m_images[i];
-        std::shared_ptr<ReferenceImage> reference;
-        reference = std::make_shared<ReferenceImage>(cam, img);
+        std::shared_ptr<Keyframe> reference;
+        reference = std::make_shared<Keyframe>(cam, img);
         m_references[i] = reference;
       }
     }
@@ -174,7 +174,7 @@ class Problem : public ::testing::Test
 
     std::vector<std::shared_ptr<Image>> m_images;
 
-    std::vector<std::shared_ptr<ReferenceImage>> m_references;
+    std::vector<std::shared_ptr<Keyframe>> m_references;
 
     std::shared_ptr<torch::Problem> m_problem;
 };

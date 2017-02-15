@@ -26,17 +26,17 @@ int main(int argc, char** argv)
     cameras[i]->Capture(image);
     image.Save(file);
 
-    // Image refImage;
-    // refImage.Load("/home/mike/Desktop/research/reference.png");
+    // Image keyframe;
+    // keyframe.Load("/home/mike/Desktop/research/reference.png");
 
     // Image difImage;
     // difImage.Load("/home/mike/Desktop/research/bounces.png");
 
     // float* maskData = reinterpret_cast<float*>(image.GetData());
-    // float* refData = reinterpret_cast<float*>(refImage.GetData());
+    // float* refData = reinterpret_cast<float*>(keyframe.GetData());
     // float* difData = reinterpret_cast<float*>(difImage.GetData());
 
-    // const unsigned int elemCount = 3 * refImage.GetHeight() * refImage.GetWidth();
+    // const unsigned int elemCount = 3 * keyframe.GetHeight() * keyframe.GetWidth();
 
     // for (uint i = 0; i < elemCount; ++i)
     // {
@@ -44,7 +44,7 @@ int main(int argc, char** argv)
     //   refData[i] = maskData[i] * (refData[i] - difData[i]);
     // }
 
-    // refImage.Save("/home/mike/Desktop/masked_image.png");
+    // keyframe.Save("/home/mike/Desktop/masked_image.png");
   }
 
   const clock_t stop = clock();

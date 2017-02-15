@@ -60,7 +60,7 @@ class PointLightSampler;
 class Primitive;
 class Random;
 class Ray;
-class ReferenceImage;
+class Keyframe;
 class Scene;
 class SceneGeometrySampler;
 class SceneLightSampler;

@@ -88,6 +88,7 @@ set(CPP_HEADERS
   ${CPP_HEADER_DIR}/GeometrySampler.h
   ${CPP_HEADER_DIR}/Group.h
   ${CPP_HEADER_DIR}/Image.h
+  ${CPP_HEADER_DIR}/Keyframe.h
   ${CPP_HEADER_DIR}/Light.h
   ${CPP_HEADER_DIR}/LightSampler.h
   ${CPP_HEADER_DIR}/Link.h
@@ -105,7 +106,6 @@ set(CPP_HEADERS
   ${CPP_HEADER_DIR}/PointLightSampler.h
   ${CPP_HEADER_DIR}/Primitive.h
   ${CPP_HEADER_DIR}/Problem.h
-  ${CPP_HEADER_DIR}/ReferenceImage.h
   ${CPP_HEADER_DIR}/Scene.h
   ${CPP_HEADER_DIR}/SceneGeometrySampler.h
   ${CPP_HEADER_DIR}/SceneLightSampler.h
@@ -143,6 +143,7 @@ set(CPP_SOURCES
   ${CPP_SOURCE_DIR}/GeometrySampler.cpp
   ${CPP_SOURCE_DIR}/Group.cpp
   ${CPP_SOURCE_DIR}/Image.cpp
+  ${CPP_SOURCE_DIR}/Keyframe.cpp
   ${CPP_SOURCE_DIR}/Light.cpp
   ${CPP_SOURCE_DIR}/LightSampler.cpp
   ${CPP_SOURCE_DIR}/Link.cpp
@@ -160,7 +161,6 @@ set(CPP_SOURCES
   ${CPP_SOURCE_DIR}/PointLightSampler.cpp
   ${CPP_SOURCE_DIR}/Primitive.cpp
   ${CPP_SOURCE_DIR}/Problem.cpp
-  ${CPP_SOURCE_DIR}/ReferenceImage.cpp
   ${CPP_SOURCE_DIR}/Scene.cpp
   ${CPP_SOURCE_DIR}/SceneGeometrySampler.cpp
   ${CPP_SOURCE_DIR}/SceneLightSampler.cpp
@@ -225,11 +225,13 @@ if(Lynx_FOUND)
 list(APPEND CPP_HEADERS
   ${CPP_HEADER_DIR}/ActivationCostFunction.h
   ${CPP_HEADER_DIR}/ReflectanceCostFunction.h
+  ${CPP_HEADER_DIR}/LightCostFunction.h
 )
 
 list(APPEND CPP_SOURCES
   ${CPP_SOURCE_DIR}/ActivationCostFunction.cpp
   ${CPP_SOURCE_DIR}/ReflectanceCostFunction.cpp
+  ${CPP_SOURCE_DIR}/LightCostFunction.cpp
 )
 
 endif()
@@ -263,6 +265,8 @@ add_custom_target(PTX_FILES ALL
 cuda_add_library(torch_cuda SHARED
   ${CUDA_SOURCE_DIR}/ActivationCostFunction.cu
   ${CUDA_HEADER_DIR}/ActivationCostFunction.cuh
+  ${CUDA_SOURCE_DIR}/LightCostFunction.cu
+  ${CUDA_HEADER_DIR}/LightCostFunction.cuh
 )
 
 # build project library

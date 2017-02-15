@@ -8,7 +8,7 @@
 #include <torch/Mesh.h>
 #include <torch/Primitive.h>
 #include <torch/PtxUtil.h>
-#include <torch/ReferenceImage.h>
+#include <torch/Keyframe.h>
 #include <torch/Scene.h>
 #include <torch/device/Camera.h>
 
@@ -19,7 +19,7 @@ Problem::Problem(std::shared_ptr<Scene> scene,
     std::shared_ptr<Mesh> mesh,
     std::shared_ptr<MatteMaterial> material,
     std::shared_ptr<EnvironmentLight> light,
-    const std::vector<std::shared_ptr<ReferenceImage>>& references) :
+    const std::vector<std::shared_ptr<Keyframe>>& references) :
   m_scene(scene),
   m_mesh(mesh),
   m_material(material),
@@ -33,7 +33,7 @@ size_t Problem::GetResidualCount() const
 {
   size_t count = 0;
 
-  for (std::shared_ptr<ReferenceImage> image : m_referenceImages)
+  for (std::shared_ptr<Keyframe> image : m_referenceImages)
   {
     count += 3 * image->GetValidPixelCount();
   }
@@ -105,7 +105,7 @@ CUdeviceptr  Problem::GetLightDerivatives()
   return m_lightDerivs->getDevicePointer(0);
 }
 
-CUdeviceptr Problem::GetReferenceImages()
+CUdeviceptr Problem::GetKeyframes()
 {
   return m_referenceImageBuffer->getDevicePointer(0);
 }
@@ -165,7 +165,7 @@ void Problem::ZeroBounceImageSizes()
 void Problem::Initialize()
 {
   CreateLightDerivBuffer();
-  CreateReferenceImageBuffer();
+  CreateKeyframeBuffer();
   CreateRenderedImageBuffer();
   CreateBounceImageBuffer();
   CreateAlbedoBlocks();
@@ -184,7 +184,7 @@ void Problem::CreateLightDerivBuffer()
   m_lightDerivs->setSize(1, 1);
 }
 
-void Problem::CreateReferenceImageBuffer()
+void Problem::CreateKeyframeBuffer()
 {
   optix::Context context = m_scene->GetContext();
   m_referenceImageBuffer = context->createBuffer(RT_BUFFER_INPUT_OUTPUT);
@@ -220,7 +220,7 @@ void Problem::CreateAlbedoBlocks()
 
   for (size_t i = 0; i < m_referenceImages.size(); ++i)
   {
-    std::shared_ptr<ReferenceImage> refImage = m_referenceImages[i];
+    std::shared_ptr<Keyframe> refImage = m_referenceImages[i];
     std::shared_ptr<AlbedoResidualBlock> block;
     block = std::make_shared<AlbedoResidualBlock>(m_mesh, refImage);
     m_albedoBlocks.push_back(block);
@@ -262,7 +262,7 @@ void Problem::CreatePixelBuffer()
 
   for (size_t i = 0; i < m_referenceImages.size(); ++i)
   {
-    std::shared_ptr<ReferenceImage> refImage = m_referenceImages[i];
+    std::shared_ptr<Keyframe> refImage = m_referenceImages[i];
     refImage->GetValidPixels(pixels);
     sample.camera = i;
 

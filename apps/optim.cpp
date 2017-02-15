@@ -44,8 +44,8 @@ int main(int argc, char** argv)
   image = std::make_shared<Image>();
   image->Load("reference.png");
 
-  std::vector<std::shared_ptr<ReferenceImage>> references;
-  references.push_back(std::make_shared<ReferenceImage>(camera, image));
+  std::vector<std::shared_ptr<Keyframe>> references;
+  references.push_back(std::make_shared<Keyframe>(camera, image));
 
   Problem problem(scene, mesh, matteMaterial, light, references);
   // problem.ComputeAlbedoDerivatives();

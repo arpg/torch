@@ -4,7 +4,7 @@
 #include <torch/Image.h>
 #include <torch/Mesh.h>
 #include <torch/PtxUtil.h>
-#include <torch/ReferenceImage.h>
+#include <torch/Keyframe.h>
 #include <torch/SparseMatrix.h>
 #include <torch/device/Camera.h>
 
@@ -14,7 +14,7 @@ namespace torch
 {
 
 AlbedoResidualBlock::AlbedoResidualBlock(std::shared_ptr<Mesh> mesh,
-    std::shared_ptr<ReferenceImage> reference) :
+    std::shared_ptr<Keyframe> reference) :
   m_mesh(mesh),
   m_reference(reference)
 {

@@ -5,11 +5,11 @@
 namespace torch
 {
 
-class ReferenceImage
+class Keyframe
 {
   public:
 
-    ReferenceImage(std::shared_ptr<Camera> camera,
+    Keyframe(std::shared_ptr<Camera> camera,
         std::shared_ptr<Image> image);
 
     void GetCamera(CameraData& camera) const;

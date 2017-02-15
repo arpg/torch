@@ -10,7 +10,7 @@ class AlbedoResidualBlock
   public:
 
     AlbedoResidualBlock(std::shared_ptr<Mesh> mesh,
-        std::shared_ptr<ReferenceImage> reference);
+        std::shared_ptr<Keyframe> reference);
 
     optix::Program GetAddProgram() const;
 
@@ -34,7 +34,7 @@ class AlbedoResidualBlock
 
     std::shared_ptr<Mesh> m_mesh;
 
-    std::shared_ptr<ReferenceImage> m_reference;
+    std::shared_ptr<Keyframe> m_reference;
 
     std::shared_ptr<SparseMatrix> m_jacobian;
 

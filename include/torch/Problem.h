@@ -12,7 +12,7 @@ class Problem
     Problem(std::shared_ptr<Scene> scene, std::shared_ptr<Mesh> mesh,
         std::shared_ptr<MatteMaterial> material,
         std::shared_ptr<EnvironmentLight> light,
-        const std::vector<std::shared_ptr<ReferenceImage>>& references);
+        const std::vector<std::shared_ptr<Keyframe>>& references);
 
     size_t GetResidualCount() const;
 
@@ -36,7 +36,7 @@ class Problem
 
     CUdeviceptr GetAlbedoDerivatives();
 
-    CUdeviceptr GetReferenceImages();
+    CUdeviceptr GetKeyframes();
 
     CUdeviceptr GetRenderedImages();
 
@@ -62,7 +62,7 @@ class Problem
 
     void CreateLightDerivBuffer();
 
-    void CreateReferenceImageBuffer();
+    void CreateKeyframeBuffer();
 
     void CreateRenderedImageBuffer();
 
@@ -92,7 +92,7 @@ class Problem
 
     std::vector<std::shared_ptr<Camera>> m_cameras;
 
-    std::vector<std::shared_ptr<ReferenceImage>> m_referenceImages;
+    std::vector<std::shared_ptr<Keyframe>> m_referenceImages;
 
     optix::Buffer m_lightDerivs;
 
