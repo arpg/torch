@@ -26,6 +26,8 @@ class Keyframe
 
     size_t GetValidPixelIndex(unsigned int x, unsigned int y) const;
 
+    void GetValidPixelRadiance(std::vector<Spectrum>& radiance);
+
   private:
 
     void Initialize();

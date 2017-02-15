@@ -47,6 +47,8 @@ class Context : public std::enable_shared_from_this<Context>
     optix::Program CreateProgram(const std::string& file,
         const std::string& name);
 
+    optix::Variable GetVariable(const std::string& name);
+
     unsigned int RegisterLaunchProgram(optix::Program program);
 
     void RegisterObject(std::shared_ptr<Object> object);

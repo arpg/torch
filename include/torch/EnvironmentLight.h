@@ -30,6 +30,8 @@ class EnvironmentLight : public Light
 
     void SetRadiance(const std::vector<Spectrum>& radiance);
 
+    void SetDerivativeBuffer(optix::Buffer buffer);
+
     void BuildScene(Link& link) override;
 
     optix::Buffer GetRadianceBuffer() const;
@@ -71,6 +73,8 @@ class EnvironmentLight : public Light
     optix::Buffer m_radianceBuffer;
 
     optix::Buffer m_offsetBuffer;
+
+    optix::Buffer m_derivBuffer;
 };
 
 } // namespace torch

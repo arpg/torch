@@ -48,6 +48,10 @@ class EnvironmentLightSampler : public LightSampler
 
     void CreateRadianceBuffer();
 
+    void CreateDerivativeBuffer();
+
+    void CreateEmptyDerivativeBuffer();
+
   protected:
 
     optix::Program m_program;
@@ -59,6 +63,10 @@ class EnvironmentLightSampler : public LightSampler
     optix::Buffer m_offsets;
 
     optix::Buffer m_radiance;
+
+    optix::Buffer m_derivatives;
+
+    optix::Buffer m_emptyDerivs;
 
     std::vector<EnvironmentLightData> m_lights;
 

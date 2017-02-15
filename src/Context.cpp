@@ -132,6 +132,11 @@ optix::Program Context::CreateProgram(const std::string& file,
   return m_context->createProgramFromPTXFile(file, name);
 }
 
+optix::Variable Context::GetVariable(const std::string& name)
+{
+  return m_context[name];
+}
+
 unsigned int Context::RegisterLaunchProgram(optix::Program program)
 {
   const unsigned int id = m_context->getEntryPointCount();
@@ -277,12 +282,6 @@ void Context::Initialize()
   cameras->setElementSize(sizeof(CameraData));
   cameras->setSize(0);
   m_context["cameras"]->setBuffer(cameras);
-
-  optix::Buffer lightDerivatives;
-  lightDerivatives = m_context->createBuffer(RT_BUFFER_OUTPUT);
-  lightDerivatives->setFormat(RT_FORMAT_FLOAT3);
-  lightDerivatives->setSize(1, 1);
-  m_context["lightDerivatives"]->setBuffer(lightDerivatives);
 
   m_context["computeLightDerivs"]->setUint(0);
   m_context["computeAlbedoDerivs"]->setUint(0);

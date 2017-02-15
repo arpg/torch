@@ -3,6 +3,7 @@
 #include <vector>
 #include <lynx/lynx.h>
 #include <torch/Core.h>
+#include <torch/KeyframeSet.h>
 
 namespace torch
 {
@@ -24,13 +25,17 @@ class LightCostFunction : public lynx::CostFunction
     void Evaluate(size_t offset, size_t size, float const* const* parameters,
         float* residuals, lynx::Matrix* jacobian) override;
 
-    void UpdateCostFunction();
+    void ClearJacobian();
 
   protected:
 
-    void ComputeJacobian();
+    void PrepareEvaluation();
 
     void CreateReferenceBuffer();
+
+    void ComputeJacobian();
+
+    void ResetJacobian();
 
   private:
 
@@ -40,17 +45,23 @@ class LightCostFunction : public lynx::CostFunction
 
     void CreateBuffer();
 
-  protected:
+    void CreateProgram();
 
-    bool m_dirty;
+    void CreateKeyframeSet();
+
+  protected:
 
     bool m_locked;
 
     std::shared_ptr<EnvironmentLight> m_light;
 
-    std::vector<std::shared_ptr<Keyframe>> m_keyframes;
+    std::unique_ptr<KeyframeSet> m_keyframes;
 
     optix::Buffer m_jacobian;
+
+    optix::Program m_program;
+
+    unsigned int m_programId;
 
     float* m_jacobianValues;
 

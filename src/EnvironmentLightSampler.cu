@@ -16,7 +16,7 @@ rtDeclareVariable(uint, computeLightDerivs, , );
 rtDeclareVariable(uint2, launchIndex, rtLaunchIndex, );
 rtBuffer<torch::CameraData> cameras;
 rtBuffer<torch::PixelSample> pixelSamples;
-rtBuffer<float3, 2> lightDerivatives;
+rtBuffer<rtBufferId<float3, 2>, 1> lightDerivatives;
 
 TORCH_DEVICE uint GetRowCount(uint light)
 {
@@ -67,11 +67,11 @@ RT_CALLABLE_PROGRAM void Sample(torch::LightSample& sample)
   const bool visible = torch::IsVisible(sample);
   if (!visible) sample.radiance = make_float3(0, 0, 0);
 
-  if (computeLightDerivs && visible)
+  if (computeLightDerivs && visible) // TODO: check if light has non-empty derivs
   {
     const float theta = dot(sample.direction, sample.snormal);
     const uint paramIndex = offsets[light][index.x] + index.y;
     const uint2 derivIndex = make_uint2(paramIndex, launchIndex.x);
-    lightDerivatives[derivIndex] += theta * sample.throughput / sample.pdf;
+    lightDerivatives[light][derivIndex] -= theta * sample.throughput / sample.pdf;
   }
 }

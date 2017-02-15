@@ -1,6 +1,7 @@
 #include <torch/Keyframe.h>
 #include <torch/Camera.h>
 #include <torch/Image.h>
+#include <torch/Spectrum.h>
 
 namespace torch
 {
@@ -65,6 +66,27 @@ size_t Keyframe::GetValidPixelIndex(unsigned int x, unsigned int y) const
   }
 
   return validIndex;
+}
+
+void Keyframe::GetValidPixelRadiance(std::vector<Spectrum>& radiance)
+{
+  size_t i = 0;
+  radiance.resize(m_validPixelCount);
+  const size_t totalPixels = m_mask->GetHeight() * m_mask->GetWidth();
+  Spectrum* data = reinterpret_cast<Spectrum*>(m_image->GetData());
+
+  for (unsigned int y = 0; y < m_mask->GetHeight(); ++y)
+  {
+    for (unsigned int x = 0; x < m_mask->GetWidth(); ++x)
+    {
+      const size_t index = y * m_mask->GetWidth() + x;
+
+      if (m_validPixelMap[index] != totalPixels)
+      {
+        radiance[i++] = data[index];
+      }
+    }
+  }
 }
 
 void Keyframe::Initialize()

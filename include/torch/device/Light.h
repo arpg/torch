@@ -51,6 +51,7 @@ struct EnvironmentLightData
   int distributionId;
   int offsetsId;
   int radianceId;
+  int derivId;
   float luminance;
 };
 

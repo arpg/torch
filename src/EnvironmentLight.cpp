@@ -66,6 +66,12 @@ void EnvironmentLight::SetRadiance(const std::vector<Spectrum>& radiance)
   m_context->MarkDirty();
 }
 
+void EnvironmentLight::SetDerivativeBuffer(optix::Buffer buffer)
+{
+  m_derivBuffer = buffer;
+  m_context->MarkDirty();
+}
+
 void EnvironmentLight::BuildScene(Link& link)
 {
   Light::BuildScene(link);
@@ -119,6 +125,7 @@ void EnvironmentLight::UpdateSampler(Link& link)
   data.distributionId = m_distribution->GetProgram()->getId();
   data.offsetsId = m_offsetBuffer->getId();
   data.radianceId = m_radianceBuffer->getId();
+  data.derivId = (m_derivBuffer.get()) ? m_derivBuffer->getId() : 0;
   data.luminance = 1; // TODO: implement
 
   const optix::Matrix4x4 R =

@@ -71,6 +71,7 @@ void EnvironmentLightSampler::UpdateBuffers()
   std::vector<optix::Matrix3x3> rotations(m_lights.size());
   std::vector<unsigned int> offsets(m_lights.size());
   std::vector<int> radiance(m_lights.size());
+  std::vector<int> derivatives(m_lights.size());
 
   for (size_t i = 0; i < m_lights.size(); ++i)
   {
@@ -78,12 +79,16 @@ void EnvironmentLightSampler::UpdateBuffers()
     rotations[i] = m_lights[i].rotation;
     offsets[i] = m_lights[i].offsetsId;
     radiance[i] = m_lights[i].radianceId;
+
+    derivatives[i] = (m_lights[i].derivId) ?
+      m_lights[i].derivId : m_emptyDerivs->getId();
   }
 
   WriteBuffer(m_samplePrograms, samplePrograms);
   WriteBuffer(m_rotations, rotations);
   WriteBuffer(m_offsets, offsets);
   WriteBuffer(m_radiance, radiance);
+  WriteBuffer(m_derivatives, derivatives);
 }
 
 template <typename T>
@@ -104,6 +109,8 @@ void EnvironmentLightSampler::Initialize()
   CreateOffsetBuffer();
   CreateRotationsBuffer();
   CreateRadianceBuffer();
+  CreateDerivativeBuffer();
+  CreateEmptyDerivativeBuffer();
 }
 
 void EnvironmentLightSampler::CreateProgram()
@@ -149,6 +156,21 @@ void EnvironmentLightSampler::CreateRadianceBuffer()
   m_program["radiance"]->setBuffer(m_radiance);
   m_radiance->setFormat(RT_FORMAT_BUFFER_ID);
   m_radiance->setSize(0);
+}
+
+void EnvironmentLightSampler::CreateDerivativeBuffer()
+{
+  m_derivatives = m_context->CreateBuffer(RT_BUFFER_INPUT);
+  m_program["lightDerivatives"]->setBuffer(m_derivatives);
+  m_derivatives->setFormat(RT_FORMAT_BUFFER_ID);
+  m_derivatives->setSize(0);
+}
+
+void EnvironmentLightSampler::CreateEmptyDerivativeBuffer()
+{
+  m_emptyDerivs = m_context->CreateBuffer(RT_BUFFER_INPUT);
+  m_emptyDerivs->setFormat(RT_FORMAT_FLOAT3);
+  m_emptyDerivs->setSize(1, 1);
 }
 
 } // namespace torch

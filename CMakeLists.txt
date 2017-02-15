@@ -89,6 +89,7 @@ set(CPP_HEADERS
   ${CPP_HEADER_DIR}/Group.h
   ${CPP_HEADER_DIR}/Image.h
   ${CPP_HEADER_DIR}/Keyframe.h
+  ${CPP_HEADER_DIR}/KeyframeSet.h
   ${CPP_HEADER_DIR}/Light.h
   ${CPP_HEADER_DIR}/LightSampler.h
   ${CPP_HEADER_DIR}/Link.h
@@ -144,6 +145,7 @@ set(CPP_SOURCES
   ${CPP_SOURCE_DIR}/Group.cpp
   ${CPP_SOURCE_DIR}/Image.cpp
   ${CPP_SOURCE_DIR}/Keyframe.cpp
+  ${CPP_SOURCE_DIR}/KeyframeSet.cpp
   ${CPP_SOURCE_DIR}/Light.cpp
   ${CPP_SOURCE_DIR}/LightSampler.cpp
   ${CPP_SOURCE_DIR}/Link.cpp
@@ -235,6 +237,10 @@ list(APPEND CPP_SOURCES
   ${CPP_SOURCE_DIR}/AlbedoCostFunction.cpp
   ${CPP_SOURCE_DIR}/LightCostFunction.cpp
   ${CPP_SOURCE_DIR}/ReflectanceCostFunction.cpp
+)
+
+list(APPEND CUDA_SOURCES
+  ${CUDA_SOURCE_DIR}/LightCostFunction.cu
 )
 
 endif()
