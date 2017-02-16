@@ -17,6 +17,8 @@ class KeyframeSet
 
     void Add(std::shared_ptr<Keyframe> keyframe);
 
+    std::shared_ptr<Keyframe> operator[](size_t index) const;
+
     size_t GetValidPixelCount() const;
 
     optix::Buffer GetCameraBuffer();

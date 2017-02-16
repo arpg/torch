@@ -5,9 +5,6 @@
 #include <torch/PtxUtil.h>
 #include <torch/Spectrum.h>
 
-#include <iostream>
-#include <fstream>
-
 namespace torch
 {
 
@@ -113,9 +110,9 @@ void LightCostFunction::ComputeJacobian()
 void LightCostFunction::ResetJacobian()
 {
   const size_t rows = GetResidualCount() / 3;
-  const size_t cols = GetParameterCount();
+  const size_t cols = GetParameterCount() / 3;
   const size_t count = 3 * rows * cols;
-  m_jacobian->setSize(cols, rows);
+  m_jacobian->setSize(rows, cols);
 
   float* device = reinterpret_cast<float*>(m_jacobian->map());
   std::fill(device, device + count, 0.0f);

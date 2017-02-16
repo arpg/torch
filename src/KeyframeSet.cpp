@@ -31,6 +31,11 @@ void KeyframeSet::Add(std::shared_ptr<Keyframe> keyframe)
   m_dirty = true;
 }
 
+std::shared_ptr<Keyframe> KeyframeSet::operator[](size_t index) const
+{
+  return m_keyframes[index];
+}
+
 size_t KeyframeSet::GetValidPixelCount() const
 {
   return m_validPixelCount;
