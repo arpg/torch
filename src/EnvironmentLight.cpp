@@ -62,7 +62,7 @@ void EnvironmentLight::SetRadiance(size_t index, const Spectrum& radiance)
 void EnvironmentLight::SetRadiance(const std::vector<Spectrum>& radiance)
 {
   const size_t size = std::min(radiance.size(), m_radiance.size());
-  std::copy(radiance.begin(), radiance.end() + size, m_radiance.data());
+  std::copy(radiance.begin(), radiance.begin() + size, m_radiance.data());
   m_context->MarkDirty();
 }
 

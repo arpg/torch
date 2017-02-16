@@ -4,7 +4,9 @@
 
 using namespace torch;
 
-int main(int argc, char** argv)
+uint iteration = 0;
+
+void Solve(std::vector<Spectrum>& radiance)
 {
   std::cout << "Starting..." << std::endl;
 
@@ -26,8 +28,8 @@ int main(int argc, char** argv)
 
   std::shared_ptr<EnvironmentLight> light;
   light = scene.CreateEnvironmentLight();
-  light->SetRowCount(3);
-  light->SetRadiance(0.01, 0.01, 0.01);
+  light->SetRowCount(21);
+  light->SetRadiance(0.001, 0.001, 0.001);
   light->SetRadiance(0, Spectrum::FromRGB(5.0, 5.0, 5.0));
   scene.Add(light);
 
@@ -35,10 +37,10 @@ int main(int argc, char** argv)
   camera = scene.CreateCamera();
   camera->SetOrientation(0, 0, 0);
   camera->SetPosition(0, 0, 0);
-  camera->SetImageSize(80, 60);
-  camera->SetFocalLength(40, 40);
-  camera->SetCenterPoint(40, 30);
-  camera->SetSampleCount(8);
+  camera->SetImageSize(160, 120);
+  camera->SetFocalLength(80, 80);
+  camera->SetCenterPoint(80, 60);
+  camera->SetSampleCount(16);
 
   std::cout << "Rendering reference image..." << std::endl;
 
@@ -47,7 +49,7 @@ int main(int argc, char** argv)
   camera->Capture(*image);
   image->Save("reference.png");
 
-  light->SetRadiance(0.01, 0.01, 0.01);
+  light->SetRadiance(radiance);
   light->GetContext()->Compile();
 
   std::cout << "Creating image mask..." << std::endl;
@@ -73,16 +75,35 @@ int main(int argc, char** argv)
 
   std::cout << "Solving problem..." << std::endl;
 
-  lynx::Solver::Summary summary;
+  lynx::Solver::Options options;
+  options.maxIterations = 10000;
+
   lynx::Solver solver(&problem);
+  solver.Configure(options);
+
+  lynx::Solver::Summary summary;
   solver.Solve(&summary);
+
   std::cout << summary.BriefReport() << std::endl;
 
   std::cout << "Rendering final estimate..." << std::endl;
 
   camera->Capture(*image);
-  image->Save("final.png");
+  image->Save("final" + std::to_string(iteration) + ".png");
 
-  std::cout << "Success" << std::endl;
+  LYNX_CHECK_CUDA(cudaMemcpy(radiance.data(), values,
+      sizeof(float) * costFunction->GetParameterCount(),
+      cudaMemcpyDeviceToHost))
+
+  ++iteration;
+}
+
+int main(int argc, char** argv)
+{
+  std::vector<Spectrum> radiance(522);
+  Spectrum initial = Spectrum::FromRGB(0.001, 0.001, 0.001);
+  std::fill(radiance.begin(), radiance.end(), initial);
+  Solve(radiance);
+  Solve(radiance);
   return 0;
 }

@@ -39,6 +39,7 @@ TORCH_DEVICE float3 GetAlbedo()
   const float b = fminf(1, triScales.x);
   const float c = fminf(1 - b, triScales.y);
   const float a = 1 - b - c;
+
   return a * albedos[x] + b * albedos[y] + c * albedos[z];
 }
 
@@ -114,10 +115,13 @@ RT_PROGRAM void ClosestHit()
   brdfSample.seed = rayData.seed;
   SampleBrdf(brdfSample);
 
-  float theta = dot(shadingNormal, brdfSample.direction);
-  rayData.bounce.origin = sample.origin;
-  rayData.bounce.direction = brdfSample.direction;
-  rayData.bounce.throughput = theta * rayData.throughput * brdfSample.throughput / brdfSample.pdf;
+  if (brdfSample.pdf > 1E-8)
+  {
+    float theta = dot(shadingNormal, brdfSample.direction);
+    rayData.bounce.origin = sample.origin;
+    rayData.bounce.direction = brdfSample.direction;
+    rayData.bounce.throughput = theta * rayData.throughput * brdfSample.throughput / brdfSample.pdf;
+  }
 }
 
 RT_PROGRAM void AnyHit()

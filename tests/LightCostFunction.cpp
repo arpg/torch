@@ -1,3 +1,4 @@
+#include <cmath>
 #include <gtest/gtest.h>
 #include <lynx/lynx.h>
 #include <torch/Torch.h>
@@ -95,10 +96,10 @@ TEST(LightCostFunction, Optimization)
   camera = scene.CreateCamera();
   camera->SetOrientation(0, 0, 0);
   camera->SetPosition(0, 0, 0);
-  camera->SetImageSize(80, 60);
-  camera->SetFocalLength(40, 40);
-  camera->SetCenterPoint(40, 30);
-  camera->SetSampleCount(32);
+  camera->SetImageSize(160, 120);
+  camera->SetFocalLength(80, 80);
+  camera->SetCenterPoint(80, 60);
+  camera->SetSampleCount(64);
 
   std::shared_ptr<Image> image;
   image = std::make_shared<Image>();
@@ -130,7 +131,8 @@ TEST(LightCostFunction, Optimization)
 
   std::cout << summary.BriefReport() << std::endl;
 
-  ASSERT_TRUE(summary.solutionUsable && summary.finalCost < 0.1);
+  ASSERT_TRUE(summary.solutionUsable && summary.finalCost < 0.1 &&
+      !std::isnan(summary.finalCost) && !std::isinf(summary.finalCost));
 }
 
 } // namespace testing
