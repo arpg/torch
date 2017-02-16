@@ -10,7 +10,8 @@ class ReflectanceCostFunction : public lynx::CostFunction
 {
   public:
 
-    ReflectanceCostFunction(std::shared_ptr<MatteMaterial> material);
+    ReflectanceCostFunction(std::shared_ptr<MatteMaterial> material,
+        std::shared_ptr<Mesh> mesh);
 
     virtual ~ReflectanceCostFunction();
 
@@ -25,9 +26,17 @@ class ReflectanceCostFunction : public lynx::CostFunction
 
     void Initialize();
 
+    void SetDimensions();
+
+    void CreateAdjacencyMap();
+
   protected:
 
     std::shared_ptr<MatteMaterial> m_material;
+
+    std::shared_ptr<Mesh> m_mesh;
+
+    std::vector<std::vector<size_t>> m_adjacencyMap;
 };
 
 } // namespace torch

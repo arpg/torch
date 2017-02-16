@@ -8,8 +8,9 @@ namespace torch
 {
 
 ReflectanceCostFunction::ReflectanceCostFunction(
-    std::shared_ptr<MatteMaterial> material) :
-  m_material(material)
+    std::shared_ptr<MatteMaterial> material, std::shared_ptr<Mesh> mesh) :
+  m_material(material),
+  m_mesh(mesh)
 {
   Initialize();
 }
@@ -47,10 +48,21 @@ void ReflectanceCostFunction::Evaluate(size_t offset, size_t size,
 
 void ReflectanceCostFunction::Initialize()
 {
+  SetDimensions();
+  CreateAdjacencyMap();
+}
+
+void ReflectanceCostFunction::SetDimensions()
+{
   const size_t count = 3 * m_material->GetAlbedoCount();
   lynx::CostFunction::m_residualCount = count;
   lynx::CostFunction::m_parameterBlockSizes.push_back(count);
   lynx::CostFunction::m_maxEvaluationBlockSize = count;
+}
+
+void ReflectanceCostFunction::CreateAdjacencyMap()
+{
+
 }
 
 } // namespace torch
