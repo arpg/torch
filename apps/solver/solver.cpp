@@ -10,41 +10,45 @@ int main(int argc, char** argv)
 
   Scene scene;
 
-  std::shared_ptr<Sphere> geometry;
-  geometry = scene.CreateSphere();
+  std::shared_ptr<Mesh> geometry;
+  geometry = scene.CreateMesh("../shark.ply");
   geometry->SetScale(1, 1, 1);
 
-  std::shared_ptr<MatteMaterial> material;
-  material = scene.CreateMatteMaterial();
-  material->SetAlbedo(0.8, 0.2, 0.2);
+  std::shared_ptr<Material> material;
+  material = scene.CreateMaterial("../shark.ply");
 
   std::shared_ptr<Primitive> primitive;
   primitive = scene.CreatePrimitive();
   primitive->SetGeometry(geometry);
   primitive->SetMaterial(material);
-  primitive->SetPosition(0, 0, 1);
+  primitive->SetPosition(0, 0, -0.5);
   scene.Add(primitive);
 
   std::shared_ptr<EnvironmentLight> light;
   light = scene.CreateEnvironmentLight();
-  light->SetRowCount(6);
-  light->SetRadiance(0.5, 0.5, 0.5);
+  light->SetRowCount(3);
+  light->SetRadiance(0.01, 0.01, 0.01);
+  light->SetRadiance(0, Spectrum::FromRGB(5.0, 5.0, 5.0));
   scene.Add(light);
 
   std::shared_ptr<Camera> camera;
   camera = scene.CreateCamera();
   camera->SetOrientation(0, 0, 0);
   camera->SetPosition(0, 0, 0);
-  camera->SetImageSize(80, 40);
+  camera->SetImageSize(80, 60);
   camera->SetFocalLength(40, 40);
   camera->SetCenterPoint(40, 30);
-  camera->SetSampleCount(64);
+  camera->SetSampleCount(8);
 
   std::cout << "Rendering reference image..." << std::endl;
 
   std::shared_ptr<Image> image;
   image = std::make_shared<Image>();
   camera->Capture(*image);
+  image->Save("reference.png");
+
+  light->SetRadiance(0.01, 0.01, 0.01);
+  light->GetContext()->Compile();
 
   std::cout << "Creating image mask..." << std::endl;
 
@@ -67,9 +71,17 @@ int main(int argc, char** argv)
   costFunction->AddKeyframe(keyframe);
   problem.AddResidualBlock(costFunction, nullptr, values);
 
-  std::cout << "Checking gradient..." << std::endl;
+  std::cout << "Solving problem..." << std::endl;
 
-  problem.CheckGradients();
+  lynx::Solver::Summary summary;
+  lynx::Solver solver(&problem);
+  solver.Solve(&summary);
+  std::cout << summary.BriefReport() << std::endl;
+
+  std::cout << "Rendering final estimate..." << std::endl;
+
+  camera->Capture(*image);
+  image->Save("final.png");
 
   std::cout << "Success" << std::endl;
   return 0;

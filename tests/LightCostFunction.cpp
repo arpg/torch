@@ -104,8 +104,6 @@ TEST(LightCostFunction, Optimization)
   image = std::make_shared<Image>();
   camera->Capture(*image);
 
-  image->Save("reference.png");
-
   light->SetRadiance(0.01, 0.00, 0.00);
   light->GetContext()->Compile();
 
@@ -131,9 +129,6 @@ TEST(LightCostFunction, Optimization)
   solver.Solve(&summary);
 
   std::cout << summary.BriefReport() << std::endl;
-
-  camera->Capture(*image);
-  image->Save("result.png");
 
   ASSERT_TRUE(summary.solutionUsable && summary.finalCost < 0.1);
 }

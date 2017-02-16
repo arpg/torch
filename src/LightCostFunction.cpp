@@ -5,6 +5,8 @@
 #include <torch/PtxUtil.h>
 #include <torch/Spectrum.h>
 
+#include <iostream>
+
 namespace torch
 {
 

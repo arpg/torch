@@ -132,44 +132,43 @@ RT_PROGRAM void CaptureDepth()
 
 RT_PROGRAM void CaptureMask()
 {
-  // const int pad = 2;
-  // float depth = depthBuffer[pixelIndex];
-  // float minDepth = FLT_MAX;
-  // float maxDepth = FLT_MIN;
+  const int pad = 2;
+  float depth = depthBuffer[pixelIndex];
+  float minDepth = FLT_MAX;
+  float maxDepth = FLT_MIN;
 
-  // if (pixelIndex.x < pad || pixelIndex.x >= (imageSize.x - pad) ||
-  //     pixelIndex.y < pad || pixelIndex.y >= (imageSize.y - pad))
-  // {
-  //   buffer[pixelIndex] = make_float3(0);
-  //   return;
-  // }
+  if (pixelIndex.x < pad || pixelIndex.x >= (imageSize.x - pad) ||
+      pixelIndex.y < pad || pixelIndex.y >= (imageSize.y - pad))
+  {
+    buffer[pixelIndex] = make_float3(0);
+    return;
+  }
 
-  // for (int i = pixelIndex.x - pad; i < pixelIndex.x + pad; ++i)
-  // {
-  //   for (int j = pixelIndex.y - pad; j < pixelIndex.y + pad; ++j)
-  //   {
-  //     if (i < 0 || i >= imageSize.x || j < 0 || j > imageSize.y)
-  //     {
-  //       continue;
-  //     }
+  for (int i = pixelIndex.x - pad; i < pixelIndex.x + pad; ++i)
+  {
+    for (int j = pixelIndex.y - pad; j < pixelIndex.y + pad; ++j)
+    {
+      if (i < 0 || i >= imageSize.x || j < 0 || j > imageSize.y)
+      {
+        continue;
+      }
 
-  //     minDepth = fminf(minDepth, depthBuffer[make_uint2(i, j)]);
-  //     maxDepth = fmaxf(maxDepth, depthBuffer[make_uint2(i, j)]);
+      minDepth = fminf(minDepth, depthBuffer[make_uint2(i, j)]);
+      maxDepth = fmaxf(maxDepth, depthBuffer[make_uint2(i, j)]);
 
-  //     if (fabs(maxDepth - minDepth) > 0.05)
-  //     {
-  //       depth = RT_DEFAULT_MAX;
-  //       break;
-  //     }
-  //   }
+      if (fabs(maxDepth - minDepth) > 0.05)
+      {
+        depth = RT_DEFAULT_MAX;
+        break;
+      }
+    }
 
-  //   if (depth == RT_DEFAULT_MAX)
-  //   {
-  //     break;
-  //   }
-  // }
+    if (depth == RT_DEFAULT_MAX)
+    {
+      break;
+    }
+  }
 
-  // depth = (depth == RT_DEFAULT_MAX) ? 0 : 1;
-  // buffer[pixelIndex] = make_float3(depth);
-  buffer[pixelIndex] = make_float3(1, 1, 1);
+  depth = (depth == RT_DEFAULT_MAX) ? 0 : 1;
+  buffer[pixelIndex] = make_float3(depth);
 }
