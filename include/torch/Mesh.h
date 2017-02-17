@@ -34,9 +34,20 @@ class Mesh : public SingleGeometry
 
     optix::Buffer GetFaceBuffer() const;
 
+    void GetVertexAdjacencyMap(std::vector<uint>& map,
+        std::vector<uint>& offsets, bool includeSelf) const;
+
+    void GetVertexAdjacencyMap(std::vector<std::vector<uint>>& map,
+        bool includeSelf) const;
+
     BoundingBox GetBounds(const Transform& transform) override;
 
   protected:
+
+    static void AddAdjacencies(std::vector<std::vector<uint>>& map,
+        const uint3& face, uint index, bool includeSelf);
+
+    static void AddAdjacencies(std::vector<uint>& map, uint parent, uint child);
 
     void UpdateBounds(const std::vector<Point>& vertices);
 

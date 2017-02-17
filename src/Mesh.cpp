@@ -71,9 +71,66 @@ optix::Buffer Mesh::GetFaceBuffer() const
   return m_faceBuffer;
 }
 
+void Mesh::GetVertexAdjacencyMap(std::vector<uint>& map,
+    std::vector<uint>& offsets, bool includeSelf) const
+{
+  std::vector<std::vector<uint>> map2D;
+  GetVertexAdjacencyMap(map2D, includeSelf);
+  offsets.resize(map2D.size() + 1);
+  offsets[0] = 0;
+
+  for (size_t i = 0; i < map2D.size(); ++i)
+  {
+    const std::vector<uint>& row = map2D[i];
+    offsets[i + 1] = row.size() + offsets[i];
+  }
+
+  map.resize(offsets.back());
+
+  for (size_t i = 0; i < map2D.size(); ++i)
+  {
+    const std::vector<uint>& row = map2D[i];
+    std::copy(row.begin(), row.end(), &map[offsets[i]]);
+  }
+}
+
+void Mesh::GetVertexAdjacencyMap(std::vector<std::vector<uint>>& map,
+    bool includeSelf) const
+{
+  map.resize(m_vertices.size());
+
+  for (const uint3& face : m_faces)
+  {
+    AddAdjacencies(map, face, 0, includeSelf);
+    AddAdjacencies(map, face, 1, includeSelf);
+    AddAdjacencies(map, face, 2, includeSelf);
+  }
+}
+
 BoundingBox Mesh::GetBounds(const Transform& transform)
 {
   return transform * m_transform * m_bounds;
+}
+
+void Mesh::AddAdjacencies(std::vector<std::vector<uint>>& map,
+    const uint3& face, uint index, bool includeSelf)
+{
+  const uint child1 = (index + 1) % 3;
+  const uint child2 = (index + 2) % 3;
+  const uint* array = reinterpret_cast<const uint*>(&face);
+  AddAdjacencies(map[array[index]], array[index], array[child1]);
+  AddAdjacencies(map[array[index]], array[index], array[child2]);
+
+  if (includeSelf)
+  {
+    AddAdjacencies(map[array[index]], array[index], array[index]);
+  }
+}
+
+void Mesh::AddAdjacencies(std::vector<uint>& map, uint parent, uint child)
+{
+  auto iter = std::find(map.begin(), map.end(), child);
+  if (iter == map.end()) map.push_back(child);
 }
 
 void Mesh::UpdateBounds(const std::vector<Point>& vertices)

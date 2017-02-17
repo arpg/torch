@@ -15,6 +15,14 @@ class ReflectanceCostFunction : public lynx::CostFunction
 
     virtual ~ReflectanceCostFunction();
 
+    float GetChromaticityThreshold() const;
+
+    void SetChromaticityThreshold(float threshold);
+
+    float GetWeight() const;
+
+    void SetWeight(float weight);
+
     lynx::Matrix* CreateJacobianMatrix() override;
 
     void Evaluate(float const* const* parameters, float* residuals) override;
@@ -36,7 +44,17 @@ class ReflectanceCostFunction : public lynx::CostFunction
 
     std::shared_ptr<Mesh> m_mesh;
 
-    std::vector<std::vector<size_t>> m_adjacencyMap;
+    unsigned int* m_adjacencyMap;
+
+    unsigned int* m_adjacencyOffsets;
+
+    float m_chromThreshold;
+
+    float m_weight;
+
+    unsigned int m_valueCount;
+
+    unsigned int* m_rowIndices;
 };
 
 } // namespace torch
