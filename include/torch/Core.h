@@ -61,6 +61,7 @@ class Primitive;
 class Random;
 class Ray;
 class Keyframe;
+class KeyframeSet;
 class Scene;
 class SceneGeometrySampler;
 class SceneLightSampler;

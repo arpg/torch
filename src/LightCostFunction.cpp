@@ -2,6 +2,7 @@
 #include <torch/Context.h>
 #include <torch/EnvironmentLight.h>
 #include <torch/Keyframe.h>
+#include <torch/KeyframeSet.h>
 #include <torch/PtxUtil.h>
 #include <torch/Spectrum.h>
 
@@ -20,21 +21,17 @@ LightCostFunction::LightCostFunction(
 
 LightCostFunction::~LightCostFunction()
 {
-  cudaFree(m_referenceValues);
 }
 
 void LightCostFunction::AddKeyframe(std::shared_ptr<Keyframe> keyframe)
 {
-  LYNX_ASSERT(!m_locked, "cost function cannot be updated");
+  LYNX_ASSERT(!m_locked, "new keyframes cannot be added");
   const size_t residualCount = 3 * keyframe->GetValidPixelCount();
   lynx::CostFunction::m_residualCount += residualCount;
   lynx::CostFunction::m_maxEvaluationBlockSize += residualCount;
-  m_keyframes->Add(keyframe);
-
-  m_jacobianValues = nullptr;
-  LYNX_CHECK_CUDA(cudaFree(nullptr));
-  LYNX_CHECK_CUDA(cudaFree(m_referenceValues));
   m_referenceValues = nullptr;
+  m_jacobianValues = nullptr;
+  m_keyframes->Add(keyframe);
 }
 
 lynx::Matrix* LightCostFunction::CreateJacobianMatrix()
@@ -49,6 +46,7 @@ lynx::Matrix* LightCostFunction::CreateJacobianMatrix()
 void LightCostFunction::Evaluate(const float* const* parameters,
     float* residuals)
 {
+  PrepareEvaluation();
   const size_t rows = GetResidualCount() / 3;
   const size_t cols = GetParameterCount() / 3;
   lynx::Matrix3C jacobian(m_jacobianValues, rows, cols);
@@ -62,6 +60,8 @@ void LightCostFunction::Evaluate(size_t offset, size_t size,
   LYNX_ASSERT(jacobian->GetValues() == m_jacobianValues, "invalid jacobian");
   LYNX_ASSERT(offset == 0, "sub-problem cannot be evaluated");
   LYNX_ASSERT(size == GetResidualCount(), "sub-problem cannot be evaluated");
+
+  PrepareEvaluation();
   jacobian->RightMultiply(parameters[0], residuals);
   lynx::Add(m_referenceValues, residuals, residuals, GetResidualCount());
 }

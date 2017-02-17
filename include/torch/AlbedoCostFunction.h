@@ -24,11 +24,15 @@ class AlbedoCostFunction : public lynx::CostFunction
     void Evaluate(size_t offset, size_t size, float const* const* parameters,
         float* residuals, lynx::Matrix* jacobian) override;
 
-    void UpdateCostFunction();
+    void ClearJacobian();
 
   protected:
 
+    void PrepareEvaluation();
+
     void ComputeJacobian();
+
+    void ResetJacobian();
 
     void CreateReferenceBuffer();
 
@@ -40,17 +44,23 @@ class AlbedoCostFunction : public lynx::CostFunction
 
     void CreateBuffer();
 
-  protected:
+    void CreateProgram();
 
-    bool m_dirty;
+    void CreateKeyframeSet();
+
+  protected:
 
     bool m_locked;
 
     std::shared_ptr<MatteMaterial> m_material;
 
-    std::vector<std::shared_ptr<Keyframe>> m_keyframes;
+    std::unique_ptr<KeyframeSet> m_keyframes;
 
     optix::Buffer m_jacobian;
+
+    optix::Program m_program;
+
+    unsigned int m_programId;
 
     float* m_jacobianValues;
 

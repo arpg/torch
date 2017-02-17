@@ -3,7 +3,6 @@
 #include <vector>
 #include <lynx/lynx.h>
 #include <torch/Core.h>
-#include <torch/KeyframeSet.h>
 
 namespace torch
 {

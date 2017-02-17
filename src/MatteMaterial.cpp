@@ -33,10 +33,30 @@ void MatteMaterial::SetAlbedos(const std::vector<Spectrum>& albedos)
   UploadAlbedos();
 }
 
+void MatteMaterial::SetDerivativeBuffer(optix::Buffer buffer)
+{
+  m_derivBuffer = buffer;
+  m_material["albedoDerivatives"]->setBuffer(m_derivBuffer);
+}
+
+optix::Buffer MatteMaterial::GetAlbedoBuffer() const
+{
+  return m_albedoBuffer;
+}
+
 void MatteMaterial::Initialize()
 {
+  CreateDerivativeBuffer();
   CreateAlbedoBuffer();
   UploadAlbedos();
+}
+
+void MatteMaterial::CreateDerivativeBuffer()
+{
+  m_derivBuffer = m_context->CreateBuffer(RT_BUFFER_INPUT_OUTPUT);
+  m_derivBuffer->setFormat(RT_FORMAT_FLOAT3);
+  m_derivBuffer->setSize(0);
+  m_material["albedoDerivatives"]->setBuffer(m_derivBuffer);
 }
 
 void MatteMaterial::CreateAlbedoBuffer()

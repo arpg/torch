@@ -240,6 +240,7 @@ list(APPEND CPP_SOURCES
 )
 
 list(APPEND CUDA_SOURCES
+  ${CUDA_SOURCE_DIR}/AlbedoCostFunction.cu
   ${CUDA_SOURCE_DIR}/LightCostFunction.cu
 )
 

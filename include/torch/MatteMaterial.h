@@ -20,9 +20,15 @@ class MatteMaterial : public Material
 
     void SetAlbedos(const std::vector<Spectrum>& albedos);
 
+    void SetDerivativeBuffer(optix::Buffer buffer);
+
+    optix::Buffer GetAlbedoBuffer() const;
+
   private:
 
     void Initialize();
+
+    void CreateDerivativeBuffer();
 
     void CreateAlbedoBuffer();
 
@@ -33,6 +39,8 @@ class MatteMaterial : public Material
     optix::Buffer m_albedoBuffer;
 
     std::vector<Spectrum> m_albedos;
+
+    optix::Buffer m_derivBuffer;
 };
 
 } // namespace torch

@@ -26,6 +26,7 @@ rtDeclareVariable(SampleLightFunction, SampleLights, , );
 typedef rtCallableProgramId<void(uint, uint, float3)> JacobianAddFunction;
 rtBuffer<JacobianAddFunction> AddToAlbedoJacobian;
 rtDeclareVariable(uint, computeAlbedoDerivs, , );
+rtBuffer<float3> albedoDerivatives;
 
 rtDeclareVariable(uint2, launchIndex, rtLaunchIndex, );
 rtBuffer<torch::CameraData> cameras;
@@ -90,7 +91,11 @@ RT_PROGRAM void ClosestHit()
       const float3 albedo = GetAlbedo();
       const float theta = dot(shadingNormal, sample.direction);
       const float3 throughput = (rayData.throughput * sample.radiance * theta / sample.pdf) / (lightSamples * M_PIf);
-      rayData.radiance += albedo * throughput;
+
+      if (computeAlbedoDerivs == 0 || rayData.depth > 0)
+      {
+        rayData.radiance += albedo * throughput;
+      }
 
       if (computeAlbedoDerivs == 1 && rayData.depth == 0)
       {
