@@ -31,6 +31,8 @@ rtDeclareVariable(uint2, launchIndex, rtLaunchIndex, );
 rtBuffer<torch::CameraData> cameras;
 rtBuffer<torch::PixelSample> pixelSamples;
 
+rtDeclareVariable(unsigned int, albedoOnly, , );
+
 TORCH_DEVICE float3 GetAlbedo()
 {
   const uint x = (triFace.x >= albedos.size()) ? albedos.size() - 1 : triFace.x;
@@ -79,6 +81,12 @@ RT_PROGRAM void ClosestHit()
 
   const float3 albedo = GetAlbedo();
   sample.throughput = (albedo * rayData.throughput) / (lightSamples * M_PIf);
+
+  if (albedoOnly)
+  {
+    rayData.radiance += (albedo * rayData.throughput);
+    return;
+  }
 
   for (unsigned int i = 0; i < lightSamples; ++i)
   {

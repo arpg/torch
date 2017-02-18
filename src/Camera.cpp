@@ -65,6 +65,14 @@ void Camera::Capture(Image& image)
   CopyBuffer(image);
 }
 
+void Camera::CaptureAlbedo(Image& image)
+{
+  m_context->GetVariable("albedoOnly")->setUint(true);
+  m_context->Launch(m_programId, m_imageSize);
+  m_context->GetVariable("albedoOnly")->setUint(false);
+  CopyBuffer(image);
+}
+
 void Camera::CaptureMask(Image& image)
 {
   m_context->Launch(m_depthProgramId, m_imageSize);

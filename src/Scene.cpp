@@ -127,9 +127,14 @@ std::shared_ptr<MatteMaterial> Scene::CreateMatteMaterial()
   return CreateObject<MatteMaterial>();
 }
 
-optix::Context Scene::GetContext()
+optix::Context Scene::GetOptixContext()
 {
   return m_context->GetContext();
+}
+
+std::shared_ptr<Context> Scene::GetContext()
+{
+  return m_context;
 }
 
 void Scene::Initialize()

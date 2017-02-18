@@ -11,6 +11,7 @@ rtDeclareVariable(uint2, imageSize, rtLaunchDim, );
 rtDeclareVariable(rtObject, sceneRoot, , );
 rtDeclareVariable(float, sceneEpsilon, , );
 
+rtDeclareVariable(unsigned int, albedoOnly, , );
 rtDeclareVariable(unsigned int, sampleCount, , );
 rtDeclareVariable(torch::CameraData, camera, , );
 rtBuffer<float3, 2> buffer;
@@ -72,6 +73,11 @@ RT_PROGRAM void Capture()
       rtTrace(sceneRoot, ray, data);
       InitializeRay(ray);
       seed = data.seed;
+
+      if (albedoOnly)
+      {
+        break;
+      }
 
       torch::RayBounce& bounce = data.bounce;
 

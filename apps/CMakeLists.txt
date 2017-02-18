@@ -6,6 +6,8 @@ add_executable(optim optim.cpp)
 target_link_libraries(optim ${LIBRARY_NAME})
 add_dependencies(optim ${LIBRARY_NAME})
 
+add_subdirectory(albedo_baker)
+
 if(Lynx_FOUND)
   add_subdirectory(solver)
 endif()

@@ -68,6 +68,7 @@ set(CONFIG_HEADERS
 set(CPP_HEADER_DIR include/${LIBRARY_NAME})
 
 set(CPP_HEADERS
+  ${CPP_HEADER_DIR}/AlbedoBaker.h
   ${CPP_HEADER_DIR}/AlbedoResidualBlock.h
   ${CPP_HEADER_DIR}/AreaLight.h
   ${CPP_HEADER_DIR}/AreaLightSampler.h
@@ -126,6 +127,7 @@ set(CPP_HEADERS
 set(CPP_SOURCE_DIR src)
 
 set(CPP_SOURCES
+  ${CPP_SOURCE_DIR}/AlbedoBaker.cpp
   ${CPP_SOURCE_DIR}/AlbedoResidualBlock.cpp
   ${CPP_SOURCE_DIR}/AreaLight.cpp
   ${CPP_SOURCE_DIR}/AreaLightSampler.cpp
@@ -198,6 +200,7 @@ set(CUDA_HEADERS
 set(CUDA_SOURCE_DIR src)
 
 set(CUDA_SOURCES
+  ${CUDA_SOURCE_DIR}/AlbedoBaker.cu
   ${CUDA_SOURCE_DIR}/AlbedoResidualBlock.cu
   ${CUDA_SOURCE_DIR}/AreaLightSampler.cu
   ${CUDA_SOURCE_DIR}/Camera.cu

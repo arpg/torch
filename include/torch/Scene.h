@@ -43,7 +43,9 @@ class Scene
 
     std::shared_ptr<MatteMaterial> CreateMatteMaterial();
 
-    optix::Context GetContext();
+    optix::Context GetOptixContext();
+
+    std::shared_ptr<Context> GetContext();
 
   private:
 

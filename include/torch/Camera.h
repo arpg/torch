@@ -25,6 +25,8 @@ class Camera : public Node
 
     void Capture(Image& image);
 
+    void CaptureAlbedo(Image& image);
+
     void CaptureMask(Image& image);
 
     void PreBuildScene() override;

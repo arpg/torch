@@ -122,7 +122,7 @@ CUdeviceptr Problem::GetBounceImages()
 
 void Problem::SetLightBufferSize()
 {
-  optix::Context context = m_scene->GetContext();
+  optix::Context context = m_scene->GetOptixContext();
   context["computeLightDerivs"]->setUint(1);
   const size_t w = GetLightParameterCount() / 3;
   const size_t h = GetResidualCount() / 3;
@@ -131,33 +131,33 @@ void Problem::SetLightBufferSize()
 
 void Problem::ZeroLightBufferSize()
 {
-  optix::Context context = m_scene->GetContext();
+  optix::Context context = m_scene->GetOptixContext();
   context["computeLightDerivs"]->setUint(0);
   m_lightDerivs->setSize(1, 1);
 }
 
 void Problem::SetAlbedoBufferSize()
 {
-  optix::Context context = m_scene->GetContext();
+  optix::Context context = m_scene->GetOptixContext();
   context["computeAlbedoDerivs"]->setUint(1);
 }
 
 void Problem::ZeroAlbedoBufferSize()
 {
-  optix::Context context = m_scene->GetContext();
+  optix::Context context = m_scene->GetOptixContext();
   context["computeAlbedoDerivs"]->setUint(0);
 }
 
 void Problem::SetBounceImageSizes()
 {
-  optix::Context context = m_scene->GetContext();
+  optix::Context context = m_scene->GetOptixContext();
   context["saveBounceImages"]->setUint(1);
   m_bounceImages->setSize(GetResidualCount());
 }
 
 void Problem::ZeroBounceImageSizes()
 {
-  optix::Context context = m_scene->GetContext();
+  optix::Context context = m_scene->GetOptixContext();
   context["saveBounceImages"]->setUint(0);
   m_bounceImages->setSize(1);
 }
@@ -177,7 +177,7 @@ void Problem::Initialize()
 
 void Problem::CreateLightDerivBuffer()
 {
-  optix::Context context = m_scene->GetContext();
+  optix::Context context = m_scene->GetOptixContext();
   m_lightDerivs = context->createBuffer(RT_BUFFER_INPUT_OUTPUT);
   m_lightDerivs->setFormat(RT_FORMAT_FLOAT3);
   context["lightDerivatives"]->setBuffer(m_lightDerivs);
@@ -186,7 +186,7 @@ void Problem::CreateLightDerivBuffer()
 
 void Problem::CreateKeyframeBuffer()
 {
-  optix::Context context = m_scene->GetContext();
+  optix::Context context = m_scene->GetOptixContext();
   m_referenceImageBuffer = context->createBuffer(RT_BUFFER_INPUT_OUTPUT);
   m_referenceImageBuffer->setFormat(RT_FORMAT_FLOAT3);
   context["referenceImages"]->setBuffer(m_referenceImageBuffer);
@@ -195,7 +195,7 @@ void Problem::CreateKeyframeBuffer()
 
 void Problem::CreateRenderedImageBuffer()
 {
-  optix::Context context = m_scene->GetContext();
+  optix::Context context = m_scene->GetOptixContext();
   m_renderedImages = context->createBuffer(RT_BUFFER_INPUT_OUTPUT);
   m_renderedImages->setFormat(RT_FORMAT_FLOAT3);
   context["renderedImages"]->setBuffer(m_renderedImages);
@@ -204,7 +204,7 @@ void Problem::CreateRenderedImageBuffer()
 
 void Problem::CreateBounceImageBuffer()
 {
-  optix::Context context = m_scene->GetContext();
+  optix::Context context = m_scene->GetOptixContext();
   m_bounceImages = context->createBuffer(RT_BUFFER_INPUT_OUTPUT);
   m_bounceImages->setFormat(RT_FORMAT_FLOAT3);
   context["bounceImages"]->setBuffer(m_bounceImages);
@@ -213,7 +213,7 @@ void Problem::CreateBounceImageBuffer()
 
 void Problem::CreateAlbedoBlocks()
 {
-  optix::Context context = m_scene->GetContext();
+  optix::Context context = m_scene->GetOptixContext();
   m_addToAlbedoBuffer = context->createBuffer(RT_BUFFER_INPUT);
   m_addToAlbedoBuffer->setFormat(RT_FORMAT_PROGRAM_ID);
   std::vector<int> ids(m_referenceImages.size());
@@ -236,7 +236,7 @@ void Problem::CreateAlbedoBlocks()
 
 void Problem::CreateCameraBuffer()
 {
-  optix::Context context = m_scene->GetContext();
+  optix::Context context = m_scene->GetOptixContext();
   m_cameraBuffer = context->createBuffer(RT_BUFFER_INPUT);
   m_cameraBuffer->setFormat(RT_FORMAT_USER);
   m_cameraBuffer->setElementSize(sizeof(CameraData));
@@ -273,7 +273,7 @@ void Problem::CreatePixelBuffer()
     }
   }
 
-  optix::Context context = m_scene->GetContext();
+  optix::Context context = m_scene->GetOptixContext();
   m_pixelBuffer = context->createBuffer(RT_BUFFER_INPUT);
   m_pixelBuffer->setFormat(RT_FORMAT_USER);
   m_pixelBuffer->setElementSize(sizeof(PixelSample));
@@ -287,7 +287,7 @@ void Problem::CreatePixelBuffer()
 
 void Problem::CreateRenderBuffer()
 {
-  optix::Context context = m_scene->GetContext();
+  optix::Context context = m_scene->GetOptixContext();
   m_renderBuffer = context->createBuffer(RT_BUFFER_OUTPUT);
   m_renderBuffer->setFormat(RT_FORMAT_FLOAT3);
   m_renderBuffer->setSize(GetResidualCount() / 3);
