@@ -61,6 +61,18 @@ optix::Buffer MatteMaterial::GetAlbedoBuffer() const
   return m_albedoBuffer;
 }
 
+void MatteMaterial::LoadAlbedos()
+{
+  RTsize size;
+  m_albedoBuffer->getSize(size);
+  m_albedos.resize(size);
+
+  float3* host = reinterpret_cast<float3*>(m_albedos.data());
+  const float3* device = reinterpret_cast<float3*>(m_albedoBuffer->map());
+  std::copy(device, device + size, host);
+  m_albedoBuffer->unmap();
+}
+
 void MatteMaterial::Initialize()
 {
   CreateCameraBuffer();
@@ -90,7 +102,7 @@ void MatteMaterial::CreatePixelBuffer()
 void MatteMaterial::CreateAlbedoBuffer()
 {
   m_albedos.push_back(Spectrum());
-  m_albedoBuffer = m_context->CreateBuffer(RT_BUFFER_INPUT);
+  m_albedoBuffer = m_context->CreateBuffer(RT_BUFFER_INPUT_OUTPUT);
   m_albedoBuffer->setFormat(RT_FORMAT_FLOAT3);
   m_albedoBuffer->setSize(1);
   m_material["albedos"]->setBuffer(m_albedoBuffer);

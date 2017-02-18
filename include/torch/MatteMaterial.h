@@ -30,6 +30,8 @@ class MatteMaterial : public Material
 
     optix::Buffer GetAlbedoBuffer() const;
 
+    void LoadAlbedos();
+
   private:
 
     void Initialize();

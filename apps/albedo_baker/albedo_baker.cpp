@@ -46,8 +46,14 @@ int main(int argc, char** argv)
   std::cout << "Baking albedos..." << std::endl;
 
   AlbedoBaker baker(scene);
-  baker.SetSampleCount(4);
+  baker.SetSampleCount(16);
   baker.Bake(matteMaterial, geometry);
+
+  std::cout << "Saving mesh..." << std::endl;
+
+  matteMaterial->LoadAlbedos();
+  MeshWriter writer(geometry, matteMaterial);
+  writer.Write("baked_mesh.ply");
 
   std::cout << "Rendering results..." << std::endl;
 
