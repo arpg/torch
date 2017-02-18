@@ -14,6 +14,8 @@ class MatteMaterial : public Material
 
     size_t GetAlbedoCount() const;
 
+    void GetAlbedos(std::vector<Spectrum>& albedos) const;
+
     void SetAlbedo(const Spectrum& albedo);
 
     void SetAlbedo(float r, float g, float b);

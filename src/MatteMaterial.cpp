@@ -16,6 +16,11 @@ size_t MatteMaterial::GetAlbedoCount() const
   return m_albedos.size();
 }
 
+void MatteMaterial::GetAlbedos(std::vector<Spectrum>& albedos) const
+{
+  albedos = m_albedos;
+}
+
 void MatteMaterial::SetAlbedo(const Spectrum& albedo)
 {
   m_albedos.resize(1);

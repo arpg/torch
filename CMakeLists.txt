@@ -100,6 +100,7 @@ set(CPP_HEADERS
   ${CPP_HEADER_DIR}/Mesh.h
   ${CPP_HEADER_DIR}/MeshLoader.h
   ${CPP_HEADER_DIR}/MeshSampler.h
+  ${CPP_HEADER_DIR}/MeshWriter.h
   ${CPP_HEADER_DIR}/Node.h
   ${CPP_HEADER_DIR}/Normal.h
   ${CPP_HEADER_DIR}/Object.h
@@ -157,6 +158,7 @@ set(CPP_SOURCES
   ${CPP_SOURCE_DIR}/Mesh.cpp
   ${CPP_SOURCE_DIR}/MeshLoader.cpp
   ${CPP_SOURCE_DIR}/MeshSampler.cpp
+  ${CPP_SOURCE_DIR}/MeshWriter.cpp
   ${CPP_SOURCE_DIR}/Node.cpp
   ${CPP_SOURCE_DIR}/Normal.cpp
   ${CPP_SOURCE_DIR}/Object.cpp

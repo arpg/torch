@@ -38,6 +38,7 @@ set(TEST_CPP_SOURCES
   ${TEST_CPP_SOURCE_DIR}/Distribution1D.cpp
   ${TEST_CPP_SOURCE_DIR}/Distribution2D.cpp
   ${TEST_CPP_SOURCE_DIR}/LightCostFunction.cpp
+  ${TEST_CPP_SOURCE_DIR}/MeshWriter.cpp
   ${TEST_CPP_SOURCE_DIR}/Node.cpp
   ${TEST_CPP_SOURCE_DIR}/Problem.cpp
   ${TEST_CPP_SOURCE_DIR}/ReflectanceCostFunction.cpp
