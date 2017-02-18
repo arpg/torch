@@ -2,6 +2,8 @@
 #include <torch/Context.h>
 #include <torch/PtxUtil.h>
 
+#include <iostream>
+
 namespace torch
 {
 
@@ -55,6 +57,11 @@ void SparseMatrix::GetColumnIndices(std::vector<unsigned int>& indices)
   unsigned int* device = reinterpret_cast<unsigned int*>(m_colIndices->map());
   std::copy(device, device + size, indices.data());
   m_colIndices->unmap();
+}
+
+optix::Buffer SparseMatrix::GetValuesBuffer() const
+{
+  return m_values;
 }
 
 void SparseMatrix::AllocateValues(size_t size)

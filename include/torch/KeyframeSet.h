@@ -15,9 +15,15 @@ class KeyframeSet
 
     bool Empty() const;
 
+    size_t Size() const;
+
     void Add(std::shared_ptr<Keyframe> keyframe);
 
     std::shared_ptr<Keyframe> operator[](size_t index) const;
+
+    std::shared_ptr<Keyframe> Get(size_t index) const;
+
+    size_t GetValidPixelIndex(size_t index, unsigned int x, unsigned int y) const;
 
     size_t GetValidPixelCount() const;
 

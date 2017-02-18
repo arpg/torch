@@ -28,6 +28,8 @@ class Keyframe
 
     void GetValidPixelRadiance(std::vector<Spectrum>& radiance);
 
+    bool IsValidPixel(unsigned int x, unsigned int y) const;
+
   private:
 
     void Initialize();

@@ -24,9 +24,8 @@ typedef rtCallableProgramX<void(torch::LightSample&)> SampleLightFunction;
 rtDeclareVariable(SampleLightFunction, SampleLights, , );
 
 typedef rtCallableProgramId<void(uint, uint, float3)> JacobianAddFunction;
-rtBuffer<JacobianAddFunction> AddToAlbedoJacobian;
+rtDeclareVariable(JacobianAddFunction, AddToAlbedoJacobian, , );
 rtDeclareVariable(uint, computeAlbedoDerivs, , );
-rtBuffer<float3> albedoDerivatives;
 
 rtDeclareVariable(uint2, launchIndex, rtLaunchIndex, );
 rtBuffer<torch::CameraData> cameras;
@@ -99,18 +98,13 @@ RT_PROGRAM void ClosestHit()
 
       if (computeAlbedoDerivs == 1 && rayData.depth == 0)
       {
-        const torch::PixelSample& pixel = pixelSamples[launchIndex.x];
-        const unsigned int imageIndex = pixel.camera;
-        const torch::CameraData& camera = cameras[imageIndex];
-
         const float beta = fminf(1, triScales.x);
         const float gamma = fminf(1 - beta, triScales.y);
         const float alpha = 1 - beta - gamma;
 
-        const unsigned int col = launchIndex.x;
-        AddToAlbedoJacobian[imageIndex](triFace.x, col, alpha * throughput);
-        AddToAlbedoJacobian[imageIndex](triFace.y, col,  beta * throughput);
-        AddToAlbedoJacobian[imageIndex](triFace.z, col, gamma * throughput);
+        AddToAlbedoJacobian(launchIndex.x, triFace.x, -throughput * alpha);
+        AddToAlbedoJacobian(launchIndex.x, triFace.y, -throughput * beta);
+        AddToAlbedoJacobian(launchIndex.x, triFace.z, -throughput * gamma);
       }
     }
   }

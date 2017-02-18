@@ -5,10 +5,10 @@ rtDeclareVariable(unsigned int, launchIndex, rtLaunchIndex, );
 rtDeclareVariable(torch::CameraData, camera, , );
 rtDeclareVariable(optix::Matrix4x4, Tcw, , );
 rtDeclareVariable(optix::Matrix4x4, Twc, , );
-rtBuffer<unsigned int, 1> neighborOffsets;
-rtBuffer<unsigned int, 1> neighborIndices;
-rtBuffer<uint4, 1> boundingBoxes;
-rtBuffer<float3, 1> vertices;
+rtBuffer<unsigned int> neighborOffsets;
+rtBuffer<unsigned int> neighborIndices;
+rtBuffer<uint4> boundingBoxes;
+rtBuffer<float3> vertices;
 
 TORCH_DEVICE float2 GetImageCoords(unsigned int index)
 {

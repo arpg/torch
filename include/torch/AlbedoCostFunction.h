@@ -11,7 +11,8 @@ class AlbedoCostFunction : public lynx::CostFunction
 {
   public:
 
-    AlbedoCostFunction(std::shared_ptr<MatteMaterial> material);
+    AlbedoCostFunction(std::shared_ptr<MatteMaterial> material,
+        std::shared_ptr<Mesh> mesh);
 
     virtual ~AlbedoCostFunction();
 
@@ -30,9 +31,9 @@ class AlbedoCostFunction : public lynx::CostFunction
 
     void PrepareEvaluation();
 
-    void ComputeJacobian();
+    void CreatePixelVertexBuffer();
 
-    void ResetJacobian();
+    void ComputeJacobian();
 
     void CreateReferenceBuffer();
 
@@ -42,9 +43,15 @@ class AlbedoCostFunction : public lynx::CostFunction
 
     void SetDimensions();
 
-    void CreateBuffer();
+    void CreateJacobianBuffer();
 
-    void CreateProgram();
+    void CreateBoundingBoxBuffer();
+
+    void CreateAdjacencyBuffers();
+
+    void CreateCaptureProgram();
+
+    void CreateBoundsProgram();
 
     void CreateKeyframeSet();
 
@@ -54,17 +61,37 @@ class AlbedoCostFunction : public lynx::CostFunction
 
     std::shared_ptr<MatteMaterial> m_material;
 
+    std::shared_ptr<Mesh> m_mesh;
+
     std::unique_ptr<KeyframeSet> m_keyframes;
 
-    optix::Buffer m_jacobian;
+    std::shared_ptr<SparseMatrix> m_jacobian;
 
-    optix::Program m_program;
+    optix::Buffer m_boundingBoxes;
 
-    unsigned int m_programId;
+    optix::Buffer m_neighborOffsets;
+
+    optix::Buffer m_neighborIndices;
+
+    optix::Program m_captureProgram;
+
+    unsigned int m_captureProgramId;
+
+    optix::Program m_boundsProgram;
+
+    unsigned int m_boundsProgramId;
 
     float* m_jacobianValues;
 
     float* m_referenceValues;
+
+    unsigned int m_valueCount;
+
+    unsigned int* m_rowIndices;
+
+    unsigned int* m_colIndices;
+
+    bool m_dirty;
 };
 
 } // namespace torch

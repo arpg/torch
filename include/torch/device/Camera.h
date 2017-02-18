@@ -15,6 +15,8 @@ struct CameraData
   float3 w;
   optix::Matrix3x3 K;
   optix::Matrix3x3 Kinv;
+  optix::Matrix4x4 Twc;
+  optix::Matrix4x4 Tcw;
   unsigned int samples;
 };
 

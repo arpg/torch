@@ -131,6 +131,9 @@ void Camera::GetData(const Transform& transform, CameraData& data) const
   data.Kinv.setRow(0, make_float3(1 / m_focalLength.x, 0, -m_centerPoint.x / m_focalLength.x));
   data.Kinv.setRow(1, make_float3(0, 1 / m_focalLength.y, -m_centerPoint.y / m_focalLength.x));
   data.Kinv.setRow(2, make_float3(0, 0, 1));
+
+  data.Twc = transform.GetMatrix();
+  data.Tcw = transform.Inverse().GetMatrix();
 }
 
 void Camera::Initialize()

@@ -263,11 +263,8 @@ void Context::Initialize()
   CreateGeometrySampler();
   CreateEmptyProgram();
 
-  optix::Buffer addToAlbedoBuffer;
-  addToAlbedoBuffer = m_context->createBuffer(RT_BUFFER_INPUT);
-  addToAlbedoBuffer->setFormat(RT_FORMAT_PROGRAM_ID);
-  addToAlbedoBuffer->setSize(0);
-  m_context["AddToAlbedoJacobian"]->setBuffer(addToAlbedoBuffer);
+  optix::Program sparseProgram = CreateProgram(PtxUtil::GetFile("Context"), "SparseDoNothing");
+  m_context["AddToAlbedoJacobian"]->setProgramId(sparseProgram);
 
   optix::Buffer pixelSamples;
   pixelSamples = m_context->createBuffer(RT_BUFFER_INPUT);

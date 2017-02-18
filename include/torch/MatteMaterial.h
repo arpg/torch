@@ -20,7 +20,11 @@ class MatteMaterial : public Material
 
     void SetAlbedos(const std::vector<Spectrum>& albedos);
 
-    void SetDerivativeBuffer(optix::Buffer buffer);
+    void SetDerivativeProgram(optix::Program program);
+
+    void SetCameraBuffer(optix::Buffer buffer);
+
+    void SetPixelBuffer(optix::Buffer buffer);
 
     optix::Buffer GetAlbedoBuffer() const;
 
@@ -28,7 +32,9 @@ class MatteMaterial : public Material
 
     void Initialize();
 
-    void CreateDerivativeBuffer();
+    void CreateCameraBuffer();
+
+    void CreatePixelBuffer();
 
     void CreateAlbedoBuffer();
 
@@ -41,6 +47,10 @@ class MatteMaterial : public Material
     std::vector<Spectrum> m_albedos;
 
     optix::Buffer m_derivBuffer;
+
+    optix::Buffer m_cameraBuffer;
+
+    optix::Buffer m_pixelBuffer;
 };
 
 } // namespace torch

@@ -24,6 +24,11 @@ bool KeyframeSet::Empty() const
   return m_keyframes.empty();
 }
 
+size_t KeyframeSet::Size() const
+{
+  return m_keyframes.size();
+}
+
 void KeyframeSet::Add(std::shared_ptr<Keyframe> keyframe)
 {
   m_keyframes.push_back(keyframe);
@@ -34,6 +39,24 @@ void KeyframeSet::Add(std::shared_ptr<Keyframe> keyframe)
 std::shared_ptr<Keyframe> KeyframeSet::operator[](size_t index) const
 {
   return m_keyframes[index];
+}
+
+std::shared_ptr<Keyframe> KeyframeSet::Get(size_t index) const
+{
+  return m_keyframes[index];
+}
+
+size_t KeyframeSet::GetValidPixelIndex(size_t index, unsigned int x,
+    unsigned int y) const
+{
+  size_t offset = 0;
+
+  for (size_t i = 0; i < index; ++i)
+  {
+    offset += m_keyframes[i]->GetValidPixelCount();
+  }
+
+  return offset + m_keyframes[index]->GetValidPixelIndex(x, y);
 }
 
 size_t KeyframeSet::GetValidPixelCount() const

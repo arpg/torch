@@ -22,6 +22,8 @@ class SparseMatrix
 
     void GetColumnIndices(std::vector<unsigned int>& indices);
 
+    optix::Buffer GetValuesBuffer() const;
+
   protected:
 
     void AllocateValues(size_t size);

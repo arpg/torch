@@ -1,4 +1,5 @@
 #include <torch/Keyframe.h>
+#include <exception>
 #include <torch/Camera.h>
 #include <torch/Image.h>
 #include <torch/Spectrum.h>
@@ -62,7 +63,7 @@ size_t Keyframe::GetValidPixelIndex(unsigned int x, unsigned int y) const
 
   if (validIndex == totalPixels)
   {
-    throw "pixel is not valid";
+    throw std::invalid_argument("pixel is not valid");
   }
 
   return validIndex;
@@ -87,6 +88,12 @@ void Keyframe::GetValidPixelRadiance(std::vector<Spectrum>& radiance)
       }
     }
   }
+}
+
+bool Keyframe::IsValidPixel(unsigned int x, unsigned int y) const
+{
+  const size_t pixelIndex = y * m_mask->GetWidth() + x;
+  return reinterpret_cast<float3*>(m_mask->GetData())[pixelIndex].x == 1;
 }
 
 void Keyframe::Initialize()

@@ -1,3 +1,4 @@
+#include <cfloat>
 #include <torch/device/Camera.h>
 #include <torch/device/Random.h>
 #include <torch/device/Ray.h>
@@ -8,8 +9,11 @@ rtDeclareVariable(uint, launchIndex, rtLaunchIndex, );
 rtBuffer<torch::CameraData> cameras;
 rtBuffer<torch::PixelSample> pixelSamples;
 rtBuffer<float3> render;
-rtDeclareVariable(uint, computeAlbedoDerivs, , );
-rtDeclareVariable(uint, computeLightDerivs, , );
+
+rtBuffer<uint4> boundingBoxes;
+rtBuffer<unsigned int> neighborOffsets;
+rtBuffer<unsigned int> neighborIndices;
+rtBuffer<float3> vertices;
 
 static __inline__ __device__
 void GetDirection(float3& direction, unsigned int& seed, unsigned int i)
@@ -112,4 +116,50 @@ RT_PROGRAM void Capture()
   }
 
   render[launchIndex] = data.radiance;
+}
+
+TORCH_DEVICE float2 GetImageCoords(uint image, uint vertex)
+{
+  const torch::CameraData& camera = cameras[image];
+  const float3 Xcp = make_float3(camera.Tcw * make_float4(vertices[vertex], 1));
+  const float3 uvw = camera.K * Xcp;
+  return make_float2(uvw.x / uvw.z, uvw.y / uvw.z);
+}
+
+TORCH_DEVICE void Union(float4& bbox, const float2& uv)
+{
+  bbox.x = fminf(uv.x, bbox.x);
+  bbox.y = fminf(uv.y, bbox.y);
+  bbox.z = fmaxf(uv.x, bbox.z);
+  bbox.w = fmaxf(uv.y, bbox.w);
+}
+
+RT_PROGRAM void GetBoundingBoxes()
+{
+  float4 bbox;
+  bbox.x = FLT_MAX;
+  bbox.y = FLT_MAX;
+  bbox.z = FLT_MIN;
+  bbox.w = FLT_MIN;
+
+  const uint image = launchIndex / vertices.size();
+  const uint vertex = launchIndex % vertices.size();
+  const torch::CameraData& camera = cameras[image];
+
+  uint4& boundingBox = boundingBoxes[image * vertices.size() + vertex];
+
+  const unsigned int start = neighborOffsets[vertex];
+  const unsigned int stop = neighborOffsets[vertex + 1];
+  Union(bbox, GetImageCoords(image, vertex));
+
+  for (unsigned int i = start; i < stop; ++i)
+  {
+    unsigned int neighborVertex = neighborIndices[i];
+    Union(bbox, GetImageCoords(image, neighborVertex));
+  }
+
+  boundingBox.x = max(0u, uint(floor(bbox.x)));
+  boundingBox.y = max(0u, uint(floor(bbox.y)));
+  boundingBox.z = min(camera.imageSize.x - 1, uint(ceil(bbox.z)));
+  boundingBox.w = min(camera.imageSize.y - 1, uint(ceil(bbox.w)));
 }

@@ -1,5 +1,6 @@
 #include <torch/MatteMaterial.h>
 #include <torch/Context.h>
+#include <torch/device/Camera.h>
 
 namespace torch
 {
@@ -33,10 +34,21 @@ void MatteMaterial::SetAlbedos(const std::vector<Spectrum>& albedos)
   UploadAlbedos();
 }
 
-void MatteMaterial::SetDerivativeBuffer(optix::Buffer buffer)
+void MatteMaterial::SetDerivativeProgram(optix::Program program)
 {
-  m_derivBuffer = buffer;
-  m_material["albedoDerivatives"]->setBuffer(m_derivBuffer);
+  m_material["AddToAlbedoJacobian"]->setProgramId(program);
+}
+
+void MatteMaterial::SetCameraBuffer(optix::Buffer buffer)
+{
+  m_cameraBuffer = buffer;
+  m_material["cameras"]->setBuffer(m_cameraBuffer);
+}
+
+void MatteMaterial::SetPixelBuffer(optix::Buffer buffer)
+{
+  m_pixelBuffer = buffer;
+  m_material["pixelSamples"]->setBuffer(m_pixelBuffer);
 }
 
 optix::Buffer MatteMaterial::GetAlbedoBuffer() const
@@ -46,17 +58,28 @@ optix::Buffer MatteMaterial::GetAlbedoBuffer() const
 
 void MatteMaterial::Initialize()
 {
-  CreateDerivativeBuffer();
+  CreateCameraBuffer();
+  CreatePixelBuffer();
   CreateAlbedoBuffer();
   UploadAlbedos();
 }
 
-void MatteMaterial::CreateDerivativeBuffer()
+void MatteMaterial::CreateCameraBuffer()
 {
-  m_derivBuffer = m_context->CreateBuffer(RT_BUFFER_INPUT_OUTPUT);
-  m_derivBuffer->setFormat(RT_FORMAT_FLOAT3);
-  m_derivBuffer->setSize(0);
-  m_material["albedoDerivatives"]->setBuffer(m_derivBuffer);
+  m_cameraBuffer = m_context->CreateBuffer(RT_BUFFER_INPUT);
+  m_cameraBuffer->setFormat(RT_FORMAT_USER);
+  m_cameraBuffer->setElementSize(sizeof(CameraData));
+  m_cameraBuffer->setSize(0);
+  m_material["cameras"]->setBuffer(m_cameraBuffer);
+}
+
+void MatteMaterial::CreatePixelBuffer()
+{
+  m_pixelBuffer = m_context->CreateBuffer(RT_BUFFER_INPUT);
+  m_pixelBuffer->setFormat(RT_FORMAT_USER);
+  m_pixelBuffer->setElementSize(sizeof(PixelSample));
+  m_pixelBuffer->setSize(0);
+  m_material["pixelSamples"]->setBuffer(m_pixelBuffer);
 }
 
 void MatteMaterial::CreateAlbedoBuffer()

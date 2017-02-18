@@ -67,7 +67,7 @@ TEST(AlbedoCostFunction, Gradient)
   camera->SetImageSize(160, 120);
   camera->SetFocalLength(80, 80);
   camera->SetCenterPoint(80, 60);
-  camera->SetSampleCount(64);
+  camera->SetSampleCount(10);
 
   std::shared_ptr<Image> image;
   image = std::make_shared<Image>();
@@ -93,10 +93,11 @@ TEST(AlbedoCostFunction, Gradient)
 
   problem.AddParameterBlock(values, 3 * material->GetAlbedoCount());
   problem.SetLowerBound(values, 0.0f);
-  problem.SetLowerBound(values, 1.0f);
+  problem.SetUpperBound(values, 1.0f);
 
   AlbedoCostFunction* costFunction;
-  costFunction = new AlbedoCostFunction(material);
+  costFunction = new AlbedoCostFunction(material, geometry);
+  costFunction->AddKeyframe(keyframe);
   problem.AddResidualBlock(costFunction, nullptr, values);
 
   problem.CheckGradients();
@@ -163,7 +164,7 @@ TEST(AlbedoCostFunction, Optimization)
   camera->SetImageSize(160, 120);
   camera->SetFocalLength(80, 80);
   camera->SetCenterPoint(80, 60);
-  camera->SetSampleCount(64);
+  camera->SetSampleCount(10);
 
   std::shared_ptr<Image> image;
   image = std::make_shared<Image>();
@@ -189,10 +190,11 @@ TEST(AlbedoCostFunction, Optimization)
 
   problem.AddParameterBlock(values, 3 * material->GetAlbedoCount());
   problem.SetLowerBound(values, 0.0f);
-  problem.SetLowerBound(values, 1.0f);
+  problem.SetUpperBound(values, 1.0f);
 
   AlbedoCostFunction* costFunction;
-  costFunction = new AlbedoCostFunction(material);
+  costFunction = new AlbedoCostFunction(material, geometry);
+  costFunction->AddKeyframe(keyframe);
   problem.AddResidualBlock(costFunction, nullptr, values);
 
   lynx::Solver::Summary summary;
