@@ -73,6 +73,14 @@ void Camera::CaptureAlbedo(Image& image)
   CopyBuffer(image);
 }
 
+void Camera::CaptureLighting(Image& image)
+{
+  m_context->GetVariable("lightingOnly")->setUint(true);
+  m_context->Launch(m_programId, m_imageSize);
+  m_context->GetVariable("lightingOnly")->setUint(false);
+  CopyBuffer(image);
+}
+
 void Camera::CaptureMask(Image& image)
 {
   m_context->Launch(m_depthProgramId, m_imageSize);

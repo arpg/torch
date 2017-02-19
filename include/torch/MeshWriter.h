@@ -15,7 +15,15 @@ class MeshWriter
     MeshWriter(std::shared_ptr<Mesh> mesh,
         std::shared_ptr<MatteMaterial> material);
 
+    bool GetMeshlabFriendly() const;
+
+    void SetMeshlabFriendly(bool friendly);
+
     void Write(const std::string& file);
+
+  protected:
+
+    void MakeMeshlabFriendly(const std::string& file);
 
   private:
 
@@ -32,6 +40,8 @@ class MeshWriter
     void AddColors();
 
   protected:
+
+    bool m_meshlabFriendly;
 
     std::shared_ptr<Mesh> m_mesh;
 

@@ -1,4 +1,6 @@
 #include <torch/MeshWriter.h>
+#include <fstream>
+#include <regex>
 #include <assimp/Exporter.hpp>
 #include <assimp/scene.h>
 #include <torch/Exception.h>
@@ -15,17 +17,75 @@ namespace torch
 
 MeshWriter::MeshWriter(std::shared_ptr<Mesh> mesh,
     std::shared_ptr<MatteMaterial> material) :
+  m_meshlabFriendly(true),
   m_mesh(mesh),
   m_material(material)
 {
   Initialize();
 }
 
+bool MeshWriter::GetMeshlabFriendly() const
+{
+  return m_meshlabFriendly;
+}
+
+void MeshWriter::SetMeshlabFriendly(bool friendly)
+{
+  m_meshlabFriendly = friendly;
+}
+
 void MeshWriter::Write(const std::string& file)
 {
+  std::cout << "Writing mesh file..." << std::endl;
   Assimp::Exporter exporter;
   aiReturn result = exporter.Export(m_aiScene, "ply", file);
   if (result != aiReturn_SUCCESS) throw Exception(exporter.GetErrorString());
+  if (m_meshlabFriendly) MakeMeshlabFriendly(file);
+}
+
+void MeshWriter::MakeMeshlabFriendly(const std::string& file)
+{
+  std::cout << "Making meshlab friendly..." << std::endl;
+
+  const std::string outfile (file + ".tmp");
+  std::ofstream fout(outfile);
+  std::ifstream fin(file);
+  std::string line;
+
+  std::smatch match;
+  std::regex comment("^comment .*");
+  std::regex vertex("^(.*) ([-.0-9e]+) ([-.0-9e]+) ([-.0-9e]+) 1$");
+
+  while (std::getline(fin, line))
+  {
+    if (std::regex_match(line, comment)) continue;
+
+    if (line == "property float r") line = "property uchar red";
+    else if (line == "property float g") line = "property uchar green";
+    else if (line == "property float b") line = "property uchar blue";
+    else if (line == "property float a") line = "property uchar alpha";
+
+    if (std::regex_search(line, match, vertex))
+    {
+      unsigned int r = 255 * std::stof(match[2].str());
+      unsigned int g = 255 * std::stof(match[3].str());
+      unsigned int b = 255 * std::stof(match[4].str());
+      fout << match[1].str() << " ";
+      fout << r << " ";
+      fout << g << " ";
+      fout << b << " 255";
+      fout << std::endl;
+    }
+    else
+    {
+      fout << line << std::endl;
+    }
+
+  }
+
+  fin.close();
+  fout.close();
+  std::rename(outfile.c_str(), file.c_str());
 }
 
 void MeshWriter::Initialize()

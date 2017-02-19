@@ -32,6 +32,7 @@ rtBuffer<torch::CameraData> cameras;
 rtBuffer<torch::PixelSample> pixelSamples;
 
 rtDeclareVariable(unsigned int, albedoOnly, , );
+rtDeclareVariable(unsigned int, lightingOnly, , );
 
 TORCH_DEVICE float3 GetAlbedo()
 {
@@ -99,7 +100,11 @@ RT_PROGRAM void ClosestHit()
       const float theta = dot(shadingNormal, sample.direction);
       const float3 throughput = (rayData.throughput * sample.radiance * theta / sample.pdf) / (lightSamples * M_PIf);
 
-      if (computeAlbedoDerivs == 0 || rayData.depth > 0)
+      if (lightingOnly)
+      {
+        rayData.radiance += throughput;
+      }
+      else if (computeAlbedoDerivs == 0 || rayData.depth > 0)
       {
         rayData.radiance += albedo * throughput;
       }
@@ -115,6 +120,11 @@ RT_PROGRAM void ClosestHit()
         AddToAlbedoJacobian(launchIndex.x, triFace.z, -throughput * gamma);
       }
     }
+  }
+
+  if (lightingOnly)
+  {
+    return;
   }
 
   torch::BrdfSample brdfSample;

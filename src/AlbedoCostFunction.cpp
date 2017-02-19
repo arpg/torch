@@ -8,6 +8,7 @@
 #include <torch/PtxUtil.h>
 #include <torch/SparseMatrix.h>
 
+#include <torch/Image.h>
 #include <iostream>
 
 namespace torch
@@ -70,6 +71,38 @@ void AlbedoCostFunction::Evaluate(const float* const* parameters,
       m_colIndices, rows, cols);
 
   jacobian.RightMultiply(parameters[0], residuals);
+
+  // // std::cout << "Render Sum:    " << lynx::Sum(residuals, GetResidualCount()) << std::endl;
+  // // std::cout << "Reference Sum: " << lynx::Sum(m_referenceValues, GetResidualCount()) << std::endl;
+
+  // std::vector<float3> values(GetResidualCount() / 3);
+  // const size_t bytes = sizeof(float) * GetResidualCount();
+  // const cudaMemcpyKind kind = cudaMemcpyDeviceToHost;
+  // LYNX_CHECK_CUDA(cudaMemcpy(values.data(), residuals, bytes, kind));
+  // // LYNX_CHECK_CUDA(cudaMemcpy(values.data(), m_referenceValues, bytes, kind));
+
+  // std::vector<uint2> pixels;
+  // m_keyframes->Get(0)->GetValidPixels(pixels);
+
+  // Image image;
+  // image.Resize(160, 120);
+  // float3* data = reinterpret_cast<float3*>(image.GetData());
+  // std::fill(data, data + 160 * 120, make_float3(0, 0, 0));
+
+  // for (size_t i = 0; i < values.size(); ++i)
+  // {
+  //   const uint2& pixel = pixels[i];
+  //   const size_t index = pixel.y * 160 + pixel.x;
+  //   values[i].x = fmaxf(fminf(fabs(values[i].x), 1.0f), 0.0f);
+  //   values[i].y = fmaxf(fminf(fabs(values[i].y), 1.0f), 0.0f);
+  //   values[i].z = fmaxf(fminf(fabs(values[i].z), 1.0f), 0.0f);
+  //   // if (values[i].x > 0) std::cout << "Pixel: " << values[i].x << std::endl;
+  //   data[index] = values[i];
+  // }
+
+  // image.Save("render.png");
+  // // std::exit(0);
+
   lynx::Add(m_referenceValues, residuals, residuals, GetResidualCount());
 }
 
@@ -200,6 +233,8 @@ void AlbedoCostFunction::ComputeJacobian()
 {
   LYNX_ASSERT(!m_keyframes->Empty(), "no keyframes have been added");
 
+  m_jacobian->SetZero();
+
   const size_t launchSize = m_keyframes->GetValidPixelCount();
   std::shared_ptr<Context> context = m_material->GetContext();
   context->GetVariable("computeAlbedoDerivs")->setUint(true);
@@ -225,6 +260,10 @@ void AlbedoCostFunction::CreateReferenceBuffer()
   const size_t bytes = sizeof(float) * count;
   LYNX_CHECK_CUDA(cudaMalloc(&m_referenceValues, bytes));
   lynx::Sub(referenceValues, renderValues, m_referenceValues, count);
+
+  // optix::Buffer reference = m_keyframes->GetReferenceBuffer();
+  // CUdeviceptr referencePtr = reference->getDevicePointer(0);
+  // m_referenceValues = reinterpret_cast<float*>(referencePtr);
 }
 
 void AlbedoCostFunction::Initialize()

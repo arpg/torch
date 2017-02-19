@@ -64,6 +64,15 @@ optix::Buffer SparseMatrix::GetValuesBuffer() const
   return m_values;
 }
 
+void SparseMatrix::SetZero()
+{
+  RTsize size;
+  m_values->getSize(size);
+  float3* device = reinterpret_cast<float3*>(m_values->map());
+  std::fill(device, device + size, make_float3(0, 0, 0));
+  m_values->unmap();
+}
+
 void SparseMatrix::AllocateValues(size_t size)
 {
   m_values->setSize(size);

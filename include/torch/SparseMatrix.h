@@ -24,6 +24,8 @@ class SparseMatrix
 
     optix::Buffer GetValuesBuffer() const;
 
+    void SetZero();
+
   protected:
 
     void AllocateValues(size_t size);

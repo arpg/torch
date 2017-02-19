@@ -45,7 +45,7 @@ __global__ void EvaluateKernel(const float* params, float* residuals,
     const float albedoNorm = length(albedo);
 
     // indicates if albedo is black
-    const bool isBlack = albedoNorm < 1E-4;
+    const bool isBlack = albedoNorm < 0.1f;
 
     // chromaticity of vertex
     float3 chrom = (isBlack) ? make_float3(0, 0, 0) : albedo / albedoNorm;
@@ -108,7 +108,7 @@ __global__ void EvaluateKernel(const float* params, float* residuals,
       const float adjAlbedoNorm = length(adjAlbedo);
 
       // indicates if adjacent albedo is black
-      const bool adjIsBlack = adjAlbedoNorm < 1E-4;
+      const bool adjIsBlack = adjAlbedoNorm < 0.1f;
 
 
       // check if adjacent vertex is not black
