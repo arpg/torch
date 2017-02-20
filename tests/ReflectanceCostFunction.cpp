@@ -74,6 +74,8 @@ TEST(ReflectanceCostFunction, Gradient)
   problem.AddResidualBlock(costFunction, nullptr, values);
 
   problem.CheckGradients();
+
+  LYNX_CHECK_CUDA(cudaFree(values));
 }
 
 TEST(ReflectanceCostFunction, Optimization)
@@ -146,6 +148,8 @@ TEST(ReflectanceCostFunction, Optimization)
   solver.Solve(&summary);
 
   ASSERT_TRUE(summary.solutionUsable && summary.finalCost < 1E-6);
+
+  LYNX_CHECK_CUDA(cudaFree(values));
 }
 
 } // namespace testing

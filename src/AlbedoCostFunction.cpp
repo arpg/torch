@@ -218,6 +218,9 @@ void AlbedoCostFunction::CreatePixelVertexBuffer()
 
   m_valueCount = totalCount;
 
+  LYNX_CHECK_CUDA(cudaFree(m_rowIndices));
+  LYNX_CHECK_CUDA(cudaFree(m_colIndices));
+
   const size_t bytes = sizeof(float) * totalCount;
   LYNX_CHECK_CUDA(cudaMalloc(&m_rowIndices, bytes));
   LYNX_CHECK_CUDA(cudaMalloc(&m_colIndices, bytes));

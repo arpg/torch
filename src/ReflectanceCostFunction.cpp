@@ -16,7 +16,8 @@ ReflectanceCostFunction::ReflectanceCostFunction(
   m_adjacencyMap(nullptr),
   m_adjacencyOffsets(nullptr),
   m_chromThreshold(0.5),
-  m_weight(1.0)
+  m_weight(1.0),
+  m_rowIndices(nullptr)
 {
   Initialize();
 }
@@ -25,6 +26,7 @@ ReflectanceCostFunction::~ReflectanceCostFunction()
 {
   cudaFree(m_adjacencyMap);
   cudaFree(m_adjacencyOffsets);
+  cudaFree(m_rowIndices);
 }
 
 float ReflectanceCostFunction::GetChromaticityThreshold() const
