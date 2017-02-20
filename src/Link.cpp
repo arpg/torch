@@ -39,6 +39,16 @@ Transform Link::GetTransform() const
   return m_transform;
 }
 
+void Link::Clear()
+{
+  m_material = nullptr;
+  m_group->setChildCount(0);
+  m_geomGroup->setChildCount(0);
+  m_group->getAcceleration()->markDirty();
+  m_geomGroup->getAcceleration()->markDirty();
+  m_group->addChild(m_geomGroup);
+}
+
 void Link::Initialize()
 {
   CreateGeometryGroup();

@@ -3,6 +3,7 @@
 #include <torch/GeometrySampler.h>
 #include <torch/Group.h>
 #include <torch/LightSampler.h>
+#include <torch/Link.h>
 #include <torch/SceneGeometrySampler.h>
 #include <torch/SceneLightSampler.h>
 #include <torch/device/Camera.h>
@@ -227,9 +228,11 @@ void Context::PreBuildScene()
 
 void Context::BuildScene()
 {
+  m_link->Clear();
   optix::Variable variable;
   variable = m_context["sceneRoot"];
-  m_sceneRoot->BuildScene(variable);
+  m_sceneRoot->BuildScene(*m_link);
+  m_link->Write(variable);
 }
 
 void Context::PostBuildScene()
@@ -262,6 +265,7 @@ void Context::Initialize()
   CreateLightSampler();
   CreateGeometrySampler();
   CreateEmptyProgram();
+  CreateLink();
 
   optix::Program sparseProgram = CreateProgram(PtxUtil::GetFile("Context"), "SparseDoNothing");
   m_context["AddToAlbedoJacobian"]->setProgramId(sparseProgram);
@@ -329,6 +333,11 @@ void Context::CreateEmptyProgram()
   const std::string file = PtxUtil::GetFile("Context");
   m_emptyProgram = m_context->createProgramFromPTXFile(file, "DoNothing");
   m_emptyProgramId = RegisterLaunchProgram(m_emptyProgram);
+}
+
+void Context::CreateLink()
+{
+  m_link = std::make_unique<Link>(shared_from_this());
 }
 
 } // namespace torch

@@ -95,6 +95,8 @@ class Context : public std::enable_shared_from_this<Context>
 
     void CreateEmptyProgram();
 
+    void CreateLink();
+
   protected:
 
     bool m_dirty;
@@ -120,6 +122,8 @@ class Context : public std::enable_shared_from_this<Context>
     optix::Buffer m_errorBuffer;
 
     BoundingBox m_bounds;
+
+    std::unique_ptr<Link> m_link;
 };
 
 } // namespace torch

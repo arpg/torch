@@ -22,6 +22,8 @@ class Link
 
     Transform GetTransform() const;
 
+    void Clear();
+
   private:
 
     void Initialize();
