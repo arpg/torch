@@ -1,4 +1,5 @@
 #include <torch/Transform.h>
+#include <Eigen/Eigen>
 #include <torch/BoundingBox.h>
 #include <torch/Normal.h>
 #include <torch/Point.h>
@@ -76,6 +77,14 @@ void Transform::SetRotation(const optix::Matrix3x3& rotation)
   std::copy(&src[6], &src[9], &dst[8]);
 
   m_matrix = M * S;
+}
+
+void Transform::SetRotation(float x, float y, float z, float w)
+{
+  Eigen::Quaternionf quaternion(w, x, y, z);
+  Eigen::Matrix3f matrix(quaternion);
+  Eigen::Vector3f angles = matrix.eulerAngles(0, 1, 2);
+  SetRotation(angles[0], angles[1], angles[2]);
 }
 
 void Transform::SetRotation(float x, float y, float z)

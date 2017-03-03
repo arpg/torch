@@ -4,9 +4,7 @@
 #include <string>
 
 #define TORCH_ASSERT(condition, message) \
-{ \
-  if (!(condition)) throw Exception(message); \
-}
+{ if (!(condition)) throw ::torch::Exception(message); }
 
 namespace torch
 {

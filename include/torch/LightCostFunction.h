@@ -65,6 +65,8 @@ class LightCostFunction : public lynx::CostFunction
     float* m_jacobianValues;
 
     float* m_referenceValues;
+
+    unsigned int m_iterations;
 };
 
 } // namespace torch

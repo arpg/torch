@@ -15,6 +15,10 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 # find required packages
 
+find_package(OpenMP)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+
 find_package(CUDA REQUIRED)
 list(APPEND REQUIRED_INCLUDE_DIRS ${CUDA_INCLUDE_DIRS})
 list(APPEND REQUIRED_LIBRARIES ${CUDA_LIBRARIES})
@@ -42,6 +46,9 @@ list(APPEND REQUIRED_LIBRARIES ${Assimp_LIBRARIES})
 find_package(TinyXML2 REQUIRED)
 list(APPEND REQUIRED_INCLUDE_DIRS ${TinyXML2_INCLUDE_DIRS})
 list(APPEND REQUIRED_LIBRARIES ${TinyXML2_LIBRARIES})
+
+find_package(Eigen3 REQUIRED)
+list(APPEND REQUIRED_INCLUDE_DIRS ${EIGEN3_INCLUDE_DIR})
 
 find_package(Lynx QUIET)
 
@@ -233,6 +240,7 @@ if(Lynx_FOUND)
 list(APPEND CPP_HEADERS
   ${CPP_HEADER_DIR}/ActivationCostFunction.h
   ${CPP_HEADER_DIR}/AlbedoCostFunction.h
+  ${CPP_HEADER_DIR}/DarkenCostFunction.h
   ${CPP_HEADER_DIR}/LightCostFunction.h
   ${CPP_HEADER_DIR}/ReflectanceCostFunction.h
 )
@@ -240,6 +248,7 @@ list(APPEND CPP_HEADERS
 list(APPEND CPP_SOURCES
   ${CPP_SOURCE_DIR}/ActivationCostFunction.cpp
   ${CPP_SOURCE_DIR}/AlbedoCostFunction.cpp
+  ${CPP_SOURCE_DIR}/DarkenCostFunction.cpp
   ${CPP_SOURCE_DIR}/LightCostFunction.cpp
   ${CPP_SOURCE_DIR}/ReflectanceCostFunction.cpp
 )
@@ -280,6 +289,8 @@ add_custom_target(PTX_FILES ALL
 cuda_add_library(torch_cuda SHARED
   ${CUDA_SOURCE_DIR}/ActivationCostFunction.cu
   ${CUDA_HEADER_DIR}/ActivationCostFunction.cuh
+  ${CUDA_SOURCE_DIR}/DarkenCostFunction.cu
+  ${CUDA_HEADER_DIR}/DarkenCostFunction.cuh
   ${CUDA_SOURCE_DIR}/ReflectanceCostFunction.cu
   ${CUDA_HEADER_DIR}/ReflectanceCostFunction.cuh
 )

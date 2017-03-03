@@ -21,6 +21,8 @@ class Transform
 
     void SetRotation(const optix::Matrix3x3& rotation);
 
+    void SetRotation(float x, float y, float z, float w);
+
     void SetRotation(float x, float y, float z);
 
     void SetRotation(const Vector& rotation);

@@ -34,6 +34,7 @@ set(TEST_CPP_SOURCE_DIR .)
 
 set(TEST_CPP_SOURCES
   ${TEST_CPP_SOURCE_DIR}/ActivationCostFunction.cpp
+  ${TEST_CPP_SOURCE_DIR}/DarkenCostFunction.cpp
   ${TEST_CPP_SOURCE_DIR}/AlbedoCostFunction.cpp
   ${TEST_CPP_SOURCE_DIR}/Distribution1D.cpp
   ${TEST_CPP_SOURCE_DIR}/Distribution2D.cpp

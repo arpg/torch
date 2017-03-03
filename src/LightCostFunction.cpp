@@ -14,7 +14,8 @@ LightCostFunction::LightCostFunction(
   m_locked(false),
   m_light(light),
   m_jacobianValues(nullptr),
-  m_referenceValues(nullptr)
+  m_referenceValues(nullptr),
+  m_iterations(0)
 {
   Initialize();
 }
@@ -99,6 +100,7 @@ void LightCostFunction::ComputeJacobian()
 
   const size_t launchSize = m_keyframes->GetValidPixelCount();
   std::shared_ptr<Context> context = m_light->GetContext();
+  m_program["iteration"]->setUint(m_iterations++);
   context->GetVariable("computeLightDerivs")->setUint(true);
   context->Launch(m_programId, launchSize);
   context->GetVariable("computeLightDerivs")->setUint(false);

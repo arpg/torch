@@ -17,6 +17,8 @@ class Transformable
 
     Vector GetOrientation() const;
 
+    void SetOrientation(float x, float y, float z, float w);
+
     void SetOrientation(float x, float y, float z);
 
     Vector GetPosition() const;

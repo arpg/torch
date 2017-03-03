@@ -10,6 +10,7 @@ rtBuffer<torch::PixelSample> pixelSamples;
 rtBuffer<float3> render;
 rtDeclareVariable(uint, computeAlbedoDerivs, , );
 rtDeclareVariable(uint, computeLightDerivs, , );
+rtDeclareVariable(uint, iteration, , );
 
 static __inline__ __device__
 void GetDirection(float3& direction, unsigned int& seed, unsigned int i)
@@ -44,7 +45,7 @@ TORCH_DEVICE unsigned int InitializeSeed()
 {
   const uint2& pixelIndex = pixelSamples[launchIndex].uv;
   unsigned int a = pixelIndex.x;
-  unsigned int b = pixelIndex.y;
+  unsigned int b = iteration;
   return torch::init_seed<16>(a, b);
 }
 
