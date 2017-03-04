@@ -43,8 +43,8 @@ void BuildScene()
 
   // mesh = scene->CreateMesh("/home/mike/Desktop/Datasets/PurpleRoomCorner02/painted_mesh.ply");
   // std::shared_ptr<Material> temp = scene->CreateMaterial("/home/mike/Desktop/Datasets/PurpleRoomCorner02/painted_mesh.ply");
-  mesh = scene->CreateMesh("/home/mike/Desktop/out_mesh_small.ply");
-  std::shared_ptr<Material> temp = scene->CreateMaterial("/home/mike/Desktop/out_mesh_small.ply");
+  mesh = scene->CreateMesh("/home/mike/Desktop/out_mesh_med.ply");
+  std::shared_ptr<Material> temp = scene->CreateMaterial("/home/mike/Desktop/out_mesh_med.ply");
   material = std::static_pointer_cast<MatteMaterial>(temp);
 
   std::shared_ptr<Primitive> primitive;
@@ -54,25 +54,31 @@ void BuildScene()
   scene->Add(primitive);
 
   light = scene->CreateVoxelLight();
-  light->SetDimensions(11, 11, 11);
-  light->SetVoxelSize(2.0 / 9);
+  light->SetDimensions(13, 13, 13);
+  light->SetVoxelSize(3.0 / 13);
   // light->SetRadiance(0.001, 0.001, 0.001);
   // light->SetRadiance(67 , Spectrum::FromRGB(2.75, 2.75, 2.75));
-  light->SetRadiance(1E-5, 1E-5, 1E-5);
+  light->SetRadiance(1E-8, 1E-8, 1E-8);
   scene->Add(light);
 
-  cameras.resize(1);
+  cameras.resize(2);
 
   const float scale = 2;
   cameras[0] = scene->CreateCamera();
   cameras[0]->SetImageSize(640 / scale, 480 / scale);
   cameras[0]->SetFocalLength(535.7239 / scale, 536.2900 / scale);
   cameras[0]->SetCenterPoint(320.2685 / scale, 240.2924 / scale);
-  // cameras[0]->SetOrientation(-0.00242877, -0.0601033, -0.0349038, 0.997579);
-  // cameras[0]->SetPosition(0.0761918, 0.124095, 0.00571185);
   cameras[0]->SetOrientation(-0.000125662, 0.0251924, -0.00142194, 0.999682);
   cameras[0]->SetPosition(-0.00808962, 0.0115375, -0.0037175);
   cameras[0]->SetSampleCount(5);
+
+  cameras[1] = scene->CreateCamera();
+  cameras[1]->SetImageSize(640 / scale, 480 / scale);
+  cameras[1]->SetFocalLength(535.7239 / scale, 536.2900 / scale);
+  cameras[1]->SetCenterPoint(320.2685 / scale, 240.2924 / scale);
+  cameras[1]->SetOrientation(-0.138295, 0.061163, -0.00884129, 0.988461);
+  cameras[1]->SetPosition(0.0614314, 0.108683, -0.052174);
+  cameras[1]->SetSampleCount(5);
 
   // const float scale = 1;
   // cameras[0] = scene->CreateCamera();
@@ -126,7 +132,11 @@ void BuildScene()
     // image->Save("reference_" + std::to_string(i) + ".png");
     // image->Load("/home/mike/Desktop/Datasets/PurpleRoomCorner02/clean/image_rgb_00160.ppm");
     // image->Load("/home/mike/Desktop/image_rgb_00160.ppm");
-    image->Load("/home/mike/Desktop/image_rgb_00019_big.ppm");
+
+    if (i == 0)
+      image->Load("/home/mike/Desktop/image_rgb_00019_big.ppm");
+    else
+      image->Load("/home/mike/Desktop/image_rgb_00077_big.ppm");
 
     keyframes[i] = std::make_shared<Keyframe>(camera, image);
   }

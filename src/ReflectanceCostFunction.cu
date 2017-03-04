@@ -21,8 +21,6 @@ __global__ void EvaluateKernel(const float* params, float* residuals,
   // vertex-channel index in CONSTRAINTS
   const unsigned int threadIndex = blockIdx.x * blockDim.x + threadIdx.x;
 
-
-
   // check if thread is valid
   if (threadIndex < size)
   {
@@ -201,7 +199,7 @@ void Evaluate(const float* params, float* residual, float* jacobian,
   const size_t blockDim = (size > 1024) ? 1024 : size;
   const size_t gridDim = (size + blockDim - 1) / blockDim;
 
-  EvaluateKernel<<<blockDim, gridDim>>>(params, residual, jacobian, size,
+  EvaluateKernel<<<gridDim, blockDim>>>(params, residual, jacobian, size,
       map, offsets, chromThreshold, weight);
 }
 
