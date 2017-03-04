@@ -28,7 +28,7 @@ void Evaluate(const float* params, float* residual, float* jacobian,
   const size_t blockDim = (size > 1024) ? 1024 : size;
   const size_t gridDim = (size + blockDim - 1) / blockDim;
 
-  EvaluateKernel<<<blockDim, gridDim>>>(params, residual, jacobian, size,
+  EvaluateKernel<<<gridDim, blockDim>>>(params, residual, jacobian, size,
       bias, inScale, outScale);
 }
 
