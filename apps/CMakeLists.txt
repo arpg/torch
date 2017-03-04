@@ -10,6 +10,10 @@ add_executable(image_processor image_processor.cpp)
 target_link_libraries(image_processor ${LIBRARY_NAME})
 add_dependencies(image_processor ${LIBRARY_NAME})
 
+add_executable(voxel_demo voxel_demo.cpp)
+target_link_libraries(voxel_demo ${LIBRARY_NAME})
+add_dependencies(voxel_demo ${LIBRARY_NAME})
+
 find_package(Eigen3 QUIET)
 
 if(EIGEN3_FOUND)

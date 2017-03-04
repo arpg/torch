@@ -9,7 +9,7 @@ class Distribution1D
 {
   public:
 
-    Distribution1D(std::shared_ptr<Context> context);
+    Distribution1D(std::shared_ptr<Context> context, bool useSecondName = false);
 
     optix::Program GetProgram() const;
 
@@ -30,6 +30,8 @@ class Distribution1D
     void CreateBuffer();
 
   protected:
+
+    bool m_useSecondName;
 
     std::shared_ptr<Context> m_context;
 

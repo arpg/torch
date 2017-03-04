@@ -13,6 +13,7 @@
 #include <torch/PointLight.h>
 #include <torch/Primitive.h>
 #include <torch/Sphere.h>
+#include <torch/VoxelLight.h>
 
 namespace torch
 {
@@ -78,6 +79,11 @@ std::shared_ptr<EnvironmentLight> Scene::CreateEnvironmentLight()
 std::shared_ptr<PointLight> Scene::CreatePointLight()
 {
   return CreateObject<PointLight>();
+}
+
+std::shared_ptr<VoxelLight> Scene::CreateVoxelLight()
+{
+  return CreateObject<VoxelLight>();
 }
 
 std::shared_ptr<Primitive> Scene::CreatePrimitive()

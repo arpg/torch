@@ -75,5 +75,6 @@ class Transform;
 class Transformable;
 class Vector;
 class VoxelLight;
+class VoxelLightData;
 
 } // namespace torch

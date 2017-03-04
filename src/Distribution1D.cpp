@@ -5,7 +5,9 @@
 namespace torch
 {
 
-Distribution1D::Distribution1D(std::shared_ptr<Context> context) :
+Distribution1D::Distribution1D(std::shared_ptr<Context> context,
+    bool useSecondName) :
+  m_useSecondName(useSecondName),
   m_context(context)
 {
   Initialize();
@@ -56,8 +58,9 @@ void Distribution1D::Initialize()
 
 void Distribution1D::CreateProgram()
 {
+  const std::string name = (m_useSecondName) ? "Sample2" : "Sample";
   const std::string file = PtxUtil::GetFile("Distribution1D");
-  m_program = m_context->CreateProgram(file, "Sample");
+  m_program = m_context->CreateProgram(file, name);
 }
 
 void Distribution1D::CreateBuffer()

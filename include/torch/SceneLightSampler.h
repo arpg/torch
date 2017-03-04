@@ -21,6 +21,8 @@ class SceneLightSampler
 
     void Add(const PointLightData& light);
 
+    void Add(const VoxelLightData& light);
+
     void Clear();
 
     void Update();

@@ -129,6 +129,7 @@ set(CPP_HEADERS
   ${CPP_HEADER_DIR}/Transform.h
   ${CPP_HEADER_DIR}/Vector.h
   ${CPP_HEADER_DIR}/VoxelLight.h
+  ${CPP_HEADER_DIR}/VoxelLightSampler.h
 )
 
 # define c++ sources
@@ -189,6 +190,7 @@ set(CPP_SOURCES
   ${CPP_SOURCE_DIR}/Transform.cpp
   ${CPP_SOURCE_DIR}/Vector.cpp
   ${CPP_SOURCE_DIR}/VoxelLight.cpp
+  ${CPP_SOURCE_DIR}/VoxelLightSampler.cpp
 )
 
 # define cuda headers
@@ -234,7 +236,7 @@ set(CUDA_SOURCES
   ${CUDA_SOURCE_DIR}/SparseMatrix.cu
   ${CUDA_SOURCE_DIR}/Sphere.cu
   ${CUDA_SOURCE_DIR}/SphereSampler.cu
-  ${CUDA_SOURCE_DIR}/VoxelLight.cu
+  ${CUDA_SOURCE_DIR}/VoxelLightSampler.cu
 )
 
 # add Lynx-dependent files if possible

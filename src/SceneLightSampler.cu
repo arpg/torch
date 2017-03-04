@@ -10,6 +10,7 @@ rtDeclareVariable(SampleFunction, SampleAreaLights, , );
 rtDeclareVariable(SampleFunction, SampleDirectionalLights, , );
 rtDeclareVariable(SampleFunction, SampleEnvironmentLights, , );
 rtDeclareVariable(SampleFunction, SamplePointLights, , );
+rtDeclareVariable(SampleFunction, SampleVoxelLights, , );
 
 RT_CALLABLE_PROGRAM void Sample(torch::LightSample& sample)
 {
@@ -39,6 +40,10 @@ RT_CALLABLE_PROGRAM void Sample(torch::LightSample& sample)
 
     case torch::LIGHT_TYPE_POINT:
       SamplePointLights(sample);
+      break;
+
+    case torch::LIGHT_TYPE_VOXEL:
+      SampleVoxelLights(sample);
       break;
   }
 

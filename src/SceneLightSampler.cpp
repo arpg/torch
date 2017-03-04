@@ -6,6 +6,7 @@
 #include <torch/EnvironmentLightSampler.h>
 #include <torch/PointLightSampler.h>
 #include <torch/PtxUtil.h>
+#include <torch/VoxelLightSampler.h>
 #include <torch/device/Light.h>
 
 namespace torch
@@ -44,6 +45,12 @@ void SceneLightSampler::Add(const PointLightData& light)
 {
   LightSampler* sampler = m_samplers[LIGHT_TYPE_POINT].get();
   static_cast<PointLightSampler*>(sampler)->Add(light);
+}
+
+void SceneLightSampler::Add(const VoxelLightData& light)
+{
+  LightSampler* sampler = m_samplers[LIGHT_TYPE_VOXEL].get();
+  static_cast<VoxelLightSampler*>(sampler)->Add(light);
 }
 
 void SceneLightSampler::Clear()
@@ -120,6 +127,10 @@ void SceneLightSampler::CreateLightSamplers()
   sampler = std::make_unique<PointLightSampler>(m_context);
   m_program["SamplePointLights"]->set(sampler.get()->GetProgram());
   m_samplers[LIGHT_TYPE_POINT] = std::move(sampler);
+
+  sampler = std::make_unique<VoxelLightSampler>(m_context);
+  m_program["SampleVoxelLights"]->set(sampler.get()->GetProgram());
+  m_samplers[LIGHT_TYPE_VOXEL] = std::move(sampler);
 }
 
 } // namespace torch

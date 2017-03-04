@@ -12,6 +12,7 @@ enum LightType
   LIGHT_TYPE_DIRECTIONAL,
   LIGHT_TYPE_ENVIRONMENT,
   LIGHT_TYPE_POINT,
+  LIGHT_TYPE_VOXEL,
   LIGHT_TYPE_COUNT
 };
 
@@ -60,6 +61,24 @@ struct PointLightData
   float3 position;
   float3 intensity;
   float luminance;
+};
+
+struct VoxelLightData
+{
+  optix::Matrix3x4 transform;
+  int distributionId;
+  int radianceId;
+  int derivId;
+  uint3 dimensions;
+  float voxelSize;
+  float luminance;
+};
+
+struct VoxelLightSubData
+{
+  optix::Matrix3x4 transform;
+  uint3 dimensions;
+  float voxelSize;
 };
 
 } // namespace torch
