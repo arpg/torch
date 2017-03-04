@@ -65,8 +65,13 @@ TEST(ActivationCostFunction, Optimization)
   costFunction = new torch::ActivationCostFunction(light);
   problem.AddResidualBlock(costFunction, nullptr, values);
 
-  lynx::Solver::Summary summary;
+  lynx::Solver::Options options;
+  options.maxIterations = 10000;
+
   lynx::Solver solver(&problem);
+  solver.Configure(options);
+
+  lynx::Solver::Summary summary;
   solver.Solve(&summary);
 
   ASSERT_TRUE(summary.solutionUsable && summary.finalCost < 1E-6);

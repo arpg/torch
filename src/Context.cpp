@@ -285,6 +285,7 @@ void Context::Initialize()
   m_context["cameras"]->setBuffer(cameras);
 
   m_context["computeLightDerivs"]->setUint(0);
+  m_context["computeVoxelDerivs"]->setUint(0);
   m_context["computeAlbedoDerivs"]->setUint(0);
 }
 

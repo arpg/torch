@@ -18,11 +18,10 @@ Eigen::Matrix4f GetRotationMatrix(const Vector& rotation)
   return result;
 }
 
-Eigen::Matrix4f GetRotationMatrix(const optix::Matrix4x4& rotation)
+const Eigen::Matrix4f GetRotationMatrix(const optix::Matrix4x4& rotation)
 {
-  optix::Matrix4x4 transpose = rotation.transpose();
   typedef Eigen::Matrix<float, 4, 4, Eigen::RowMajor> RowMatrix;
-  return Eigen::Map<RowMatrix>(transpose.getData());
+  return Eigen::Map<const RowMatrix>(rotation.getData());
 }
 
 TEST(Transform, Translation)

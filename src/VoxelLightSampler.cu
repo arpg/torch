@@ -1,3 +1,4 @@
+#include <torch/device/Camera.h>
 #include <torch/device/Light.h>
 #include <torch/device/Random.h>
 #include <torch/device/Visibility.h>
@@ -10,6 +11,12 @@ rtBuffer<Distribution1DId> SampleLight;
 
 rtBuffer<torch::VoxelLightSubData> subdata;
 rtBuffer<rtBufferId<float3, 1>, 1> radiance;
+
+rtDeclareVariable(uint, computeVoxelDerivs, , );
+rtDeclareVariable(uint2, launchIndex, rtLaunchIndex, );
+rtBuffer<torch::CameraData> cameras;
+rtBuffer<torch::PixelSample> pixelSamples;
+rtBuffer<rtBufferId<float3, 2>, 1> lightDerivatives;
 
 TORCH_DEVICE uint3 GetIndices(uint light, uint voxel)
 {
@@ -124,5 +131,13 @@ RT_CALLABLE_PROGRAM void Sample(torch::LightSample& sample)
   const bool visible = torch::IsVisible(sample);
   if (!visible) sample.radiance = make_float3(0, 0, 0);
 
-  // TODO: compute derivs
+  if (computeVoxelDerivs && visible) // TODO: check if light has non-empty derivs
+  {
+    float distance = sample.tmax;
+    const float radius = subdata[light].voxelSize / 2.0f;
+    const float area = 4 * M_PIf * radius * radius;
+    const float theta = dot(sample.direction, sample.snormal);
+    const uint2 derivIndex = make_uint2(launchIndex.x, voxel);
+    lightDerivatives[light][derivIndex] -= theta * sample.throughput / (sample.pdf * distance * area);
+  }
 }

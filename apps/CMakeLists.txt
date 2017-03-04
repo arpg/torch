@@ -2,10 +2,6 @@ add_executable(main main.cpp)
 target_link_libraries(main ${LIBRARY_NAME})
 add_dependencies(main ${LIBRARY_NAME})
 
-add_executable(optim optim.cpp)
-target_link_libraries(optim ${LIBRARY_NAME})
-add_dependencies(optim ${LIBRARY_NAME})
-
 add_executable(image_processor image_processor.cpp)
 target_link_libraries(image_processor ${LIBRARY_NAME})
 add_dependencies(image_processor ${LIBRARY_NAME})

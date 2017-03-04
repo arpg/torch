@@ -8,9 +8,7 @@ rtDeclareVariable(uint, launchIndex, rtLaunchIndex, );
 rtBuffer<torch::CameraData> cameras;
 rtBuffer<torch::PixelSample> pixelSamples;
 rtBuffer<float3> render;
-rtBuffer<float3, 2> lightDerivatives;
-rtDeclareVariable(uint, computeAlbedoDerivs, , );
-rtDeclareVariable(uint, computeLightDerivs, , );
+rtDeclareVariable(uint, iteration, , );
 
 static __inline__ __device__
 void GetDirection(float3& direction, unsigned int& seed, unsigned int i)
@@ -45,7 +43,7 @@ TORCH_DEVICE unsigned int InitializeSeed()
 {
   const uint2& pixelIndex = pixelSamples[launchIndex].uv;
   unsigned int a = pixelIndex.x;
-  unsigned int b = pixelIndex.y;
+  unsigned int b = iteration;
   return torch::init_seed<16>(a, b);
 }
 
@@ -64,15 +62,6 @@ RT_PROGRAM void Capture()
   InitializeRay(ray);
   data.radiance = make_float3(0, 0, 0);
   const unsigned int totalSamples = sampleCount * sampleCount;
-
-  if (computeLightDerivs)
-  {
-    for (size_t i = 0; i < lightDerivatives.size().x; ++i)
-    {
-      const uint2 derivIndex = make_uint2(i, launchIndex);
-      lightDerivatives[derivIndex] = make_float3(0, 0, 0);
-    }
-  }
 
   for (unsigned int i = 0; i < totalSamples; ++i)
   {

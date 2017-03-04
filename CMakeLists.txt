@@ -115,7 +115,6 @@ set(CPP_HEADERS
   ${CPP_HEADER_DIR}/PointLight.h
   ${CPP_HEADER_DIR}/PointLightSampler.h
   ${CPP_HEADER_DIR}/Primitive.h
-  ${CPP_HEADER_DIR}/Problem.h
   ${CPP_HEADER_DIR}/Scene.h
   ${CPP_HEADER_DIR}/SceneGeometrySampler.h
   ${CPP_HEADER_DIR}/SceneLightSampler.h
@@ -176,7 +175,6 @@ set(CPP_SOURCES
   ${CPP_SOURCE_DIR}/PointLight.cpp
   ${CPP_SOURCE_DIR}/PointLightSampler.cpp
   ${CPP_SOURCE_DIR}/Primitive.cpp
-  ${CPP_SOURCE_DIR}/Problem.cpp
   ${CPP_SOURCE_DIR}/Scene.cpp
   ${CPP_SOURCE_DIR}/SceneGeometrySampler.cpp
   ${CPP_SOURCE_DIR}/SceneLightSampler.cpp
@@ -230,7 +228,6 @@ set(CUDA_SOURCES
   ${CUDA_SOURCE_DIR}/Mesh.cu
   ${CUDA_SOURCE_DIR}/MeshSampler.cu
   ${CUDA_SOURCE_DIR}/PointLightSampler.cu
-  ${CUDA_SOURCE_DIR}/Problem.cu
   ${CUDA_SOURCE_DIR}/SceneGeometrySampler.cu
   ${CUDA_SOURCE_DIR}/SceneLightSampler.cu
   ${CUDA_SOURCE_DIR}/SparseMatrix.cu
@@ -249,6 +246,7 @@ list(APPEND CPP_HEADERS
   ${CPP_HEADER_DIR}/DarkenCostFunction.h
   ${CPP_HEADER_DIR}/LightCostFunction.h
   ${CPP_HEADER_DIR}/ReflectanceCostFunction.h
+  ${CPP_HEADER_DIR}/VoxelCostFunction.h
 )
 
 list(APPEND CPP_SOURCES
@@ -257,11 +255,13 @@ list(APPEND CPP_SOURCES
   ${CPP_SOURCE_DIR}/DarkenCostFunction.cpp
   ${CPP_SOURCE_DIR}/LightCostFunction.cpp
   ${CPP_SOURCE_DIR}/ReflectanceCostFunction.cpp
+  ${CPP_SOURCE_DIR}/VoxelCostFunction.cpp
 )
 
 list(APPEND CUDA_SOURCES
   ${CUDA_SOURCE_DIR}/AlbedoCostFunction.cu
   ${CUDA_SOURCE_DIR}/LightCostFunction.cu
+  ${CUDA_SOURCE_DIR}/VoxelCostFunction.cu
 )
 
 endif()

@@ -67,7 +67,7 @@ TEST(AlbedoCostFunction, Gradient)
   camera->SetImageSize(160, 120);
   camera->SetFocalLength(80, 80);
   camera->SetCenterPoint(80, 60);
-  camera->SetSampleCount(10);
+  camera->SetSampleCount(32);
 
   std::shared_ptr<Image> image;
   image = std::make_shared<Image>();
@@ -164,7 +164,7 @@ TEST(AlbedoCostFunction, Optimization)
   camera->SetImageSize(160, 120);
   camera->SetFocalLength(80, 80);
   camera->SetCenterPoint(80, 60);
-  camera->SetSampleCount(10);
+  camera->SetSampleCount(32);
 
   std::shared_ptr<Image> image;
   image = std::make_shared<Image>();
@@ -197,8 +197,13 @@ TEST(AlbedoCostFunction, Optimization)
   costFunction->AddKeyframe(keyframe);
   problem.AddResidualBlock(costFunction, nullptr, values);
 
-  lynx::Solver::Summary summary;
+  lynx::Solver::Options options;
+  options.maxIterations = 10000;
+
   lynx::Solver solver(&problem);
+  solver.Configure(options);
+
+  lynx::Solver::Summary summary;
   solver.Solve(&summary);
 
   ASSERT_TRUE(summary.solutionUsable && summary.finalCost < 1E-6);

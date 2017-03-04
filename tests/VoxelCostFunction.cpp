@@ -8,7 +8,7 @@ namespace torch
 namespace testing
 {
 
-TEST(LightCostFunction, Gradient)
+TEST(VoxelCostFunction, Gradient)
 {
   Scene scene;
 
@@ -27,10 +27,12 @@ TEST(LightCostFunction, Gradient)
   primitive->SetPosition(0, 0, 1);
   scene.Add(primitive);
 
-  std::shared_ptr<EnvironmentLight> light;
-  light = scene.CreateEnvironmentLight();
-  light->SetRowCount(6);
-  light->SetRadiance(0.5, 0.5, 0.5);
+  std::shared_ptr<VoxelLight> light;
+  light = scene.CreateVoxelLight();
+  light->SetDimensions(10, 1, 1);
+  light->SetVoxelSize(0.25);
+  light->SetPosition(0, 0, -1);
+  light->SetRadiance(0.01, 0.00, 0.00);
   scene.Add(light);
 
   std::shared_ptr<Camera> camera;
@@ -46,6 +48,8 @@ TEST(LightCostFunction, Gradient)
   image = std::make_shared<Image>();
   camera->Capture(*image);
 
+  image->Save("test_image2.png");
+
   std::shared_ptr<Keyframe> keyframe;
   keyframe = std::make_shared<Keyframe>(camera, image);
 
@@ -55,18 +59,18 @@ TEST(LightCostFunction, Gradient)
   CUdeviceptr pointer = buffer->getDevicePointer(0);
   float* values = reinterpret_cast<float*>(pointer);
 
-  problem.AddParameterBlock(values, 3 * light->GetDirectionCount());
+  problem.AddParameterBlock(values, 3 * light->GetVoxelCount());
   problem.SetLowerBound(values, 0.0f);
 
-  torch::LightCostFunction* costFunction;
-  costFunction = new torch::LightCostFunction(light);
+  torch::VoxelCostFunction* costFunction;
+  costFunction = new torch::VoxelCostFunction(light);
   costFunction->AddKeyframe(keyframe);
   problem.AddResidualBlock(costFunction, nullptr, values);
 
   problem.CheckGradients();
 }
 
-TEST(LightCostFunction, Optimization)
+TEST(VoxelCostFunction, Optimization)
 {
   Scene scene;
 
@@ -85,11 +89,13 @@ TEST(LightCostFunction, Optimization)
   primitive->SetPosition(0, 0, 1);
   scene.Add(primitive);
 
-  std::shared_ptr<EnvironmentLight> light;
-  light = scene.CreateEnvironmentLight();
-  light->SetRowCount(3);
+  std::shared_ptr<VoxelLight> light;
+  light = scene.CreateVoxelLight();
+  light->SetDimensions(2, 1, 1);
+  light->SetVoxelSize(0.25);
+  light->SetPosition(0, 0, -1);
   light->SetRadiance(0.01, 0.00, 0.00);
-  light->SetRadiance(0, Spectrum::FromRGB(5.0, 0.0, 0.0));
+  light->SetRadiance(0, Spectrum::FromRGB(2.0, 0.0, 0.0));
   scene.Add(light);
 
   std::shared_ptr<Camera> camera;
@@ -105,9 +111,6 @@ TEST(LightCostFunction, Optimization)
   image = std::make_shared<Image>();
   camera->Capture(*image);
 
-  light->SetRadiance(0.01, 0.00, 0.00);
-  light->GetContext()->Compile();
-
   std::shared_ptr<Keyframe> keyframe;
   keyframe = std::make_shared<Keyframe>(camera, image);
 
@@ -117,11 +120,14 @@ TEST(LightCostFunction, Optimization)
   CUdeviceptr pointer = buffer->getDevicePointer(0);
   float* values = reinterpret_cast<float*>(pointer);
 
-  problem.AddParameterBlock(values, 3 * light->GetDirectionCount());
+  light->SetRadiance(0.01, 0.00, 0.00);
+  light->GetContext()->Compile();
+
+  problem.AddParameterBlock(values, 3 * light->GetVoxelCount());
   problem.SetLowerBound(values, 0.0f);
 
-  torch::LightCostFunction* costFunction;
-  costFunction = new torch::LightCostFunction(light);
+  torch::VoxelCostFunction* costFunction;
+  costFunction = new torch::VoxelCostFunction(light);
   costFunction->AddKeyframe(keyframe);
   problem.AddResidualBlock(costFunction, nullptr, values);
 
@@ -133,8 +139,6 @@ TEST(LightCostFunction, Optimization)
 
   lynx::Solver::Summary summary;
   solver.Solve(&summary);
-
-  std::cout << summary.BriefReport() << std::endl;
 
   ASSERT_TRUE(summary.solutionUsable && summary.finalCost < 0.1 &&
       !std::isnan(summary.finalCost) && !std::isinf(summary.finalCost));
