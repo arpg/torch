@@ -41,8 +41,10 @@ void BuildScene()
   // std::fill(albedos.begin(), albedos.end(), Spectrum::FromRGB(0.5, 0.5, 0.5));
   // material->SetAlbedos(albedos);
 
-  mesh = scene->CreateMesh("/home/mike/Desktop/Datasets/PurpleRoomCorner02/painted_mesh.ply");
-  std::shared_ptr<Material> temp = scene->CreateMaterial("/home/mike/Desktop/Datasets/PurpleRoomCorner02/painted_mesh.ply");
+  // mesh = scene->CreateMesh("/home/mike/Desktop/Datasets/PurpleRoomCorner02/painted_mesh.ply");
+  // std::shared_ptr<Material> temp = scene->CreateMaterial("/home/mike/Desktop/Datasets/PurpleRoomCorner02/painted_mesh.ply");
+  mesh = scene->CreateMesh("/home/mike/Desktop/out_mesh_small.ply");
+  std::shared_ptr<Material> temp = scene->CreateMaterial("/home/mike/Desktop/out_mesh_small.ply");
   material = std::static_pointer_cast<MatteMaterial>(temp);
 
   std::shared_ptr<Primitive> primitive;
@@ -60,14 +62,16 @@ void BuildScene()
 
   cameras.resize(1);
 
-  const float scale = 2;
+  const float scale = 4;
   cameras[0] = scene->CreateCamera();
   cameras[0]->SetImageSize(640 / scale, 480 / scale);
   cameras[0]->SetFocalLength(535.7239 / scale, 536.2900 / scale);
   cameras[0]->SetCenterPoint(320.2685 / scale, 240.2924 / scale);
-  cameras[0]->SetOrientation(-0.00242877, -0.0601033, -0.0349038, 0.997579);
-  cameras[0]->SetPosition(0.0761918, 0.124095, 0.00571185);
-  cameras[0]->SetSampleCount(4);
+  // cameras[0]->SetOrientation(-0.00242877, -0.0601033, -0.0349038, 0.997579);
+  // cameras[0]->SetPosition(0.0761918, 0.124095, 0.00571185);
+  cameras[0]->SetOrientation(-0.000125662, 0.0251924, -0.00142194, 0.999682);
+  cameras[0]->SetPosition(-0.00808962, 0.0115375, -0.0037175);
+  cameras[0]->SetSampleCount(5);
 
   // const float scale = 1;
   // cameras[0] = scene->CreateCamera();
@@ -120,7 +124,8 @@ void BuildScene()
     // image->Load("/home/mike/Downloads/reference2.png");
     // image->Save("reference_" + std::to_string(i) + ".png");
     // image->Load("/home/mike/Desktop/Datasets/PurpleRoomCorner02/clean/image_rgb_00160.ppm");
-    image->Load("/home/mike/Desktop/image_rgb_00160.ppm");
+    // image->Load("/home/mike/Desktop/image_rgb_00160.ppm");
+    image->Load("/home/mike/Desktop/image_rgb_00019.ppm");
 
     keyframes[i] = std::make_shared<Keyframe>(camera, image);
   }
@@ -148,24 +153,19 @@ void CreateLightProblem()
   optix::Buffer buffer = light->GetRadianceBuffer();
   CUdeviceptr pointer = buffer->getDevicePointer(0);
   lightValues = reinterpret_cast<float*>(pointer);
-  std::cout << __LINE__ << std::endl;
 
   lightProblem = new lynx::Problem();
   lightProblem->AddParameterBlock(lightValues, paramCount);
   lightProblem->SetLowerBound(lightValues, 0.0f);
-  std::cout << __LINE__ << std::endl;
 
   lightCostFunction = new torch::LightCostFunction(light);
-  std::cout << __LINE__ << std::endl;
 
   for (std::shared_ptr<Keyframe> keyframe : keyframes)
   {
     lightCostFunction->AddKeyframe(keyframe);
   }
-  std::cout << __LINE__ << std::endl;
 
   lightProblem->AddResidualBlock(lightCostFunction, nullptr, lightValues);
-  std::cout << __LINE__ << std::endl;
 
   ActivationCostFunction* actCostFunction;
   actCostFunction = new ActivationCostFunction(light);
@@ -173,7 +173,6 @@ void CreateLightProblem()
   actCostFunction->SetInnerScale(1.0);
   actCostFunction->SetOuterScale(1.0);
   lightProblem->AddResidualBlock(actCostFunction, nullptr, lightValues);
-  std::cout << __LINE__ << std::endl;
 }
 
 void CreateAlbedoProblem()

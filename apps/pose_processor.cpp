@@ -8,6 +8,7 @@
 
 DEFINE_string(poses, "poses.csv", "pose file to be processed");
 DEFINE_string(out, "new_poses.csv", "output file for processed poses");
+DEFINE_bool(euler, false, "output rotation in Euler angles");
 
 int main(int argc, char** argv)
 {
@@ -26,8 +27,6 @@ int main(int argc, char** argv)
   std::ofstream fout(FLAGS_out);
   std::string line;
 
-  int count = 0;
-
   while (std::getline(fin, line))
   {
     Eigen::Matrix4d Tiw;
@@ -40,44 +39,35 @@ int main(int argc, char** argv)
       Tiw.data()[i] = std::stod(token);
     }
 
-    // Eigen::Matrix4d Twi = Eigen::Matrix4d::Identity();
-    // Twi.block<3, 3>(0, 0) = Tiw.block<3, 3>(0, 0).transpose();
-    // Twi.block<3, 1>(0, 3) = -Tiw.block<3, 1>(0, 3);
-    // const Eigen::Matrix4d Twr = Twi * Tir;
-
     const Eigen::Matrix4d Twr = Tiw.inverse() * Tir;
 
-    // Eigen::VectorXd new_pose(7);
-    // const Eigen::Quaterniond quaternion(Twr.block<3, 3>(0, 0));
-    // new_pose.segment<4>(0) = quaternion.coeffs();
-    // new_pose.segment<3>(4) = Twr.block<3, 1>(0, 3);
-
-    // for (int i = 0; i < 6; ++i)
-    // {
-    //   fout << new_pose[i] << ", ";
-    // }
-
-    // fout << new_pose[6] << std::endl;;
-
-    Eigen::VectorXd new_pose(6);
-    new_pose.segment<3>(0) = Twr.block<3, 3>(0, 0).eulerAngles(0, 1, 2);
-    new_pose.segment<3>(3) = Twr.block<3, 1>(0, 3);
-
-    if (count == 172)
+    if (FLAGS_euler)
     {
-      LOG(INFO) << std::endl << Tiw;
-      LOG(INFO) << "\n\n";
-      LOG(INFO) << std::endl << Twr;
-    }
+      Eigen::VectorXd new_pose(6);
+      new_pose.segment<3>(0) = Twr.block<3, 3>(0, 0).eulerAngles(0, 1, 2);
+      new_pose.segment<3>(3) = Twr.block<3, 1>(0, 3);
 
-    for (int i = 0; i < 5; ++i)
+      for (int i = 0; i < 5; ++i)
+      {
+        fout << new_pose[i] << ", ";
+      }
+
+      fout << new_pose[5] << std::endl;;
+    }
+    else
     {
-      fout << new_pose[i] << ", ";
+      Eigen::VectorXd new_pose(7);
+      const Eigen::Quaterniond quaternion(Twr.block<3, 3>(0, 0));
+      new_pose.segment<4>(0) = quaternion.coeffs();
+      new_pose.segment<3>(4) = Twr.block<3, 1>(0, 3);
+
+      for (int i = 0; i < 6; ++i)
+      {
+        fout << new_pose[i] << ", ";
+      }
+
+      fout << new_pose[6] << std::endl;;
     }
-
-    fout << new_pose[5] << std::endl;;
-
-    ++count;
   }
 
   fin.close();
