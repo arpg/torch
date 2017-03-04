@@ -27,6 +27,8 @@ class Scene
 
     std::shared_ptr<PointLight> CreatePointLight();
 
+    std::shared_ptr<VoxelLight> CreateVoxelLight();
+
     std::shared_ptr<Primitive> CreatePrimitive();
 
     std::shared_ptr<Primitive> CreatePrimitive(const std::string& file);

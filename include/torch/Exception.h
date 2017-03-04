@@ -3,8 +3,11 @@
 #include <exception>
 #include <string>
 
-#define TORCH_ASSERT(condition, message) \
-{ if (!(condition)) throw ::torch::Exception(message); }
+#define TORCH_ASSERT(cond, message) \
+{ if (!(cond)) throw ::torch::Exception(__FILE__, __LINE__, message); }
+
+#define TORCH_THROW(message) \
+{ throw ::torch::Exception(__FILE__, __LINE__, message); }
 
 namespace torch
 {
@@ -13,19 +16,20 @@ class Exception : public std::exception
 {
   public:
 
-    Exception(const std::string& message) :
-      m_message(message)
-    {
-    }
+    Exception(const std::string& message);
 
-    const char* what() const throw() override
-    {
-      return m_message.c_str();
-    }
+    Exception(const std::string& file, int line, const std::string& message);
+
+    const char* what() const throw() override;
+
+  private:
+
+    static std::string CreateMessage(const std::string& file, int line,
+        const std::string& message);
 
   protected:
 
-    const std::string m_message;
+    std::string m_message;
 };
 
 } // namespace torch

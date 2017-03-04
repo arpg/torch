@@ -74,5 +74,6 @@ class SphereSampler;
 class Transform;
 class Transformable;
 class Vector;
+class VoxelLight;
 
 } // namespace torch
