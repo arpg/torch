@@ -56,6 +56,13 @@ TORCH_DEVICE void SampleVoxel(const float3& origin, uint& seed,
   const float3 delta_xc = x - c;
   const float dist_xc = length(delta_xc);
 
+  if (r > dist_xc)
+  {
+    rad = make_float3(0, 0, 0);
+    pdf = 0.0f;
+    return;
+  }
+
   const float3 w = -normalize(delta_xc);
   float3 u1 = make_float3(0, -w.z, w.y);
   float3 u2 = make_float3(-w.z, 0, w.x);
@@ -107,6 +114,20 @@ TORCH_DEVICE void SampleVoxel(const float3& origin, uint& seed,
 
   point = xp;
 
+  if (isnan(point.x))
+  {
+    rtPrintf("Phi: %f\n", phi);
+    rtPrintf("U:  %f %f %f\n", u.x, u.y, u.z);
+    rtPrintf("V:  %f %f %f\n", v.x, v.y, v.z);
+    rtPrintf("W:  %f %f %f\n", w.x, w.y, w.z);
+    rtPrintf("A: %f\n", a);
+    rtPrintf("OD: %f\n", -od);
+    rtPrintf("B: %f\n", b);
+    rtPrintf("X:  %f %f %f\n", x.x, x.y, x.z);
+    rtPrintf("T:  %f\n", t);
+    rtPrintf("D:  %f %f %f\n", -direction.x, -direction.y, -direction.z);
+  }
+
   // TODO: compute pdf correctly
   // pdf = cosTheta / (2 * M_PIf * dist_xpx * dist_xpx * (1 - sqrtf(1 - temp * temp)));
   pdf = 1.0;
@@ -121,12 +142,22 @@ RT_CALLABLE_PROGRAM void Sample(torch::LightSample& sample)
   rand = torch::randf(sample.seed);
   const uint voxel = SampleLight[light](rand, voxelPdf);
 
-  SampleVoxel(sample.origin, sample.seed, light, voxel, sample.direction,
+  float3 point;
+
+  SampleVoxel(sample.origin, sample.seed, light, voxel, point,
       sample.radiance, pointPdf);
 
-  sample.tmax = length(sample.direction - sample.origin);
-  sample.direction = normalize(sample.direction - sample.origin);
+  if (pointPdf > 1E-6f)
+  {
+
+  sample.tmax = length(point - sample.origin);
+  sample.direction = normalize(point - sample.origin);
   sample.pdf *= voxelPdf * pointPdf;
+
+  if (isnan(sample.direction.x))
+  {
+    rtPrintf("NANS!!!\n");
+  }
 
   const bool visible = torch::IsVisible(sample);
   if (!visible) sample.radiance = make_float3(0, 0, 0);
@@ -139,5 +170,7 @@ RT_CALLABLE_PROGRAM void Sample(torch::LightSample& sample)
     const float theta = dot(sample.direction, sample.snormal);
     const uint2 derivIndex = make_uint2(launchIndex.x, voxel);
     lightDerivatives[light][derivIndex] -= theta * sample.throughput / (sample.pdf * distance * area);
+  }
+
   }
 }

@@ -4,6 +4,8 @@
 #include <torch/Image.h>
 #include <torch/Spectrum.h>
 
+#include <iostream>
+
 namespace torch
 {
 

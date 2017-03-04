@@ -128,12 +128,16 @@ void VoxelCostFunction::ComputeJacobian()
 
   ResetJacobian();
 
+  std::cout << __FILE__ << " : " << __LINE__ << std::endl;
+
   const size_t launchSize = m_keyframes->GetValidPixelCount();
   std::shared_ptr<Context> context = m_light->GetContext();
   m_program["iteration"]->setUint(m_iterations++);
   context->GetVariable("computeVoxelDerivs")->setUint(true);
   context->Launch(m_programId, launchSize);
   context->GetVariable("computeVoxelDerivs")->setUint(false);
+
+  std::cout << __FILE__ << " : " << __LINE__ << std::endl;
 
   CUdeviceptr pointer = m_jacobian->getDevicePointer(0);
   m_jacobianValues = reinterpret_cast<float*>(pointer);

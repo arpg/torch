@@ -5,3 +5,7 @@ add_dependencies(solver ${LIBRARY_NAME})
 add_executable(albedo_solver albedo_solver.cpp)
 target_link_libraries(albedo_solver ${LIBRARY_NAME})
 add_dependencies(albedo_solver ${LIBRARY_NAME})
+
+add_executable(voxel_solver voxel_solver.cpp)
+target_link_libraries(voxel_solver ${LIBRARY_NAME})
+add_dependencies(voxel_solver ${LIBRARY_NAME})

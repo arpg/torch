@@ -48,17 +48,17 @@ TORCH_DEVICE float3 GetAlbedo()
 
 TORCH_DEVICE optix::Matrix3x3 NormalToRotation(const float3& n)
 {
- float3 u = make_float3(1, 0, 0);
- float3 v = make_float3(0, 0, 1);
- if (dot(u, n) < dot(v, n)) u = v;
- v = normalize(cross(n, u));
- u = normalize(cross(n, v));
+  float3 u = make_float3(1, 0, 0);
+  float3 v = make_float3(0, 0, 1);
+  if (fabs(dot(u, n)) > fabs(dot(v, n))) u = v;
+  v = normalize(cross(n, u));
+  u = normalize(cross(n, v));
 
- optix::Matrix3x3 R;
- R.setCol(0, u);
- R.setCol(1, v);
- R.setCol(2, n);
- return R;
+  optix::Matrix3x3 R;
+  R.setCol(0, u);
+  R.setCol(1, v);
+  R.setCol(2, n);
+  return R;
 }
 
 TORCH_DEVICE void SampleBrdf(torch::BrdfSample& sample)
@@ -68,6 +68,17 @@ TORCH_DEVICE void SampleBrdf(torch::BrdfSample& sample)
   sample.pdf = direction.z / M_PIf;
   sample.direction = NormalToRotation(sample.normal) * direction;
   sample.throughput = GetAlbedo() / M_PIf;
+
+  if (isnan(sample.direction.x))
+  {
+    optix::Matrix3x3 R = NormalToRotation(sample.normal);
+    rtPrintf("DDD: %f %f %f\n", direction.x, direction.y, direction.z);
+    rtPrintf("NNN: %f %f %f\n", sample.normal.x, sample.normal.y, sample.normal.z);
+    rtPrintf("R:\n%f %f %f\n%f %f %f\n%f %f %f\n",
+             R[0], R[1], R[2],
+             R[3], R[4], R[5],
+             R[6], R[7], R[8]);
+  }
 }
 
 RT_PROGRAM void ClosestHit()
@@ -131,6 +142,11 @@ RT_PROGRAM void ClosestHit()
   brdfSample.normal = shadingNormal;
   brdfSample.seed = rayData.seed;
   SampleBrdf(brdfSample);
+
+  if (isnan(brdfSample.direction.x))
+  {
+    rtPrintf("Shading Normal: %f %f %f\n", shadingNormal.x, shadingNormal.y, shadingNormal.z);
+  }
 
   if (brdfSample.pdf > 1E-8)
   {

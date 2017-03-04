@@ -65,6 +65,13 @@ RT_PROGRAM void Intersect(int index)
         shadingNormal = alpha * normals[face.x] + beta * normals[face.y] + gamma * normals[face.z];
         shadingNormal = faceforward(shadingNormal, -ray.direction, geometricNormal);
         shadingNormal = normalize(shadingNormal);
+
+        if (isnan(shadingNormal.x) ||
+            isnan(shadingNormal.y) ||
+            isnan(shadingNormal.z))
+        {
+          shadingNormal = geometricNormal;
+        }
       }
       else
       {

@@ -80,6 +80,11 @@ RT_PROGRAM void Capture()
 
     for (unsigned int depth = 0; depth < 6; ++depth)
     {
+      if (isnan(ray.direction.x))
+      {
+        rtPrintf("%d: NANS!!!\n", depth);
+      }
+
       data.depth = depth;
       data.seed = seed;
       rtTrace(sceneRoot, ray, data);

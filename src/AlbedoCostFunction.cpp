@@ -238,11 +238,15 @@ void AlbedoCostFunction::ComputeJacobian()
 
   m_jacobian->SetZero();
 
+  std::cout << __FILE__ << " : " << __LINE__ << std::endl;
+
   const size_t launchSize = m_keyframes->GetValidPixelCount();
   std::shared_ptr<Context> context = m_material->GetContext();
   context->GetVariable("computeAlbedoDerivs")->setUint(true);
   context->Launch(m_captureProgramId, launchSize);
   context->GetVariable("computeAlbedoDerivs")->setUint(false);
+
+  std::cout << __FILE__ << " : " << __LINE__ << std::endl;
 
   optix::Buffer buffer = m_jacobian->GetValuesBuffer();
   CUdeviceptr pointer = buffer->getDevicePointer(0);
