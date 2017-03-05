@@ -14,6 +14,10 @@ class Image
 
     void Resize(unsigned int w, unsigned int h);
 
+    void Scale(unsigned int w, unsigned int h);
+
+    void Scale(float scale);
+
     unsigned int GetWidth() const;
 
     unsigned int GetHeight() const;

@@ -5,7 +5,8 @@ namespace torch
 
 TORCH_HOSTDEVICE void SampleDiskUniform(const float2& sample, float2& p)
 {
-  float r, theta;
+  float r = 0.0f;
+  float theta = 0.0f;
   const float sx = 2 * sample.x - 1;
   const float sy = 2 * sample.y - 1;
 

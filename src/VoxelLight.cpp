@@ -56,6 +56,11 @@ void VoxelLight::SetDimensions(uint x, uint y, uint z)
   m_context->MarkDirty();
 }
 
+void VoxelLight::SetDimensions(uint dims)
+{
+  SetDimensions(dims, dims, dims);
+}
+
 void VoxelLight::SetVoxelSize(float size)
 {
   m_voxelSize = size;

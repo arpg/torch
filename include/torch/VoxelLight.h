@@ -26,6 +26,8 @@ class VoxelLight : public Light
 
     void SetDimensions(uint x, uint y, uint z);
 
+    void SetDimensions(uint dims);
+
     void SetVoxelSize(float size);
 
     void SetDerivativeBuffer(optix::Buffer buffer);

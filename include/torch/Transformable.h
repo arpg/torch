@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sophus/se3.hpp>
 #include <torch/Transform.h>
 
 namespace torch
@@ -14,6 +15,8 @@ class Transformable
     Transform GetTransform() const;
 
     void SetTransform(const Transform& transform);
+
+    void SetTransform(const Sophus::SE3f& transform);
 
     Vector GetOrientation() const;
 

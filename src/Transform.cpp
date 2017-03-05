@@ -23,6 +23,14 @@ Transform::Transform(optix::Transform transform)
   transform->getMatrix(false, m_matrix.getData(), nullptr);
 }
 
+void torch::Transform::SetTransform(const Sophus::SE3f& transform)
+{
+  Eigen::Vector3f t = transform.translation();
+  Eigen::Vector3f r = transform.so3().matrix().eulerAngles(0, 1, 2);
+  SetTranslation(t[0], t[1], t[2]);
+  SetRotation(r[0], r[1], r[2]);
+}
+
 optix::Matrix4x4 Transform::GetRotationMatrix() const
 {
   unsigned int count = 0;

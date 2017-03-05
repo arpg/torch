@@ -19,6 +19,12 @@ void Transformable::SetTransform(const Transform& transform)
   UpdateTransform();
 }
 
+void torch::Transformable::SetTransform(const Sophus::SE3f& transform)
+{
+  m_transform.SetTransform(transform);
+  UpdateTransform();
+}
+
 Vector Transformable::GetOrientation() const
 {
   return m_transform.GetEulerAngles();

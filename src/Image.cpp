@@ -12,6 +12,18 @@ void Image::Resize(unsigned int w, unsigned int h)
   m_image = cv::Mat(h, w, CV_32FC3);
 }
 
+void Image::Scale(unsigned int w, unsigned int h)
+{
+  cv::resize(m_image, m_image, cv::Size(w, h));
+}
+
+void Image::Scale(float scale)
+{
+  unsigned int w = scale * GetWidth();
+  unsigned int h = scale * GetHeight();
+  cv::resize(m_image, m_image, cv::Size(w, h));
+}
+
 unsigned int Image::GetWidth() const
 {
   return m_image.cols;

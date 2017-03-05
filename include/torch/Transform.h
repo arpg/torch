@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sophus/se3.hpp>
 #include <torch/Core.h>
 
 namespace torch
@@ -14,6 +15,8 @@ class Transform
     Transform(const optix::Matrix4x4& matrix);
 
     Transform(optix::Transform transform);
+
+    void SetTransform(const Sophus::SE3f& transform);
 
     optix::Matrix4x4 GetRotationMatrix() const;
 
