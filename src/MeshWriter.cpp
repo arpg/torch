@@ -67,9 +67,9 @@ void MeshWriter::MakeMeshlabFriendly(const std::string& file)
 
     if (std::regex_search(line, match, vertex))
     {
-      unsigned int r = 255 * std::stof(match[2].str());
-      unsigned int g = 255 * std::stof(match[3].str());
-      unsigned int b = 255 * std::stof(match[4].str());
+      unsigned int r = 255 * std::stod(match[2].str());
+      unsigned int g = 255 * std::stod(match[3].str());
+      unsigned int b = 255 * std::stod(match[4].str());
       fout << match[1].str() << " ";
       fout << r << " ";
       fout << g << " ";

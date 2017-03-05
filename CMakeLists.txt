@@ -127,6 +127,7 @@ set(CPP_HEADERS
   ${CPP_HEADER_DIR}/Transformable.h
   ${CPP_HEADER_DIR}/Transform.h
   ${CPP_HEADER_DIR}/Vector.h
+  ${CPP_HEADER_DIR}/VoxelActivationCostFunction.h
   ${CPP_HEADER_DIR}/VoxelLight.h
   ${CPP_HEADER_DIR}/VoxelLightSampler.h
 )
@@ -187,6 +188,7 @@ set(CPP_SOURCES
   ${CPP_SOURCE_DIR}/Transformable.cpp
   ${CPP_SOURCE_DIR}/Transform.cpp
   ${CPP_SOURCE_DIR}/Vector.cpp
+  ${CPP_SOURCE_DIR}/VoxelActivationCostFunction.cpp
   ${CPP_SOURCE_DIR}/VoxelLight.cpp
   ${CPP_SOURCE_DIR}/VoxelLightSampler.cpp
 )
@@ -246,6 +248,7 @@ list(APPEND CPP_HEADERS
   ${CPP_HEADER_DIR}/DarkenCostFunction.h
   ${CPP_HEADER_DIR}/LightCostFunction.h
   ${CPP_HEADER_DIR}/ReflectanceCostFunction.h
+  ${CPP_HEADER_DIR}/VoxelActivationCostFunction.h
   ${CPP_HEADER_DIR}/VoxelCostFunction.h
 )
 
@@ -261,6 +264,7 @@ list(APPEND CPP_SOURCES
 list(APPEND CUDA_SOURCES
   ${CUDA_SOURCE_DIR}/AlbedoCostFunction.cu
   ${CUDA_SOURCE_DIR}/LightCostFunction.cu
+  ${CUDA_SOURCE_DIR}/VoxelActivationCostFunction.cu
   ${CUDA_SOURCE_DIR}/VoxelCostFunction.cu
 )
 

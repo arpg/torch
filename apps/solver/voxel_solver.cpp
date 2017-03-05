@@ -21,7 +21,7 @@ float* lightValues;
 lynx::Problem* albedoProblem;
 AlbedoCostFunction* albedoCostFunction;
 ReflectanceCostFunction* refCostFunction;
-DarkenCostFunction* darkenCostFunction;
+// DarkenCostFunction* darkenCostFunction;
 float* albedoValues;
 
 void BuildScene()
@@ -54,8 +54,9 @@ void BuildScene()
   scene->Add(primitive);
 
   light = scene->CreateVoxelLight();
-  light->SetDimensions(13, 13, 13);
-  light->SetVoxelSize(3.0 / 13);
+  // light->SetDimensions(13, 13, 13);
+  light->SetDimensions(7, 7, 7);
+  light->SetVoxelSize(3.5 / 7);
   // light->SetRadiance(0.001, 0.001, 0.001);
   // light->SetRadiance(67 , Spectrum::FromRGB(2.75, 2.75, 2.75));
   light->SetRadiance(1E-8, 1E-8, 1E-8);
@@ -178,10 +179,10 @@ void CreateLightProblem()
 
   lightProblem->AddResidualBlock(lightCostFunction, nullptr, lightValues);
 
-  // ActivationCostFunction* actCostFunction;
-  // actCostFunction = new ActivationCostFunction(light);
+  // VoxelActivationCostFunction* actCostFunction;
+  // actCostFunction = new VoxelActivationCostFunction(light);
   // actCostFunction->SetBias(1.0);
-  // actCostFunction->SetInnerScale(1.0);
+  // actCostFunction->SetInnerScale(10.0);
   // actCostFunction->SetOuterScale(1.0);
   // lightProblem->AddResidualBlock(actCostFunction, nullptr, lightValues);
 }
@@ -207,20 +208,14 @@ void CreateAlbedoProblem()
     albedoCostFunction->AddKeyframe(keyframe);
   }
 
-  std::cout << __FILE__ << " : " << __LINE__ << std::endl;
-
   albedoProblem->AddResidualBlock(albedoCostFunction, nullptr, albedoValues);
 
-  std::cout << __FILE__ << " : " << __LINE__ << std::endl;
-
   refCostFunction = new ReflectanceCostFunction(material, mesh);
-  refCostFunction->SetChromaticityThreshold(0.995);
-  refCostFunction->SetWeight(0.4);
+  refCostFunction->SetChromaticityThreshold(0.0);
+  refCostFunction->SetWeight(1.25);
   albedoProblem->AddResidualBlock(refCostFunction, nullptr, albedoValues);
 
-  std::cout << __FILE__ << " : " << __LINE__ << std::endl;
-
-  darkenCostFunction = new DarkenCostFunction(paramCount);
+  // darkenCostFunction = new DarkenCostFunction(paramCount);
   // darkenCostFunction->SetWeight(0.1);
   // albedoProblem->AddResidualBlock(darkenCostFunction, nullptr, albedoValues);
 }
@@ -270,7 +265,7 @@ void SolveAlbedoProblem()
   std::cout << "Solving albedo problem..." << std::endl;
 
   albedoCostFunction->ClearJacobian();
-  darkenCostFunction->SetValues(albedoValues);
+  // darkenCostFunction->SetValues(albedoValues);
 
   lynx::Solver::Options options;
   options.maxIterations = 50000;
@@ -311,37 +306,14 @@ void SolveProblem()
   CreateAlbedoProblem();
   CreateLightProblem();
 
-  int i = 0;
-
   for (iteration = 0; iteration < 20; ++iteration)
   {
     std::cout << "Starting iteration " << iteration << "..." << std::endl;
     SolveAlbedoProblem();
     SolveLightProblem();
-
-    if (iteration == 0)
-    {
-      ++iteration; SolveLightProblem();
-      ++iteration; SolveLightProblem();
-      ++iteration; SolveLightProblem();
-    }
-
-    refCostFunction->SetWeight(2.0);
-
-    if (iteration % 5 == 0)
-    {
-      std::cout << "Writing final mesh estimate..." << std::endl;
-      MeshWriter writer(mesh, material);
-      writer.Write("mesh_estimate_" + std::to_string(iteration) + ".ply");
-    }
-
-    albedoProblem->AddResidualBlock(albedoCostFunction, nullptr, albedoValues);
-
-    ++i;
   }
 
   std::cout << "Writing final mesh estimate..." << std::endl;
-
   MeshWriter writer(mesh, material);
   writer.Write("mesh_estimate.ply");
 }

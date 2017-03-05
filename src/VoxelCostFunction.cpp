@@ -50,39 +50,12 @@ lynx::Matrix* VoxelCostFunction::CreateJacobianMatrix()
 void VoxelCostFunction::Evaluate(const float* const* parameters,
     float* residuals)
 {
-  // for (size_t i = 0; i < GetParameterCount() / 3; ++i)
-  // {
-  //   std::cout << "Param " << i << ": ";
-  //   std::cout << lynx::Get(&parameters[0][3 * i + 0]) << " ";
-  //   std::cout << lynx::Get(&parameters[0][3 * i + 1]) << " ";
-  //   std::cout << lynx::Get(&parameters[0][3 * i + 2]) << std::endl;
-  // }
-
-  // std::cout << "--------------" << std::endl;
-
   PrepareEvaluation();
   const size_t rows = GetResidualCount() / 3;
   const size_t cols = GetParameterCount() / 3;
   lynx::Matrix3C jacobian(m_jacobianValues, rows, cols);
   jacobian.RightMultiply(parameters[0], residuals);
   lynx::Add(m_referenceValues, residuals, residuals, GetResidualCount());
-
-  // Image image;
-  // image.Resize(160, 120);
-  // float* pixels = reinterpret_cast<float*>(image.GetData());
-  // std::vector<uint2> validPixels;
-  // (*m_keyframes)[0]->GetValidPixels(validPixels);
-  // std::fill(pixels, pixels + image.GetByteCount() / 4, 0.0f);
-
-  // for (size_t i = 0; i < validPixels.size(); ++i)
-  // {
-  //   const uint index = 3 * (validPixels[i].y * 160 + validPixels[i].x);
-  //   pixels[index + 0] = fabs(lynx::Get(&residuals[3 * i + 0]));
-  //   pixels[index + 1] = fabs(lynx::Get(&residuals[3 * i + 1]));
-  //   pixels[index + 2] = fabs(lynx::Get(&residuals[3 * i + 2]));
-  // }
-
-  // image.Save("residuals.png");
 }
 
 void VoxelCostFunction::Evaluate(size_t offset, size_t size,
@@ -128,16 +101,12 @@ void VoxelCostFunction::ComputeJacobian()
 
   ResetJacobian();
 
-  std::cout << __FILE__ << " : " << __LINE__ << std::endl;
-
   const size_t launchSize = m_keyframes->GetValidPixelCount();
   std::shared_ptr<Context> context = m_light->GetContext();
   m_program["iteration"]->setUint(m_iterations++);
   context->GetVariable("computeVoxelDerivs")->setUint(true);
   context->Launch(m_programId, launchSize);
   context->GetVariable("computeVoxelDerivs")->setUint(false);
-
-  std::cout << __FILE__ << " : " << __LINE__ << std::endl;
 
   CUdeviceptr pointer = m_jacobian->getDevicePointer(0);
   m_jacobianValues = reinterpret_cast<float*>(pointer);

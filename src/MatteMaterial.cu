@@ -68,17 +68,6 @@ TORCH_DEVICE void SampleBrdf(torch::BrdfSample& sample)
   sample.pdf = direction.z / M_PIf;
   sample.direction = NormalToRotation(sample.normal) * direction;
   sample.throughput = GetAlbedo() / M_PIf;
-
-  if (isnan(sample.direction.x))
-  {
-    optix::Matrix3x3 R = NormalToRotation(sample.normal);
-    rtPrintf("DDD: %f %f %f\n", direction.x, direction.y, direction.z);
-    rtPrintf("NNN: %f %f %f\n", sample.normal.x, sample.normal.y, sample.normal.z);
-    rtPrintf("R:\n%f %f %f\n%f %f %f\n%f %f %f\n",
-             R[0], R[1], R[2],
-             R[3], R[4], R[5],
-             R[6], R[7], R[8]);
-  }
 }
 
 RT_PROGRAM void ClosestHit()
@@ -135,6 +124,7 @@ RT_PROGRAM void ClosestHit()
 
   if (lightingOnly)
   {
+    rayData.bounce.direction = make_float3(0, 0, 0);
     return;
   }
 
@@ -142,11 +132,6 @@ RT_PROGRAM void ClosestHit()
   brdfSample.normal = shadingNormal;
   brdfSample.seed = rayData.seed;
   SampleBrdf(brdfSample);
-
-  if (isnan(brdfSample.direction.x))
-  {
-    rtPrintf("Shading Normal: %f %f %f\n", shadingNormal.x, shadingNormal.y, shadingNormal.z);
-  }
 
   if (brdfSample.pdf > 1E-8)
   {
