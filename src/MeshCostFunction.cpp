@@ -2,7 +2,11 @@
 #include <torch/Context.h>
 #include <torch/MatteMaterial.h>
 #include <torch/Mesh.h>
+#include <torch/Normal.h>
+#include <torch/Octree.h>
+#include <torch/Point.h>
 #include <torch/PtxUtil.h>
+#include <torch/Spectrum.h>
 #include <torch/VoxelLight.h>
 
 namespace torch
@@ -19,6 +23,7 @@ MeshCostFunction::MeshCostFunction(std::shared_ptr<VoxelLight> light,
   m_adjacentVertices(nullptr),
   m_adjacentWeights(nullptr),
   m_iterations(0),
+  m_maxNeighborCount(1),
   m_maxNeighborDistance(0.1f),
   m_similarityThreshold(0.1f)
 {
@@ -30,6 +35,14 @@ MeshCostFunction::~MeshCostFunction()
   cudaFree(m_referenceValues);
   cudaFree(m_adjacentVertices);
   cudaFree(m_adjacentWeights);
+}
+
+void MeshCostFunction::SetMaxNeighborCount(unsigned int count)
+{
+  LYNX_ASSERT(!m_locked, "adjacencies cannot be updated");
+  LYNX_ASSERT(count > 0, "count cannot be zero");
+  m_maxNeighborCount = count;
+  ClearAdjacencies();
 }
 
 void MeshCostFunction::SetMaxNeighborDistance(float distance)
@@ -106,12 +119,68 @@ void MeshCostFunction::PrepareEvaluation()
 
 void MeshCostFunction::ComputeAdjacenies()
 {
-  // TODO: implement
+  Octree octree(10.0f, 10);
+  std::vector<unsigned int> plist;
+  std::vector<unsigned int> qlist;
+  std::vector<float> weights;
 
-  // m_adjacencyCount
-  // m_adjacencyVertices
-  // m_adjacencyWeights
+  std::vector<Point> vertices;
+  m_mesh->GetVertices(vertices);
 
+  std::vector<Normal> normals;
+  m_mesh->GetNormals(normals);
+
+  std::vector<Spectrum> albedos;
+  m_material->GetAlbedos(albedos);
+
+  for (size_t i = 0; i < vertices.size(); ++i)
+  {
+    const Point& v = vertices[i];
+    const float3 position = make_float3(v.x, v.y, v.z);
+    octree.AddVertex(i, position);
+  }
+
+  for (size_t p = 0; p < vertices.size(); ++p)
+  {
+    std::vector<unsigned int> neighbors;
+
+    const Point& vp = vertices[p];
+    const Normal& np = normals[p];
+    const Spectrum& ap = albedos[p];
+    const Vector cp = ap.GetRGB().Normalize();
+
+    const float3 position = make_float3(vp.x, vp.y, vp.z);
+    octree.GetVertices(p, position, m_maxNeighborDistance, neighbors);
+
+    unsigned int added = 0;
+
+    for (size_t j = 0; j < neighbors.size(); ++j)
+    {
+      const size_t q = neighbors[j];
+      const Point& vq = vertices[q];
+      const Normal& nq = normals[q];
+      const Spectrum& aq = albedos[q];
+      const Vector cq = aq.GetRGB().Normalize();
+
+      float similarity = 1.0f;
+      similarity *= 1 - ((vp - vq).Length() / m_maxNeighborDistance);
+      similarity *= (np - nq).Length() / (2 * 0.50 * 0.50);
+      similarity *= (cp - cq).Length() / (2 * 0.15 * 0.15);
+
+      if (similarity > m_similarityThreshold)
+      {
+        plist.push_back(p);
+        qlist.push_back(q);
+        weights.push_back(similarity);
+
+        if (++added == m_maxNeighborCount) break;
+      }
+    }
+  }
+
+  // TODO: allocate and copy data to device!!!
+
+  m_adjacencyCount = plist.size();
   lynx::CostFunction::m_maxEvaluationBlockSize = 3 * m_adjacencyCount;
   lynx::CostFunction::m_residualCount = 3 * m_adjacencyCount;
 }

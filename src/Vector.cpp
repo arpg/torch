@@ -118,7 +118,8 @@ float Vector::Length() const
 
 Vector Vector::Normalize() const
 {
-  return (*this) / Length();
+  const float length = Length();
+  return (length < 1E-8) ? Vector() : (*this) / length;
 }
 
 } // namespace torch

@@ -16,6 +16,8 @@ class MeshCostFunction : public lynx::CostFunction
 
     virtual ~MeshCostFunction();
 
+    void SetMaxNeighborCount(unsigned int count);
+
     void SetMaxNeighborDistance(float distance);
 
     void SetSimilarityThreshold(float threshold);
@@ -80,6 +82,8 @@ class MeshCostFunction : public lynx::CostFunction
     float* m_adjacentWeights;
 
     unsigned int m_iterations;
+
+    unsigned int m_maxNeighborCount;
 
     float m_maxNeighborDistance;
 
