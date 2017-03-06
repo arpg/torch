@@ -18,6 +18,7 @@ struct CameraData
   optix::Matrix4x4 Twc;
   optix::Matrix4x4 Tcw;
   unsigned int samples;
+  unsigned int maxDepth;
 };
 
 struct PixelSample

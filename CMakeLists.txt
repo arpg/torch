@@ -109,11 +109,13 @@ set(CPP_HEADERS
   ${CPP_HEADER_DIR}/MaterialLoader.h
   ${CPP_HEADER_DIR}/MatteMaterial.h
   ${CPP_HEADER_DIR}/Mesh.h
+  ${CPP_HEADER_DIR}/MeshCostFunction.h
   ${CPP_HEADER_DIR}/MeshLoader.h
   ${CPP_HEADER_DIR}/MeshSampler.h
   ${CPP_HEADER_DIR}/MeshWriter.h
   ${CPP_HEADER_DIR}/Node.h
   ${CPP_HEADER_DIR}/Normal.h
+  ${CPP_HEADER_DIR}/Octree.h
   ${CPP_HEADER_DIR}/Object.h
   ${CPP_HEADER_DIR}/Point.h
   ${CPP_HEADER_DIR}/PointLight.h
@@ -170,11 +172,13 @@ set(CPP_SOURCES
   ${CPP_SOURCE_DIR}/MaterialLoader.cpp
   ${CPP_SOURCE_DIR}/MatteMaterial.cpp
   ${CPP_SOURCE_DIR}/Mesh.cpp
+  ${CPP_SOURCE_DIR}/MeshCostFunction.cpp
   ${CPP_SOURCE_DIR}/MeshLoader.cpp
   ${CPP_SOURCE_DIR}/MeshSampler.cpp
   ${CPP_SOURCE_DIR}/MeshWriter.cpp
   ${CPP_SOURCE_DIR}/Node.cpp
   ${CPP_SOURCE_DIR}/Normal.cpp
+  ${CPP_SOURCE_DIR}/Octree.cpp
   ${CPP_SOURCE_DIR}/Object.cpp
   ${CPP_SOURCE_DIR}/Point.cpp
   ${CPP_SOURCE_DIR}/PointLight.cpp
@@ -232,6 +236,7 @@ set(CUDA_SOURCES
   ${CUDA_SOURCE_DIR}/Material.cu
   ${CUDA_SOURCE_DIR}/MatteMaterial.cu
   ${CUDA_SOURCE_DIR}/Mesh.cu
+  ${CUDA_SOURCE_DIR}/MeshCostFunction.cu
   ${CUDA_SOURCE_DIR}/MeshSampler.cu
   ${CUDA_SOURCE_DIR}/PointLightSampler.cu
   ${CUDA_SOURCE_DIR}/SceneGeometrySampler.cu

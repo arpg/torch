@@ -13,6 +13,7 @@ rtDeclareVariable(float, sceneEpsilon, , );
 
 rtDeclareVariable(unsigned int, albedoOnly, , );
 rtDeclareVariable(unsigned int, sampleCount, , );
+rtDeclareVariable(unsigned int, maxDepth, , );
 rtDeclareVariable(torch::CameraData, camera, , );
 rtBuffer<float3, 2> buffer;
 rtBuffer<float, 2> depthBuffer;
@@ -66,7 +67,7 @@ RT_PROGRAM void Capture()
     data.bounce.throughput = make_float3(0, 0, 0);
     data.throughput = make_float3(1.0f / totalSamples);
 
-    for (unsigned int depth = 0; depth < 6; ++depth)
+    for (unsigned int depth = 0; depth < maxDepth; ++depth)
     {
       data.depth = depth;
       data.seed = seed;

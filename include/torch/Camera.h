@@ -23,6 +23,10 @@ class Camera : public Node
 
     void SetSampleCount(unsigned int count);
 
+    unsigned int GetMaxDepth() const;
+
+    void SetMaxDepth(unsigned int depth);
+
     void Capture(Image& image);
 
     void CaptureAlbedo(Image& image);
@@ -70,6 +74,8 @@ class Camera : public Node
     float2 m_centerPoint;
 
     unsigned int m_sampleCount;
+
+    unsigned int m_maxDepth;
 
     optix::Buffer m_buffer;
 

@@ -15,6 +15,7 @@ Camera::Camera(std::shared_ptr<Context> context) :
   m_focalLength(make_float2(0.5, 0.5)),
   m_centerPoint(make_float2(0.5, 0.5)),
   m_sampleCount(1),
+  m_maxDepth(6),
   m_detached(true)
 {
   Initialize();
@@ -57,6 +58,19 @@ void Camera::SetSampleCount(unsigned int count)
   m_program["sampleCount"]->setUint(m_sampleCount);
   m_depthProgram["sampleCount"]->setUint(m_sampleCount);
   m_maskProgram["sampleCount"]->setUint(m_sampleCount);
+}
+
+unsigned int Camera::GetMaxDepth() const
+{
+  return m_maxDepth;
+}
+
+void Camera::SetMaxDepth(unsigned int depth)
+{
+  m_maxDepth = depth;
+  m_program["maxDepth"]->setUint(m_maxDepth);
+  m_depthProgram["maxDepth"]->setUint(m_maxDepth);
+  m_maskProgram["maxDepth"]->setUint(m_maxDepth);
 }
 
 void Camera::Capture(Image& image)
@@ -138,6 +152,7 @@ void Camera::GetData(const Transform& transform, CameraData& data) const
   data.w = matrix.getCol(2);
   data.position = matrix.getCol(3);
   data.samples = m_sampleCount;
+  data.maxDepth = m_maxDepth;
   data.imageSize = m_imageSize;
 
   data.K.setRow(0, make_float3(m_focalLength.x, 0, m_centerPoint.x));
@@ -174,6 +189,7 @@ void Camera::CreateProgram()
   m_program = m_context->CreateProgram(file, "Capture");
   m_programId = m_context->RegisterLaunchProgram(m_program);
   m_program["sampleCount"]->setUint(m_sampleCount);
+  m_program["maxDepth"]->setUint(m_maxDepth);
   m_program["buffer"]->setBuffer(m_buffer);
 }
 
@@ -190,6 +206,7 @@ void Camera::CreateDepthProgram()
   m_depthProgram = m_context->CreateProgram(file, "CaptureDepth");
   m_depthProgramId = m_context->RegisterLaunchProgram(m_depthProgram);
   m_depthProgram["sampleCount"]->setUint(m_sampleCount);
+  m_depthProgram["maxDepth"]->setUint(m_maxDepth);
   m_depthProgram["depthBuffer"]->setBuffer(m_depthBuffer);
   m_depthProgram["buffer"]->setBuffer(m_buffer);
 }
@@ -200,6 +217,7 @@ void Camera::CreateMaskProgram()
   m_maskProgram = m_context->CreateProgram(file, "CaptureMask");
   m_maskProgramId = m_context->RegisterLaunchProgram(m_maskProgram);
   m_maskProgram["sampleCount"]->setUint(m_sampleCount);
+  m_maskProgram["maxDepth"]->setUint(m_maxDepth);
   m_maskProgram["depthBuffer"]->setBuffer(m_depthBuffer);
   m_maskProgram["buffer"]->setBuffer(m_buffer);
 }

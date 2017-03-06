@@ -39,8 +39,10 @@ set(TEST_CPP_SOURCES
   ${TEST_CPP_SOURCE_DIR}/Distribution1D.cpp
   ${TEST_CPP_SOURCE_DIR}/Distribution2D.cpp
   ${TEST_CPP_SOURCE_DIR}/LightCostFunction.cpp
+  ${TEST_CPP_SOURCE_DIR}/MeshCostFunction.cpp
   ${TEST_CPP_SOURCE_DIR}/MeshWriter.cpp
   ${TEST_CPP_SOURCE_DIR}/Node.cpp
+  ${TEST_CPP_SOURCE_DIR}/Octree.cpp
   ${TEST_CPP_SOURCE_DIR}/ReflectanceCostFunction.cpp
   ${TEST_CPP_SOURCE_DIR}/Sampling.cpp
   ${TEST_CPP_SOURCE_DIR}/Transform.cpp
