@@ -11,7 +11,8 @@ namespace torch
 ShadingRemover::ShadingRemover(std::shared_ptr<Mesh> mesh,
     std::shared_ptr<MatteMaterial> material) :
   m_mesh(mesh),
-  m_material(material)
+  m_material(material),
+  m_sampleCount(1)
 {
   Initialize();
 }
@@ -24,6 +25,7 @@ void ShadingRemover::SetSampleCount(unsigned int count)
 {
   m_sampleCount = count;
   m_program["sampleCount"]->setUint(m_sampleCount);
+  m_closestHitProgram["sampleCount"]->setUint(m_sampleCount);
 }
 
 void ShadingRemover::Remove()
@@ -44,9 +46,13 @@ void ShadingRemover::CreateDummyMaterial()
 {
   std::shared_ptr<Context> context = m_mesh->GetContext();
   const std::string file = PtxUtil::GetFile("ShadingRemover");
-  optix::Program program = context->CreateProgram(file, "ClosestHit");
+  m_closestHitProgram = context->CreateProgram(file, "ClosestHit");
   m_dummyMaterial = context->CreateMaterial();
-  m_dummyMaterial->setClosestHitProgram(RAY_TYPE_RADIANCE, program);
+  m_dummyMaterial->setClosestHitProgram(RAY_TYPE_RADIANCE, m_closestHitProgram);
+  m_closestHitProgram["albedos"]->setBuffer(m_material->GetAlbedoBuffer());
+  m_closestHitProgram["vertices"]->setBuffer(m_mesh->GetVertexBuffer());
+  m_closestHitProgram["normals"]->setBuffer(m_mesh->GetNormalBuffer());
+  m_closestHitProgram["sampleCount"]->setUint(m_sampleCount);
 }
 
 void ShadingRemover::CreateDummyGeometry()
@@ -82,7 +88,7 @@ void ShadingRemover::CreateProgram()
   m_programId = context->RegisterLaunchProgram(m_program);
   m_program["vertices"]->setBuffer(m_mesh->GetVertexBuffer());
   m_program["normals"]->setBuffer(m_mesh->GetNormalBuffer());
-  m_program["albedso"]->setBuffer(m_material->GetAlbedoBuffer());
+  m_program["albedos"]->setBuffer(m_material->GetAlbedoBuffer());
   m_program["sampleCount"]->setUint(m_sampleCount);
   m_program["dummyRoot"]->set(m_dummyGroup);
 }

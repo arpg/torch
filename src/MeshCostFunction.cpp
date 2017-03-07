@@ -125,92 +125,89 @@ void MeshCostFunction::Evaluate(const float* const* parameters,
   torch::EvaluateR(m_plist, m_qlist, m_adjacentWeights, m_referenceValues,
            m_shadingValues, residuals, 3 * m_adjacencyCount);
 
-  std::cout << std::endl;
-  std::cout << "Light Coefficients:" << std::endl;
-  std::cout << std::endl;
+  // std::cout << std::endl;
+  // std::cout << "Light Coefficients:" << std::endl;
+  // std::cout << std::endl;
 
-  for (size_t y = 0; y < rows; ++y)
-  {
-    for (size_t x = 0; x < cols; ++x)
-    {
-      const size_t index = x * rows + y;
-
-      std::cout << "( ";
-      std::cout << lynx::Get(m_lightCoeffValues + (3 * index + 0)) << " ";
-      std::cout << lynx::Get(m_lightCoeffValues + (3 * index + 1)) << " ";
-      std::cout << lynx::Get(m_lightCoeffValues + (3 * index + 2)) << " ";
-      std::cout << ") ";
-    }
-
-    std::cout << std::endl;
-  }
-
-  std::cout << std::endl;
-  std::cout << "Parameters:" << std::endl;
-  std::cout << std::endl;
-
-  for (size_t i = 0; i < m_light->GetVoxelCount(); ++i)
-  {
-    std::cout << "( ";
-    std::cout << lynx::Get(parameters[0] + (3 * i + 0)) << " ";
-    std::cout << lynx::Get(parameters[0] + (3 * i + 1)) << " ";
-    std::cout << lynx::Get(parameters[0] + (3 * i + 2)) << " ";
-    std::cout << ")" << std::endl;
-  }
-
-  std::cout << std::endl;
-  std::cout << "Shading Values:" << std::endl;
-  std::cout << std::endl;
-
-  for (size_t i = 0; i < m_material->GetAlbedoCount(); ++i)
-  {
-    std::cout << "( ";
-    std::cout << lynx::Get(m_shadingValues + (3 * i + 0)) << " ";
-    std::cout << lynx::Get(m_shadingValues + (3 * i + 1)) << " ";
-    std::cout << lynx::Get(m_shadingValues + (3 * i + 2)) << " ";
-    std::cout << ")" << std::endl;
-  }
-
-  std::cout << std::endl;
-  std::cout << "Residuals:" << std::endl;
-  std::cout << std::endl;
-
-  for (size_t i = 0; i < m_adjacencyCount; ++i)
-  {
-    std::cout << "( ";
-    std::cout << lynx::Get(residuals + (3 * i + 0)) << " ";
-    std::cout << lynx::Get(residuals + (3 * i + 1)) << " ";
-    std::cout << lynx::Get(residuals + (3 * i + 2)) << " ";
-    std::cout << ")" << std::endl;
-  }
-
-  std::cout << std::endl;
-  std::cout << "Jacobian:" << std::endl;
-  std::cout << std::endl;
-
-  size_t offset = 0;
-  // const size_t maxEval = 1000;
-  // const size_t residualCount = m_adjacencyCount;
-  // const size_t stepCount = (residualCount + maxEval - 1) / maxEval;
-
-  // float* jacobian = m_maxJacobian->GetValues();
-
-  // for (size_t step = 0; step < stepCount; ++step)
+  // for (size_t y = 0; y < rows; ++y)
   // {
-  //   torch::EvaluateJ(&m_plist[offset], &m_qlist[offset],
-  //       m_adjacentWeights, m_referenceValues, m_shadingValues,
-  //       m_lightCoeffValues, jacobian, m_adjacencyCount,
-  //       m_light->GetVoxelCount(), m_mesh->GetVertexCount(), maxEval);
+  //   for (size_t x = 0; x < cols; ++x)
+  //   {
+  //     const size_t index = x * rows + y;
 
-  //   m_maxJacobian->LeftMultiply(residuals + offset, gradient);
-  //   offset += maxEval;
+  //     std::cout << "( ";
+  //     std::cout << lynx::Get(m_lightCoeffValues + (3 * index + 0)) << " ";
+  //     std::cout << lynx::Get(m_lightCoeffValues + (3 * index + 1)) << " ";
+  //     std::cout << lynx::Get(m_lightCoeffValues + (3 * index + 2)) << " ";
+  //     std::cout << ") ";
+  //   }
+
+  //   std::cout << std::endl;
   // }
 
-  // jacobian = m_minJacobian->GetValues();
-  // const size_t minEval = residualCount - maxEval * (residualCount / maxEval);
+  // std::cout << std::endl;
+  // std::cout << "Parameters:" << std::endl;
+  // std::cout << std::endl;
 
-  float* jacobian = m_minJacobian->GetValues();
-  const size_t minEval = m_adjacencyCount;
+  // for (size_t i = 0; i < m_light->GetVoxelCount(); ++i)
+  // {
+  //   std::cout << "( ";
+  //   std::cout << lynx::Get(parameters[0] + (3 * i + 0)) << " ";
+  //   std::cout << lynx::Get(parameters[0] + (3 * i + 1)) << " ";
+  //   std::cout << lynx::Get(parameters[0] + (3 * i + 2)) << " ";
+  //   std::cout << ")" << std::endl;
+  // }
+
+  // std::cout << std::endl;
+  // std::cout << "Shading Values:" << std::endl;
+  // std::cout << std::endl;
+
+  // for (size_t i = 0; i < m_material->GetAlbedoCount(); ++i)
+  // {
+  //   std::cout << "( ";
+  //   std::cout << lynx::Get(m_shadingValues + (3 * i + 0)) << " ";
+  //   std::cout << lynx::Get(m_shadingValues + (3 * i + 1)) << " ";
+  //   std::cout << lynx::Get(m_shadingValues + (3 * i + 2)) << " ";
+  //   std::cout << ")" << std::endl;
+  // }
+
+  // std::cout << std::endl;
+  // std::cout << "Residuals:" << std::endl;
+  // std::cout << std::endl;
+
+  // for (size_t i = 0; i < m_adjacencyCount; ++i)
+  // {
+  //   std::cout << "( ";
+  //   std::cout << lynx::Get(residuals + (3 * i + 0)) << " ";
+  //   std::cout << lynx::Get(residuals + (3 * i + 1)) << " ";
+  //   std::cout << lynx::Get(residuals + (3 * i + 2)) << " ";
+  //   std::cout << ")" << std::endl;
+  // }
+
+  // std::cout << std::endl;
+  // std::cout << "Jacobian:" << std::endl;
+  // std::cout << std::endl;
+
+  size_t offset = 0;
+  const size_t maxEval = 1000;
+  const size_t residualCount = m_adjacencyCount;
+  const size_t stepCount = (residualCount - 1) / maxEval;
+
+  float* jacobian = m_maxJacobian->GetValues();
+
+  for (size_t step = 0; step < stepCount; ++step)
+  {
+    torch::EvaluateJ(&m_plist[offset], &m_qlist[offset],
+        m_adjacentWeights, m_referenceValues, m_shadingValues,
+        m_lightCoeffValues, jacobian, m_adjacencyCount,
+        m_light->GetVoxelCount(), m_mesh->GetVertexCount(), maxEval);
+
+    m_maxJacobian->LeftMultiply(residuals + offset, gradient);
+    offset += maxEval;
+  }
+
+  jacobian = m_minJacobian->GetValues();
+  const size_t minEval = residualCount - maxEval * (residualCount / maxEval);
 
   torch::EvaluateJ(&m_plist[offset], &m_qlist[offset],
       m_adjacentWeights, m_referenceValues, m_shadingValues,
@@ -219,23 +216,30 @@ void MeshCostFunction::Evaluate(const float* const* parameters,
 
   m_minJacobian->LeftMultiply(residuals + offset, gradient);
 
-  std::cout << "Adj Count: " << m_adjacencyCount << std::endl;
+  // for (size_t y = 0; y < m_adjacencyCount; ++y)
+  // {
+  //   for (size_t x = 0; x < m_light->GetVoxelCount(); ++x)
+  //   {
+  //     const size_t index = x * m_adjacencyCount + y;
+  //     float r = lynx::Get(jacobian + (3 * index + 0));
+  //     float g = lynx::Get(jacobian + (3 * index + 1));
+  //     float b = lynx::Get(jacobian + (3 * index + 2));
 
-  for (size_t y = 0; y < m_adjacencyCount; ++y)
-  {
-    for (size_t x = 0; x < m_light->GetVoxelCount(); ++x)
-    {
-      const size_t index = x * rows + y;
+  //     if (r > -1E-10 && r < +1E-10) r = +0.0f;
+  //     if (g > -1E-10 && g < +1E-10) g = +0.0f;
+  //     if (b > -1E-10 && b < +1E-10) b = +0.0f;
 
-      std::cout << "( ";
-      std::cout << lynx::Get(jacobian + (3 * index + 0)) << " ";
-      std::cout << lynx::Get(jacobian + (3 * index + 1)) << " ";
-      std::cout << lynx::Get(jacobian + (3 * index + 2)) << " ";
-      std::cout << ") ";
-    }
+  //     std::cout << "( ";
+  //     printf("%s%0.4f ", ((r < 0) ? "" : " "), r);
+  //     printf("%s%0.4f ", ((g < 0) ? "" : " "), g);
+  //     printf("%s%0.4f ", ((b < 0) ? "" : " "), b);
+  //     std::cout << ") ";
+  //   }
 
-    std::cout << std::endl;
-  }
+  //   std::cout << std::endl;
+  // }
+
+  // std::cout << std::endl;
 }
 
 void MeshCostFunction::ClearJacobian()
@@ -277,6 +281,8 @@ void MeshCostFunction::ComputeAdjacenies()
   std::vector<Spectrum> albedos;
   m_material->GetAlbedos(albedos);
 
+  std::cout << "Populating octree..." << std::endl;
+
   for (size_t i = 0; i < vertices.size(); ++i)
   {
     const Point& v = vertices[i];
@@ -284,8 +290,15 @@ void MeshCostFunction::ComputeAdjacenies()
     octree.AddVertex(i, position);
   }
 
+  std::cout << "Finding adjacencies..." << std::endl;
+
   for (size_t p = 0; p < vertices.size(); ++p)
   {
+    if (vertices.size() < 10 || p % (vertices.size() / 10) == 0)
+    {
+      std::cout << (100.0 * p) / vertices.size() << "%" << std::endl;
+    }
+
     std::vector<unsigned int> neighbors;
 
     const Point& vp = vertices[p];
@@ -294,7 +307,7 @@ void MeshCostFunction::ComputeAdjacenies()
     const Vector cp = ap.GetRGB().Normalize();
 
     const float3 position = make_float3(vp.x, vp.y, vp.z);
-    octree.GetVertices(p, position, m_maxNeighborDistance, neighbors);
+    octree.GetVertices(p + 1, position, m_maxNeighborDistance, neighbors);
 
     unsigned int added = 0;
 
@@ -325,6 +338,8 @@ void MeshCostFunction::ComputeAdjacenies()
   m_adjacencyCount = plist.size();
   TORCH_ASSERT(m_adjacencyCount > 0, "not vertex pairs found");
 
+  std::cout << "Found " << m_adjacencyCount << " adjacencies" << std::endl;
+
   const cudaMemcpyKind kind = cudaMemcpyHostToDevice;
   size_t bytes = sizeof(unsigned int) * m_adjacencyCount;
   LYNX_CHECK_CUDA(cudaMalloc(&m_plist, bytes));
@@ -336,11 +351,6 @@ void MeshCostFunction::ComputeAdjacenies()
   LYNX_CHECK_CUDA(cudaMalloc(&m_adjacentWeights, bytes));
   LYNX_CHECK_CUDA(cudaMemcpy(m_adjacentWeights, weights.data(), bytes, kind));
 
-  for (float weight : weights)
-  {
-    std::cout << "Weight: " << weight << std::endl;
-  }
-
   // TODO: actually check memory usage
   lynx::CostFunction::m_maxEvaluationBlockSize = 1000;
   lynx::CostFunction::m_residualCount = 3 * m_adjacencyCount;
@@ -348,20 +358,17 @@ void MeshCostFunction::ComputeAdjacenies()
 
 void MeshCostFunction::ComputeLightCoefficients()
 {
-  std::cout << __FILE__ << " : " << __LINE__ << std::endl;
-
   ResetLightCoefficients();
 
-  std::cout << __FILE__ << " : " << __LINE__ << std::endl;
-
   const size_t launchSize = m_mesh->GetVertexCount();
+
+  std::cout << "Launching " << launchSize<< " threads with " << m_sampleCount << " rays each..." << std::endl;
+
   std::shared_ptr<Context> context = m_light->GetContext();
   m_program["iteration"]->setUint(m_iterations++);
   context->GetVariable("computeVoxelDerivs")->setUint(true);
   context->Launch(m_programId, launchSize);
   context->GetVariable("computeVoxelDerivs")->setUint(false);
-
-  std::cout << __FILE__ << " : " << __LINE__ << " = " << launchSize << std::endl;
 
   CUdeviceptr pointer = m_lightCoeffs->getDevicePointer(0);
   m_lightCoeffValues = reinterpret_cast<float*>(pointer);
@@ -493,6 +500,7 @@ void MeshCostFunction::ComputeReferenceValues()
   optix::Buffer albedos = m_material->GetAlbedoBuffer();
   CUdeviceptr pointer = albedos->getDevicePointer(0);
   float* referenceValues = reinterpret_cast<float*>(pointer);
+  lynx::Clamp(referenceValues, 1E-6, 1.0f, 3 * m_material->GetAlbedoCount());
 
   const size_t count = 3 * m_material->GetAlbedoCount();
   const size_t bytes = sizeof(float) * count;

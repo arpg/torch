@@ -37,22 +37,22 @@ __global__ void EvaluateJKernel(const unsigned int* plist,
   if (threadIndex < maxThreadIndex)
   {
     const float epsilon = 1E-6f;
-    const unsigned int pairIndex = (threadIndex / 3) / voxelCount;
-    const unsigned int voxelIndex = (threadIndex / 3) % voxelCount;
+    const unsigned int pairIndex = (threadIndex / 3) % launchPairCount;
+    const unsigned int voxelIndex = (threadIndex / 3) / launchPairCount;
     const unsigned int channel = threadIndex % 3;
 
     const unsigned int p = plist[pairIndex];
     const unsigned int q = qlist[pairIndex];
     const float w = weights[pairIndex];
-    const float Sp = shading[p] + epsilon;
-    const float Sq = shading[q] + epsilon;
+    const float Sp = shading[3 * p + channel] + epsilon;
+    const float Sq = shading[3 * q + channel] + epsilon;
     const float cp = coeffs[3 * voxelIndex * vertexCount + 3 * p + channel];
     const float cq = coeffs[3 * voxelIndex * vertexCount + 3 * q + channel];
 
     const unsigned int jacobIndex =
-        3 * voxelIndex * pairCount + 3 * pairIndex + channel;
+        3 * (voxelIndex * launchPairCount + pairIndex) + channel;
 
-    jacobians[jacobIndex] = -w * ((cp / Sp) - (cq / Sq));
+    jacobians[jacobIndex] = w * ((cp / Sp) - (cq / Sq));
   }
 }
 

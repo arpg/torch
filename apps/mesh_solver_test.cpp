@@ -57,7 +57,7 @@ int main(int argc, char** argv)
   light = scene.CreateVoxelLight();
   light->SetDimensions(2, 2, 2);
   light->SetVoxelSize(0.1);
-  light->SetRadiance(1.0, 1.0, 1.0);
+  light->SetRadiance(1.00, 2.01, 0.62);
   scene.Add(light);
 
   light->GetContext()->Compile();

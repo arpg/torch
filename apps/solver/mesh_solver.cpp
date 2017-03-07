@@ -8,6 +8,8 @@ DEFINE_int32(voxel_dim, 3, "number of voxels along each grid dimension");
 DEFINE_double(voxel_size, 0.1, "size of each individual voxel");
 DEFINE_double(max_dist, 0.1, "max distance for neighbor evaluation");
 DEFINE_double(sim_thresh, 0.1, "minimum similarity value for neighbor status");
+DEFINE_int32(knn, 1, "number of neighboring vertices to contrain");
+DEFINE_int32(samples, 1, "number of light samples per vertex");
 DEFINE_bool(use_act, false, "use activation cost regulizer");
 DEFINE_double(inner_act, 1.0, "inner log scale for activation cost");
 DEFINE_double(outer_act, 1.0, "outer log scale for activation cost");
@@ -49,7 +51,10 @@ void CreateScene()
   light->SetDimensions(FLAGS_voxel_dim);
   light->SetVoxelSize(FLAGS_voxel_size);
   light->SetRadiance(1E-8, 1E-8, 1E-8);
+  // light->SetRadiance(1, 1, 1);
   scene->Add(light);
+
+  light->GetContext()->Compile();
 }
 
 void CreateProblem()
@@ -66,8 +71,10 @@ void CreateProblem()
   problem->SetLowerBound(lightValues, 0.0f);
 
   costFunction = new torch::MeshCostFunction(light, mesh, material);
+  costFunction->SetMaxNeighborCount(FLAGS_knn);
   costFunction->SetMaxNeighborDistance(FLAGS_max_dist);
   costFunction->SetSimilarityThreshold(FLAGS_sim_thresh);
+  costFunction->SetLightSampleCount(FLAGS_samples);
   problem->AddResidualBlock(costFunction, nullptr, lightValues);
 
   if (FLAGS_use_act)
@@ -129,12 +136,29 @@ void SaveResults()
   }
 
   ShadingRemover remover(final_mesh, final_material);
+  remover.SetSampleCount(FLAGS_samples);
   remover.Remove();
+  final_material->LoadAlbedos();
 
   LOG(INFO) << "Writing final mesh estimate...";
 
   MeshWriter writer(final_mesh, final_material);
   writer.Write(FLAGS_out_mesh);
+
+  LOG(INFO) << "Writing final voxel values...";
+
+  std::vector<float> values(3 * light->GetVoxelCount());
+  optix::Buffer radiance = light->GetRadianceBuffer();
+  float* device = reinterpret_cast<float*>(radiance->map());
+  std::copy(device, device + values.size(), values.data());
+  radiance->unmap();
+
+  for (size_t i = 0; i < light->GetVoxelCount(); ++i)
+  {
+    std::cout << values[3 * i + 0] << " ";
+    std::cout << values[3 * i + 1] << " ";
+    std::cout << values[3 * i + 2] << std::endl;
+  }
 }
 
 void SolveProblem()

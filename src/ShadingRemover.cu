@@ -59,7 +59,6 @@ RT_PROGRAM void Remove()
 RT_PROGRAM void ClosestHit()
 {
   float3 shading = make_float3(0, 0, 0);
-  const float throughput = 1.0f / (sampleCount * M_PIf);
 
   torch::LightSample sample;
   sample.origin = vertices[launchIndex];
@@ -67,12 +66,12 @@ RT_PROGRAM void ClosestHit()
   sample.seed = rayData.seed;
   sample.normal = GetNormal();
   sample.snormal = sample.normal;
-  sample.throughput = make_float3(throughput);
 
   for (unsigned int i = 0; i < sampleCount; ++i)
   {
     SampleLights(sample);
-    shading += sample.radiance;
+    const float theta = dot(sample.snormal, sample.direction);
+    shading += (sample.radiance * theta) / (sample.pdf * sampleCount * M_PIf);
   }
 
   UpdateAlbedo(shading);

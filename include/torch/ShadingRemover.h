@@ -36,6 +36,8 @@ class ShadingRemover
 
     unsigned int m_sampleCount;
 
+    optix::Program m_closestHitProgram;
+
     optix::Program m_program;
 
     unsigned int m_programId;
