@@ -1,6 +1,7 @@
 #include <torch/LightCostFunction.h>
 #include <torch/Context.h>
 #include <torch/EnvironmentLight.h>
+#include <torch/Exception.h>
 #include <torch/Keyframe.h>
 #include <torch/KeyframeSet.h>
 #include <torch/PtxUtil.h>
@@ -65,6 +66,12 @@ void LightCostFunction::Evaluate(size_t offset, size_t size,
   PrepareEvaluation();
   jacobian->RightMultiply(parameters[0], residuals);
   lynx::Add(m_referenceValues, residuals, residuals, GetResidualCount());
+}
+
+void LightCostFunction::Evaluate(const float* const* parameters,
+    float* residuals, float* gradient)
+{
+  TORCH_THROW("not implemeneted");
 }
 
 void LightCostFunction::ClearJacobian()

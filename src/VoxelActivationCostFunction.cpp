@@ -1,4 +1,5 @@
 #include <torch/VoxelActivationCostFunction.h>
+#include <torch/Exception.h>
 #include <torch/VoxelLight.h>
 #include <torch/device/VoxelActivationCostFunction.cuh>
 
@@ -76,6 +77,12 @@ void VoxelActivationCostFunction::Evaluate(size_t offset, size_t size,
   float* r = &residuals[offset];
 
   torch::Evaluate(params, r, J, size, m_bias, m_innerScale, m_outerScale);
+}
+
+void VoxelActivationCostFunction::Evaluate(const float* const* parameters,
+    float* residuals, float* gradient)
+{
+  TORCH_THROW("not implemented");
 }
 
 void VoxelActivationCostFunction::Initialize()

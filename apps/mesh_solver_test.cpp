@@ -1,13 +1,12 @@
-#include <gtest/gtest.h>
+#include <iostream>
 #include <torch/Torch.h>
 
-namespace torch
-{
-namespace testing
-{
+using namespace torch;
 
-TEST(MeshCostFunction, Gradient)
+int main(int argc, char** argv)
 {
+  std::cout << "Starting..." << std::endl;
+
   std::vector<Point> vertices;
   vertices.push_back(Point( 0,  0,  0));
   vertices.push_back(Point( 1, -1,  0));
@@ -73,16 +72,13 @@ TEST(MeshCostFunction, Gradient)
 
   MeshCostFunction* costFunction;
   costFunction = new MeshCostFunction(light, geometry, material);
+  costFunction->SetMaxNeighborCount(10);
+  costFunction->SetMaxNeighborDistance(10.0f);
+  costFunction->SetSimilarityThreshold(0.0f);
+  costFunction->SetLightSampleCount(1000);
   problem.AddResidualBlock(costFunction, nullptr, values);
 
   problem.CheckGradients();
+
+  std::cout << "Success" << std::endl;
 }
-
-TEST(MeshCostFunction, Optimization)
-{
-
-}
-
-} // namespace testing
-
-} // namespace torch

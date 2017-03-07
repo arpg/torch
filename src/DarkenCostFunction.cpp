@@ -1,5 +1,6 @@
 #include <torch/DarkenCostFunction.h>
 #include <torch/EnvironmentLight.h>
+#include <torch/Exception.h>
 #include <torch/device/DarkenCostFunction.cuh>
 
 namespace torch
@@ -57,6 +58,12 @@ void DarkenCostFunction::Evaluate(size_t offset, size_t size,
   float* r = &residuals[offset];
 
   torch::Evaluate(params, r, J, m_values, m_weight, size);
+}
+
+void DarkenCostFunction::Evaluate(const float* const* parameters,
+    float* residuals, float* gradient)
+{
+  TORCH_THROW("not implemented");
 }
 
 void DarkenCostFunction::Initialize()

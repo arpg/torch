@@ -24,6 +24,9 @@ class VoxelCostFunction : public lynx::CostFunction
     void Evaluate(size_t offset, size_t size, float const* const* parameters,
         float* residuals, lynx::Matrix* jacobian) override;
 
+    void Evaluate(float const* const* parameters, float* residuals,
+        float* gradient) override;
+
     void ClearJacobian();
 
   protected:

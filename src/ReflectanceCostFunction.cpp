@@ -1,4 +1,5 @@
 #include <torch/ReflectanceCostFunction.h>
+#include <torch/Exception.h>
 #include <torch/MatteMaterial.h>
 #include <torch/Mesh.h>
 #include <torch/device/ReflectanceCostFunction.cuh>
@@ -77,7 +78,13 @@ void ReflectanceCostFunction::Evaluate(size_t offset, size_t size,
   float* r = &residuals[offset];
 
   torch::Evaluate(params, r, J, size, m_adjacencyMap, m_adjacencyOffsets,
-      m_chromThreshold, m_weight);
+                  m_chromThreshold, m_weight);
+}
+
+void ReflectanceCostFunction::Evaluate(const float* const* parameters,
+    float* residuals, float* gradient)
+{
+  TORCH_THROW("not implemented");
 }
 
 void ReflectanceCostFunction::Initialize()

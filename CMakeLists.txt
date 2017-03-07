@@ -125,6 +125,7 @@ set(CPP_HEADERS
   ${CPP_HEADER_DIR}/SceneGeometrySampler.h
   ${CPP_HEADER_DIR}/SceneLightSampler.h
   ${CPP_HEADER_DIR}/SceneLoader.h
+  ${CPP_HEADER_DIR}/ShadingRemover.h
   ${CPP_HEADER_DIR}/SingleGeometry.h
   ${CPP_HEADER_DIR}/SparseMatrix.h
   ${CPP_HEADER_DIR}/Spectrum.h
@@ -188,6 +189,7 @@ set(CPP_SOURCES
   ${CPP_SOURCE_DIR}/SceneGeometrySampler.cpp
   ${CPP_SOURCE_DIR}/SceneLightSampler.cpp
   ${CPP_SOURCE_DIR}/SceneLoader.cpp
+  ${CPP_SOURCE_DIR}/ShadingRemover.cpp
   ${CPP_SOURCE_DIR}/SingleGeometry.cpp
   ${CPP_SOURCE_DIR}/SparseMatrix.cpp
   ${CPP_SOURCE_DIR}/Spectrum.cpp
@@ -241,6 +243,7 @@ set(CUDA_SOURCES
   ${CUDA_SOURCE_DIR}/PointLightSampler.cu
   ${CUDA_SOURCE_DIR}/SceneGeometrySampler.cu
   ${CUDA_SOURCE_DIR}/SceneLightSampler.cu
+  ${CUDA_SOURCE_DIR}/ShadingRemover.cu
   ${CUDA_SOURCE_DIR}/SparseMatrix.cu
   ${CUDA_SOURCE_DIR}/Sphere.cu
   ${CUDA_SOURCE_DIR}/SphereSampler.cu
@@ -312,6 +315,8 @@ cuda_add_library(torch_cuda SHARED
   ${CUDA_HEADER_DIR}/DarkenCostFunction.cuh
   ${CUDA_SOURCE_DIR}/ReflectanceCostFunction.cu
   ${CUDA_HEADER_DIR}/ReflectanceCostFunction.cuh
+  ${CUDA_SOURCE_DIR}/MeshCostKernel.cu
+  ${CUDA_HEADER_DIR}/MeshCostKernel.cuh
 )
 
 # build project library

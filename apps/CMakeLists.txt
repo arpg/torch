@@ -10,6 +10,10 @@ add_executable(voxel_demo voxel_demo.cpp)
 target_link_libraries(voxel_demo ${LIBRARY_NAME})
 add_dependencies(voxel_demo ${LIBRARY_NAME})
 
+add_executable(mesh_solver_test mesh_solver_test.cpp)
+target_link_libraries(mesh_solver_test ${LIBRARY_NAME})
+add_dependencies(mesh_solver_test ${LIBRARY_NAME})
+
 find_package(Eigen3 QUIET)
 
 if(EIGEN3_FOUND)

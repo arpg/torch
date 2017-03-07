@@ -10,10 +10,23 @@ rtDeclareVariable(optix::Ray, ray, rtCurrentRay, );
 rtDeclareVariable(torch::RadianceData, rayData, rtPayload, );
 rtDeclareVariable(unsigned int, launchIndex, rtLaunchIndex, );
 rtDeclareVariable(unsigned int, sampleCount, , );
-rtDeclareVariable(unsigned int, iteration, , );
 rtDeclareVariable(rtObject, dummyRoot, , );
 rtBuffer<float3> vertices;
 rtBuffer<float3> normals;
+rtBuffer<float3> albedos;
+
+TORCH_DEVICE void UpdateAlbedo(const float3& shading)
+{
+  // TODO: handle divide-by-zero better
+
+  float3 albedo = albedos[launchIndex];
+
+  if (shading.x > 1E-4) albedo.x /= shading.x; else albedo.x = 1.0f;
+  if (shading.y > 1E-4) albedo.y /= shading.y; else albedo.y = 1.0f;
+  if (shading.z > 1E-4) albedo.z /= shading.z; else albedo.z = 1.0f;
+
+  albedos[launchIndex] = albedo;
+}
 
 TORCH_DEVICE float3 GetNormal()
 {
@@ -31,10 +44,10 @@ TORCH_DEVICE void InitializeRay(optix::Ray& ray)
 
 TORCH_DEVICE unsigned int InitializeSeed()
 {
-  return torch::init_seed<16>(launchIndex, iteration);
+  return torch::init_seed<16>(launchIndex, 7919);
 }
 
-RT_PROGRAM void Capture()
+RT_PROGRAM void Remove()
 {
   optix::Ray ray;
   InitializeRay(ray);
@@ -45,6 +58,7 @@ RT_PROGRAM void Capture()
 
 RT_PROGRAM void ClosestHit()
 {
+  float3 shading = make_float3(0, 0, 0);
   const float throughput = 1.0f / (sampleCount * M_PIf);
 
   torch::LightSample sample;
@@ -58,7 +72,10 @@ RT_PROGRAM void ClosestHit()
   for (unsigned int i = 0; i < sampleCount; ++i)
   {
     SampleLights(sample);
+    shading += sample.radiance;
   }
+
+  UpdateAlbedo(shading);
 }
 
 RT_PROGRAM void Intersect(unsigned int index)

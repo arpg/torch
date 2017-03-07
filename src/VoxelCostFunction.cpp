@@ -1,10 +1,11 @@
 #include <torch/VoxelCostFunction.h>
 #include <torch/Context.h>
-#include <torch/VoxelLight.h>
+#include <torch/Exception.h>
 #include <torch/Keyframe.h>
 #include <torch/KeyframeSet.h>
 #include <torch/PtxUtil.h>
 #include <torch/Spectrum.h>
+#include <torch/VoxelLight.h>
 
 #include <iostream>
 #include <torch/Image.h>
@@ -68,6 +69,12 @@ void VoxelCostFunction::Evaluate(size_t offset, size_t size,
   PrepareEvaluation();
   jacobian->RightMultiply(parameters[0], residuals);
   lynx::Add(m_referenceValues, residuals, residuals, GetResidualCount());
+}
+
+void VoxelCostFunction::Evaluate(const float* const* parameters,
+    float* residuals, float* gradient)
+{
+  TORCH_THROW("not implemented");
 }
 
 void VoxelCostFunction::ClearJacobian()

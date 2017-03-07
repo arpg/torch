@@ -1,5 +1,6 @@
 #include <torch/ActivationCostFunction.h>
 #include <torch/EnvironmentLight.h>
+#include <torch/Exception.h>
 #include <torch/device/ActivationCostFunction.cuh>
 
 namespace torch
@@ -76,6 +77,12 @@ void ActivationCostFunction::Evaluate(size_t offset, size_t size,
   float* r = &residuals[offset];
 
   torch::Evaluate(params, r, J, size, m_bias, m_innerScale, m_outerScale);
+}
+
+void ActivationCostFunction::Evaluate(const float* const* parameters,
+    float* residuals, float* gradient)
+{
+  TORCH_THROW("not implemeneted");
 }
 
 void ActivationCostFunction::Initialize()

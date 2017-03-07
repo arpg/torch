@@ -3,6 +3,7 @@
 #include <torch/Torch.h>
 
 DEFINE_string(mesh, "mesh.ply", "input mesh");
+DEFINE_string(hd_mesh, "", "high-res mesh used for computing final results");
 DEFINE_int32(voxel_dim, 3, "number of voxels along each grid dimension");
 DEFINE_double(voxel_size, 0.1, "size of each individual voxel");
 DEFINE_double(max_dist, 0.1, "max distance for neighbor evaluation");
@@ -108,6 +109,34 @@ void SolveProblemOnce()
   light->SetRadiance(radiance);
 }
 
+void SaveResults()
+{
+  LOG(INFO) << "Computing final albedos...";
+
+  std::shared_ptr<Mesh> final_mesh;
+  std::shared_ptr<MatteMaterial> final_material;
+
+  if (FLAGS_hd_mesh.empty())
+  {
+    final_mesh = mesh;
+    final_material = material;
+  }
+  else
+  {
+    final_mesh = scene->CreateMesh(FLAGS_hd_mesh);
+    std::shared_ptr<Material> temp = scene->CreateMaterial(FLAGS_hd_mesh);
+    final_material = std::static_pointer_cast<MatteMaterial>(temp);
+  }
+
+  ShadingRemover remover(final_mesh, final_material);
+  remover.Remove();
+
+  LOG(INFO) << "Writing final mesh estimate...";
+
+  MeshWriter writer(final_mesh, final_material);
+  writer.Write(FLAGS_out_mesh);
+}
+
 void SolveProblem()
 {
   CreateScene();
@@ -119,11 +148,7 @@ void SolveProblem()
     SolveProblemOnce();
   }
 
-  // TODO: compute final albedos!!!
-
-  LOG(INFO) << "Writing final mesh estimate...";
-  MeshWriter writer(mesh, material);
-  writer.Write(FLAGS_out_mesh);
+  SaveResults();
 }
 
 int main(int argc, char** argv)
