@@ -4,12 +4,12 @@
 
 DEFINE_string(mesh, "mesh.ply", "input mesh");
 DEFINE_string(hd_mesh, "", "high-res mesh used for computing final results");
-DEFINE_int32(voxel_dim, 3, "number of voxels along each grid dimension");
-DEFINE_double(voxel_size, 0.1, "size of each individual voxel");
+DEFINE_int32(voxel_dim, 7, "number of voxels along each grid dimension");
+DEFINE_double(voxel_size, 0.5, "size of each individual voxel");
 DEFINE_double(max_dist, 0.1, "max distance for neighbor evaluation");
 DEFINE_double(sim_thresh, 0.1, "minimum similarity value for neighbor status");
-DEFINE_int32(knn, 1, "number of neighboring vertices to contrain");
-DEFINE_int32(samples, 1, "number of light samples per vertex");
+DEFINE_int32(knn, 5, "number of neighboring vertices to contrain");
+DEFINE_int32(samples, 512, "number of light samples per vertex");
 DEFINE_bool(use_act, false, "use activation cost regulizer");
 DEFINE_double(inner_act, 1.0, "inner log scale for activation cost");
 DEFINE_double(outer_act, 1.0, "outer log scale for activation cost");
@@ -50,8 +50,7 @@ void CreateScene()
   light = scene->CreateVoxelLight();
   light->SetDimensions(FLAGS_voxel_dim);
   light->SetVoxelSize(FLAGS_voxel_size);
-  light->SetRadiance(1E-8, 1E-8, 1E-8);
-  // light->SetRadiance(1, 1, 1);
+  light->SetRadiance(1, 1, 1);
   scene->Add(light);
 
   light->GetContext()->Compile();

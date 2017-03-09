@@ -68,6 +68,19 @@ Spectrum& Spectrum::operator*=(const Spectrum& a)
   return *this;
 }
 
+Spectrum Spectrum::operator/(float a)
+{
+  Spectrum result(*this);
+  result /= a;
+  return result;
+}
+
+Spectrum&Spectrum::operator/=(float a)
+{
+  m_rgb = m_rgb / a;
+  return *this;
+}
+
 Spectrum operator*(float a, const Spectrum& b)
 {
   Spectrum result(b);

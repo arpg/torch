@@ -13,6 +13,7 @@
 #include <torch/device/Ray.h>
 
 #include <iostream>
+#include <torch/MeshWriter.h>
 
 namespace torch
 {
@@ -121,6 +122,19 @@ void MeshCostFunction::Evaluate(const float* const* parameters,
   lynx::Matrix3C coeffs(m_lightCoeffValues, rows, cols);
   coeffs.RightMultiply(parameters[0], m_shadingValues);
   lynx::Scale(-1.0, m_shadingValues, m_shadingValues, 3 * rows);
+
+  // std::vector<Spectrum> albedos(m_material->GetAlbedoCount());
+  // std::shared_ptr<MatteMaterial> material;
+  // material = std::make_shared<MatteMaterial>(m_material->GetContext());
+
+  // const size_t bytes = sizeof(Spectrum) * albedos.size();
+  // const cudaMemcpyKind kind = cudaMemcpyDeviceToHost;
+  // LYNX_CHECK_CUDA(cudaMemcpy(albedos.data(), m_shadingValues, bytes, kind));
+  // material->SetAlbedos(albedos);
+
+  // MeshWriter writer(m_mesh, material);
+  // writer.SetMeshlabFriendly(true);
+  // writer.Write("shading_values.ply");
 
   torch::EvaluateR(m_plist, m_qlist, m_adjacentWeights, m_referenceValues,
            m_shadingValues, residuals, 3 * m_adjacencyCount);
@@ -240,6 +254,8 @@ void MeshCostFunction::Evaluate(const float* const* parameters,
   // }
 
   // std::cout << std::endl;
+
+  ClearJacobian();
 }
 
 void MeshCostFunction::ClearJacobian()
@@ -309,6 +325,11 @@ void MeshCostFunction::ComputeAdjacenies()
     const float3 position = make_float3(vp.x, vp.y, vp.z);
     octree.GetVertices(p + 1, position, m_maxNeighborDistance, neighbors);
 
+    Spectrum totalColor;
+    float totalWeight = 0;
+    std::vector<unsigned int> ppot;
+    std::vector<unsigned int> qpot;
+    std::vector<float> wpot;
     unsigned int added = 0;
 
     for (size_t j = 0; j < neighbors.size(); ++j)
@@ -326,11 +347,32 @@ void MeshCostFunction::ComputeAdjacenies()
 
       if (similarity > m_similarityThreshold)
       {
-        plist.push_back(p);
-        qlist.push_back(q);
-        weights.push_back(similarity);
+        // plist.push_back(p);
+        // qlist.push_back(q);
+        // weights.push_back(similarity);
+
+        ppot.push_back(p);
+        qpot.push_back(q);
+        wpot.push_back(similarity);
+        totalColor += albedos[q];
+        totalWeight += similarity;
 
         if (++added == m_maxNeighborCount) break;
+      }
+    }
+
+    const float meanWeight = totalWeight / added;
+    const Spectrum meanColor = totalColor / added;
+    const float colorDiff = meanColor.GetY() - albedos[p].GetY();
+
+    if (colorDiff > 0)
+    {
+      for (unsigned int i = 0; i < added; ++i)
+      {
+        plist.push_back(ppot[i]);
+        qlist.push_back(qpot[i]);
+        // weights.push_back(colorDiff * meanWeight * wpot[i]);
+        weights.push_back(wpot[i]);
       }
     }
   }
@@ -361,8 +403,6 @@ void MeshCostFunction::ComputeLightCoefficients()
   ResetLightCoefficients();
 
   const size_t launchSize = m_mesh->GetVertexCount();
-
-  std::cout << "Launching " << launchSize<< " threads with " << m_sampleCount << " rays each..." << std::endl;
 
   std::shared_ptr<Context> context = m_light->GetContext();
   m_program["iteration"]->setUint(m_iterations++);

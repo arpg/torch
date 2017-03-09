@@ -82,7 +82,10 @@ void VoxelActivationCostFunction::Evaluate(size_t offset, size_t size,
 void VoxelActivationCostFunction::Evaluate(const float* const* parameters,
     float* residuals, float* gradient)
 {
-  TORCH_THROW("not implemented");
+  const size_t count = m_light->GetVoxelCount();
+  lynx::BlockDiagonalMatrix jacobian(1, 3, count);
+  Evaluate(0, GetResidualCount(), parameters, residuals, &jacobian);
+  jacobian.LeftMultiply(residuals, gradient);
 }
 
 void VoxelActivationCostFunction::Initialize()

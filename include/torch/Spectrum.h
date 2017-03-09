@@ -30,6 +30,10 @@ class Spectrum
 
     Spectrum& operator*=(const Spectrum& a);
 
+    Spectrum operator/(float a);
+
+    Spectrum& operator/=(float a);
+
     static Spectrum FromXYZ(const Vector& xyz);
 
     static Spectrum FromXYZ(float x, float y, float z);

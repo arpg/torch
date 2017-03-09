@@ -63,7 +63,7 @@ TORCH_DEVICE void SampleVoxel(const float3& origin, uint& seed,
     return;
   }
 
-  const float3 w = -normalize(delta_xc);
+  const float3 w = normalize(delta_xc);
   float3 u1 = make_float3(0, -w.z, w.y);
   float3 u2 = make_float3(-w.z, 0, w.x);
 
@@ -79,14 +79,15 @@ TORCH_DEVICE void SampleVoxel(const float3& origin, uint& seed,
   const float3 u = normalize(u1);
   const float3 v = cross(u, w);
 
-  const float temp = r / dist_xc;
-  const float cosAlpha = 1 - E1 + E1 * sqrtf(1 - (temp * temp));
+  const float r2 = radius * radius;
+  float sinThetaMax2 = r2 / dot(delta_xc, delta_xc);
+  float cosThetaMax = sqrtf(fmaxf(0.0f, 1.0f - sinThetaMax2));
+  const float cosAlpha = 1 - E1 + E1 * cosThetaMax;
+  const float sinAlpha = sqrtf(1.0f - cosAlpha * cosAlpha);
+
   const float phi = 2 * M_PIf * E2;
-
-  const float sinAlpha = sqrtf(1 - cosAlpha * cosAlpha);
-
-  const float cosPhi_sinAlpha = cos(phi) * sinAlpha;
-  const float sinPhi_sinAlpha = sin(phi) * sinAlpha;
+  const float cosPhi_sinAlpha = cosf(phi) * sinAlpha;
+  const float sinPhi_sinAlpha = sinf(phi) * sinAlpha;
 
   float3 direction;
   direction.x = u.x * cosPhi_sinAlpha + v.x * sinPhi_sinAlpha + w.x * cosAlpha;
@@ -97,7 +98,6 @@ TORCH_DEVICE void SampleVoxel(const float3& origin, uint& seed,
   // compute intersect intermediate results
   const float od = dot(delta_xc, -direction);
   const float oo = dot(delta_xc, delta_xc);
-  const float r2 = r * r;
   float a  = od * od - oo + r2;
   a = (a < 0) ? 0 : a;
 

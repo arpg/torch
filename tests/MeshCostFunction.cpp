@@ -64,7 +64,7 @@ TEST(MeshCostFunction, Gradient)
   std::shared_ptr<VoxelLight> light;
   light = scene->CreateVoxelLight();
   light->SetPosition(0, 0, -2.5);
-  light->SetDimensions(5, 5, 1);
+  light->SetDimensions(2, 2, 1);
   light->SetVoxelSize(2.0);
   light->SetRadiance(0.50, 0.50, 0.50);
   light->SetRadiance(0, Spectrum::FromRGB(10.3, 10.3, 10.3));
@@ -74,7 +74,7 @@ TEST(MeshCostFunction, Gradient)
   baker.SetSampleCount(10);
   baker.Bake(material, geometry);
 
-  light->SetRadiance(0, Spectrum::FromRGB(8.3, 8.3, 8.3));
+  // light->SetRadiance(0, Spectrum::FromRGB(8.3, 8.3, 8.3));
   light->GetContext()->Compile();
 
   optix::Buffer buffer = light->GetRadianceBuffer();
@@ -89,7 +89,7 @@ TEST(MeshCostFunction, Gradient)
   MeshCostFunction* costFunction;
   costFunction = new MeshCostFunction(light, geometry, material);
   costFunction->SetMaxNeighborCount(5);
-  costFunction->SetMaxNeighborDistance(1.5f);
+  costFunction->SetMaxNeighborDistance(1.0f);
   costFunction->SetSimilarityThreshold(0.0f);
   costFunction->SetLightSampleCount(1000);
   problem.AddResidualBlock(costFunction, nullptr, values);
@@ -105,35 +105,65 @@ TEST(MeshCostFunction, Optimization)
   std::vector<uint3> faces;
 
   Spectrum albedo = Spectrum::FromRGB(0.8, 0.4, 0.4);
+  Spectrum albedo2 = Spectrum::FromRGB(0.4, 0.4, 0.8);
 
-  for (int x = -5; x < 6; ++x)
+  const float size = 5.0f;
+  const unsigned int resolution = 25;
+  const float stepSize = size / resolution;
+  const float origin = -size / 2.0;
+
+  for (unsigned int x = 0; x <= resolution; ++x)
   {
-    for (int y = -5; y < 6; ++y)
+    for (unsigned int y = 0; y <= resolution; ++y)
     {
-      float xf = 0.5f * x;
-      float yf = 0.5f * y;
-      float zf = 1.0f + sqrtf(xf*xf + yf*yf) / 5.0;
+      float xf = origin + stepSize * x;
+      float yf = origin + stepSize * y;
+      float zf = 2.0f + sqrtf(xf*xf + yf*yf) / 5.0;
       Point p(xf, yf, zf);
-      Vector v = p - Point(0, 0, 5);
+      Vector n = p - Point(0, 0, 5);
 
       vertices.push_back(p);
-      normals.push_back(Normal(v));
-      albedos.push_back(albedo);
+      normals.push_back(Normal(n));
+      albedos.push_back((x < resolution / 2) ? albedo : albedo2);
 
-      if (x < 4 && y < 4)
+      if (x < resolution && y < resolution)
       {
-        unsigned int c  = (x + 5) * 11 + (y + 5);
-        unsigned int s  = (x + 5) * 11 + (y + 6);
-        unsigned int e  = (x + 6) * 11 + (y + 5);
-        unsigned int se = (x + 6) * 11 + (y + 6);
+        unsigned int c  = (x + 0) * (resolution + 1) + (y + 0);
+        unsigned int s  = (x + 0) * (resolution + 1) + (y + 1);
+        unsigned int e  = (x + 1) * (resolution + 1) + (y + 0);
+        unsigned int se = (x + 1) * (resolution + 1) + (y + 1);
         faces.push_back(make_uint3(c, s, se));
         faces.push_back(make_uint3(c, se, e));
       }
     }
   }
 
+  size_t ii = vertices.size();
+  vertices.push_back(Point(-0.5, -0.5, 0.8));
+  vertices.push_back(Point(-0.5, -1.5, 1.0));
+  vertices.push_back(Point(-1.5, -1.5, 1.0));
+  normals.push_back(Normal(0.0, 0.0, -1.0));
+  normals.push_back(Normal(0.0, 0.0, -1.0));
+  normals.push_back(Normal(0.0, 0.0, -1.0));
+  faces.push_back(make_uint3(ii + 0, ii + 1, ii +2));
+  albedos.push_back(Spectrum::FromRGB(0.4, 0.8, 0.4));
+  albedos.push_back(Spectrum::FromRGB(0.4, 0.8, 0.4));
+  albedos.push_back(Spectrum::FromRGB(0.4, 0.8, 0.4));
+
+  ii = vertices.size();
+
   std::shared_ptr<Scene> scene;
   scene = std::make_shared<Scene>();
+  vertices.push_back(Point(-0.5, 0.2, 1.0));
+  vertices.push_back(Point(1.0, 0.0, 1.2));
+  vertices.push_back(Point(1.0, 1.0, 1.2));
+  normals.push_back(Normal(0.0, 0.0, -1.0));
+  normals.push_back(Normal(0.0, 0.0, -1.0));
+  normals.push_back(Normal(0.0, 0.0, -1.0));
+  faces.push_back(make_uint3(ii + 0, ii + 1, ii +2));
+  albedos.push_back(Spectrum::FromRGB(0.4, 0.8, 0.4));
+  albedos.push_back(Spectrum::FromRGB(0.4, 0.8, 0.4));
+  albedos.push_back(Spectrum::FromRGB(0.4, 0.8, 0.4));
 
   std::shared_ptr<Mesh> geometry;
   geometry = scene->CreateMesh();
@@ -149,16 +179,16 @@ TEST(MeshCostFunction, Optimization)
   primitive = scene->CreatePrimitive();
   primitive->SetGeometry(geometry);
   primitive->SetMaterial(material);
-  primitive->SetPosition(0, 0, 1);
+  primitive->SetPosition(0, 0, 0);
   scene->Add(primitive);
 
   std::shared_ptr<VoxelLight> light;
   light = scene->CreateVoxelLight();
-  light->SetPosition(0, 0, -2.5);
-  light->SetDimensions(5, 5, 1);
-  light->SetVoxelSize(2.0);
-  light->SetRadiance(0.05, 0.05, 0.05);
-  light->SetRadiance(0, Spectrum::FromRGB(30, 30, 30));
+  light->SetPosition(0, 0, -3);
+  light->SetDimensions(15, 15, 1);
+  light->SetVoxelSize(1.0);
+  light->SetRadiance(0.01, 0.01, 0.01);
+  light->SetRadiance(0, Spectrum::FromRGB(100, 100, 100));
   scene->Add(light);
 
   std::shared_ptr<Camera> camera;
@@ -167,28 +197,46 @@ TEST(MeshCostFunction, Optimization)
   camera->SetImageSize(640, 480);
   camera->SetFocalLength(320, 320);
   camera->SetCenterPoint(320, 240);
-  camera->SetSampleCount(5);
+  camera->SetSampleCount(3);
 
   Image image;
-  camera->Capture(image);
-  image.Save("test_image1.png");
 
   camera->CaptureAlbedo(image);
-  image.Save("test_image1_5.png");
+  image.Save("image_01_groundtruth_albedo.png");
+
+  camera->CaptureLighting(image);
+  image.Save("image_02_groundtruth_lighting.png");
+
+  camera->Capture(image);
+  image.Save("image_03_render_with_groundtruth_lighting.png");
 
   AlbedoBaker baker(scene);
   baker.SetSampleCount(10);
   baker.Bake(material, geometry);
+  material->LoadAlbedos();
 
-  // light->SetRadiance(10.1, 10.1, 10.1);
-  light->SetRadiance(0, Spectrum::FromRGB(20, 20, 20));
-
-  camera->Capture(image);
-  image.Save("test_image2.png");
+  light->SetRadiance(0.01, 0.01, 0.01);
+  // light->SetRadiance(0, Spectrum::FromRGB(10, 10, 10));
+  // light->SetRadiance(24, Spectrum::FromRGB(100, 100, 100));
 
   camera->CaptureAlbedo(image);
-  image.Save("test_image2_5.png");
+  image.Save("image_04_initial_albedo.png");
 
+  camera->CaptureLighting(image);
+  image.Save("image_05_initial_lighting.png");
+
+  camera->Capture(image);
+  image.Save("image_06_render_with_initial_lighting.png");
+
+  material->GetAlbedos(albedos);
+  ShadingRemover remover2(geometry, material);
+  remover2.SetSampleCount(1000);
+  remover2.Remove();
+
+  camera->CaptureAlbedo(image);
+  image.Save("image_07_computed_albedos_with_initial_lighting.png");
+
+  material->SetAlbedos(albedos);
   light->GetContext()->Compile();
 
   optix::Buffer buffer = light->GetRadianceBuffer();
@@ -202,15 +250,38 @@ TEST(MeshCostFunction, Optimization)
 
   MeshCostFunction* costFunction;
   costFunction = new MeshCostFunction(light, geometry, material);
-  costFunction->SetMaxNeighborCount(5);
-  costFunction->SetMaxNeighborDistance(1.5f);
+  costFunction->SetMaxNeighborCount(10);
+  costFunction->SetMaxNeighborDistance(4.0f);
   costFunction->SetSimilarityThreshold(0.0f);
   costFunction->SetLightSampleCount(1000);
   problem.AddResidualBlock(costFunction, nullptr, values);
 
+  float cost;
+  std::cout << "======== COST ========" << std::endl;
+  std::cout << "======== COST ========" << std::endl;
+
+  for (int i = 0; i < 1000; ++i)
+  {
+    lynx::Set(values + 0, 100.0f / (i / 1000.0f));
+    lynx::Set(values + 1, 100.0f / (i / 1000.0f));
+    lynx::Set(values + 2, 100.0f / (i / 1000.0f));
+    problem.Evaluate(&cost, nullptr, nullptr);
+    std::cout << cost << std::endl;
+  }
+
+  std::cout << "======== COST ========" << std::endl;
+  std::cout << "======== COST ========" << std::endl;
+
+  // VoxelActivationCostFunction* actFunction;
+  // actFunction = new VoxelActivationCostFunction(light);
+  // actFunction->SetBias(1.0);
+  // actFunction->SetInnerScale(10.0);
+  // actFunction->SetOuterScale(8.0);
+  // problem.AddResidualBlock(actFunction, nullptr, values);
+
   lynx::Solver::Options options;
   options.maxIterations = 10000;
-  options.minCostChangeRate = 1E-9;
+  options.minCostChangeRate = 1E-20;
 
   lynx::Solver solver(&problem);
   solver.Configure(options);
@@ -220,28 +291,74 @@ TEST(MeshCostFunction, Optimization)
 
   std::cout << summary.BriefReport() << std::endl;
 
-  camera->CaptureLighting(image);
-  image.Save("test_image3.png");
+  std::vector<Spectrum> rvalues(light->GetVoxelCount());
+  optix::Buffer radiance = light->GetRadianceBuffer();
+  Spectrum* device = reinterpret_cast<Spectrum*>(radiance->map());
+  std::copy(device, device + rvalues.size(), rvalues.data());
+  radiance->unmap();
+
+  light->SetRadiance(rvalues);
+
+  camera->Capture(image);
+  image.Save("image_08_render_with_final_lighting_and_initial_albedos.png");
 
   ShadingRemover remover(geometry, material);
   remover.SetSampleCount(1000);
   remover.Remove();
 
+  material->LoadAlbedos();
   camera->CaptureAlbedo(image);
-  image.Save("test_image3_5.png");
+  image.Save("image_09_computed_albedos_with_final_lighting.png");
 
-  std::vector<float> rvalues(3 * light->GetVoxelCount());
-  optix::Buffer radiance = light->GetRadianceBuffer();
-  float* device = reinterpret_cast<float*>(radiance->map());
-  std::copy(device, device + rvalues.size(), rvalues.data());
-  radiance->unmap();
+  const size_t floatCount = 640 * 480 * 3;
+  float* data = reinterpret_cast<float*>(image.GetData());
+  float max = 0;
+
+  for (size_t i = 0; i < floatCount; ++i)
+  {
+    if (data[i] > max) max = data[i];
+  }
+
+  for (size_t i = 0; i < floatCount; ++i)
+  {
+    data[i] /= max;
+  }
+
+  image.Save("image_10_scaled_albedos_with_final_lighting.png");
+
+  camera->CaptureLighting(image);
+  image.Save("image_11_final_lighting.png");
+
+  data = reinterpret_cast<float*>(image.GetData());
+
+  for (size_t i = 0; i < floatCount; ++i)
+  {
+    if (data[i] > max) max = data[i];
+  }
+
+  for (size_t i = 0; i < floatCount; ++i)
+  {
+    data[i] /= max;
+  }
+
+  image.Save("image_12_scaled_albedos_with_final_lighting.png");
+
+  camera->Capture(image);
+  image.Save("image_13_render_with_final_lighting_and_final_albedos.png");
+
+  std::cout << std::endl;
+  std::cout << std::endl;
 
   for (size_t i = 0; i < light->GetVoxelCount(); ++i)
   {
-    std::cout << rvalues[3 * i + 0] << " ";
-    std::cout << rvalues[3 * i + 1] << " ";
-    std::cout << rvalues[3 * i + 2] << std::endl;
+    const Vector rgb = rvalues[i].GetRGB();
+    std::cout << rgb[0] << " ";
+    std::cout << rgb[1] << " ";
+    std::cout << rgb[2] << std::endl;
   }
+
+  std::cout << std::endl;
+  std::cout << std::endl;
 
   // ASSERT_TRUE(summary.solutionUsable && summary.finalCost < 1E-6);
 }
