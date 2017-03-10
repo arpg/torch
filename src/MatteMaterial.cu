@@ -127,7 +127,7 @@ RT_PROGRAM void ClosestHit()
     }
   }
 
-  if (lightingOnly)
+  if (lightingOnly && shadingCoeffsOnly)
   {
     rayData.bounce.direction = make_float3(0, 0, 0);
     return;

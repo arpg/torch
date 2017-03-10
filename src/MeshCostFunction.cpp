@@ -126,6 +126,22 @@ void MeshCostFunction::Evaluate(const float* const* parameters,
   coeffs.RightMultiply(parameters[0], m_shadingValues);
   lynx::Scale(-1.0, m_shadingValues, m_shadingValues, 3 * rows);
 
+  // for (unsigned int i = 0; i < m_light->GetVoxelCount(); ++i)
+  // {
+  //   std::cout << "Parameters: ";
+  //   std::cout << lynx::Get(&parameters[0][3 * i + 0]) << " ";
+  //   std::cout << lynx::Get(&parameters[0][3 * i + 1]) << " ";
+  //   std::cout << lynx::Get(&parameters[0][3 * i + 2]) << std::endl;
+  // }
+
+  // for (unsigned int i = 0; i < rows; ++i)
+  // {
+  //   std::cout << "Shading Values: ";
+  //   std::cout << lynx::Get(&m_shadingValues[3 * i + 0]) << " ";
+  //   std::cout << lynx::Get(&m_shadingValues[3 * i + 1]) << " ";
+  //   std::cout << lynx::Get(&m_shadingValues[3 * i + 2]) << std::endl;
+  // }
+
   // std::vector<Spectrum> albedos(m_material->GetAlbedoCount());
   // std::shared_ptr<MatteMaterial> material;
   // material = std::make_shared<MatteMaterial>(m_material->GetContext());
@@ -230,6 +246,28 @@ void MeshCostFunction::Evaluate(const float* const* parameters,
       m_adjacentWeights, m_referenceValues, m_shadingValues,
       m_lightCoeffValues, jacobian, m_adjacencyCount,
       m_light->GetVoxelCount(), m_mesh->GetVertexCount(), minEval);
+
+  // for (size_t i = 0; i < minEval; ++i)
+  // {
+  //   for (size_t j = 0; j < 3; ++j)
+  //   {
+  //     for (size_t k = 0; k < GetParameterCount(); ++k)
+  //     {
+  //       float value = 0.0;
+
+  //       if (k % 3 == j)
+  //       {
+  //         const unsigned int index = i * GetParameterCount() + 3 * (k / 3) + j;
+  //         value = lynx::Get(&jacobian[index]);
+  //       }
+
+  //       if (value < 0) printf("%8.6f ", value); else printf(" %8.6f ", value);
+  //     }
+
+  //     std::cout << std::endl;
+  //   }
+  // }
+  // std::cout << std::endl;
 
   m_minJacobian->LeftMultiply(residuals + offset, gradient);
 
@@ -368,14 +406,16 @@ void MeshCostFunction::ComputeAdjacenies()
     const Spectrum meanColor = totalColor / added;
     const float colorDiff = meanColor.GetY() - albedos[p].GetY();
 
-    // if (colorDiff > 0)
+    if (colorDiff > 0)
     {
       for (unsigned int i = 0; i < added; ++i)
       {
         plist.push_back(ppot[i]);
         qlist.push_back(qpot[i]);
-        // weights.push_back(colorDiff * meanWeight * wpot[i]);
-        weights.push_back(wpot[i]);
+        weights.push_back(colorDiff * meanWeight * wpot[i]);
+        // weights.push_back(wpot[i]);
+
+        // std::cout << "Weight: " << weights.back() << std::endl;
       }
     }
   }
@@ -418,19 +458,19 @@ void MeshCostFunction::ComputeLightCoefficients()
   CUdeviceptr pointer = m_lightCoeffs->getDevicePointer(0);
   m_lightCoeffValues = reinterpret_cast<float*>(pointer);
 
-  for (size_t i = 0; i < launchSize; ++i)
-  {
-    for (size_t j = 0; j < m_light->GetVoxelCount(); ++j)
-    {
-      const unsigned int index = j * launchSize + i;
-      std::cout << "Shading Coeffs: " <<
-          lynx::Get(&m_lightCoeffValues[3 * index + 0]) << " " <<
-          lynx::Get(&m_lightCoeffValues[3 * index + 1]) << " " <<
-          lynx::Get(&m_lightCoeffValues[3 * index + 2]) << std::endl;
-    }
-  }
+  // for (size_t i = 0; i < launchSize; ++i)
+  // {
+  //   for (size_t j = 0; j < m_light->GetVoxelCount(); ++j)
+  //   {
+  //     const unsigned int index = j * launchSize + i;
+  //     std::cout << "Shading Coeffs: " <<
+  //         lynx::Get(&m_lightCoeffValues[3 * index + 0]) << " " <<
+  //         lynx::Get(&m_lightCoeffValues[3 * index + 1]) << " " <<
+  //         lynx::Get(&m_lightCoeffValues[3 * index + 2]) << std::endl;
+  //   }
+  // }
 
-  std::cout << std::endl;
+  // std::cout << std::endl;
 }
 
 void MeshCostFunction::ResetLightCoefficients()
@@ -571,13 +611,13 @@ void MeshCostFunction::ComputeReferenceValues()
   LYNX_CHECK_CUDA(cudaMalloc(&m_referenceValues, bytes));
   lynx::Log(referenceValues, m_referenceValues, count);
 
-  for (size_t i = 0; i < m_mesh->GetVertexCount(); ++i)
-  {
-    std::cout << "Log Colors: " <<
-        lynx::Get(&m_referenceValues[3 * i + 0]) << " " <<
-        lynx::Get(&m_referenceValues[3 * i + 1]) << " " <<
-        lynx::Get(&m_referenceValues[3 * i + 2]) << std::endl;
-  }
+  // for (size_t i = 0; i < m_mesh->GetVertexCount(); ++i)
+  // {
+  //   std::cout << "Log Colors: " <<
+  //       lynx::Get(&m_referenceValues[3 * i + 0]) << " " <<
+  //       lynx::Get(&m_referenceValues[3 * i + 1]) << " " <<
+  //       lynx::Get(&m_referenceValues[3 * i + 2]) << std::endl;
+  // }
 }
 
 void MeshCostFunction::AllocateSharingValues()
