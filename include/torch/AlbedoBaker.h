@@ -18,8 +18,6 @@ class AlbedoBaker
     void Bake(std::shared_ptr<MatteMaterial> material,
         std::shared_ptr<Mesh> mesh);
 
-  protected:
-
   private:
 
     void Initialize();

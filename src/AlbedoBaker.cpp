@@ -46,6 +46,7 @@ void AlbedoBaker::Bake(std::shared_ptr<MatteMaterial> material,
   std::shared_ptr<Context> context = m_scene->GetContext();
   context->Launch(m_bakeProgramId, size);
   context->Launch(m_copyProgramId, size);
+  material->LoadAlbedos();
 }
 
 void AlbedoBaker::Initialize()

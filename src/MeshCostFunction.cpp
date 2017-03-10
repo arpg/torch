@@ -1,4 +1,7 @@
 #include <torch/MeshCostFunction.h>
+
+#include <climits>
+
 #include <torch/Context.h>
 #include <torch/Exception.h>
 #include <torch/MatteMaterial.h>
@@ -255,7 +258,7 @@ void MeshCostFunction::Evaluate(const float* const* parameters,
 
   // std::cout << std::endl;
 
-  ClearJacobian();
+  // ClearJacobian();
 }
 
 void MeshCostFunction::ClearJacobian()
@@ -365,7 +368,7 @@ void MeshCostFunction::ComputeAdjacenies()
     const Spectrum meanColor = totalColor / added;
     const float colorDiff = meanColor.GetY() - albedos[p].GetY();
 
-    if (colorDiff > 0)
+    // if (colorDiff > 0)
     {
       for (unsigned int i = 0; i < added; ++i)
       {
@@ -406,12 +409,28 @@ void MeshCostFunction::ComputeLightCoefficients()
 
   std::shared_ptr<Context> context = m_light->GetContext();
   m_program["iteration"]->setUint(m_iterations++);
+  context->GetVariable("shadingCoeffsOnly")->setUint(true);
   context->GetVariable("computeVoxelDerivs")->setUint(true);
   context->Launch(m_programId, launchSize);
   context->GetVariable("computeVoxelDerivs")->setUint(false);
+  context->GetVariable("shadingCoeffsOnly")->setUint(false);
 
   CUdeviceptr pointer = m_lightCoeffs->getDevicePointer(0);
   m_lightCoeffValues = reinterpret_cast<float*>(pointer);
+
+  for (size_t i = 0; i < launchSize; ++i)
+  {
+    for (size_t j = 0; j < m_light->GetVoxelCount(); ++j)
+    {
+      const unsigned int index = j * launchSize + i;
+      std::cout << "Shading Coeffs: " <<
+          lynx::Get(&m_lightCoeffValues[3 * index + 0]) << " " <<
+          lynx::Get(&m_lightCoeffValues[3 * index + 1]) << " " <<
+          lynx::Get(&m_lightCoeffValues[3 * index + 2]) << std::endl;
+    }
+  }
+
+  std::cout << std::endl;
 }
 
 void MeshCostFunction::ResetLightCoefficients()
@@ -540,12 +559,25 @@ void MeshCostFunction::ComputeReferenceValues()
   optix::Buffer albedos = m_material->GetAlbedoBuffer();
   CUdeviceptr pointer = albedos->getDevicePointer(0);
   float* referenceValues = reinterpret_cast<float*>(pointer);
-  lynx::Clamp(referenceValues, 1E-6, 1.0f, 3 * m_material->GetAlbedoCount());
+
+  lynx::Clamp(referenceValues, 0, std::numeric_limits<float>::max(),
+      3 * m_material->GetAlbedoCount());
+
+  lynx::Add(1E-6, referenceValues, referenceValues,
+      3 * m_material->GetAlbedoCount());
 
   const size_t count = 3 * m_material->GetAlbedoCount();
   const size_t bytes = sizeof(float) * count;
   LYNX_CHECK_CUDA(cudaMalloc(&m_referenceValues, bytes));
   lynx::Log(referenceValues, m_referenceValues, count);
+
+  for (size_t i = 0; i < m_mesh->GetVertexCount(); ++i)
+  {
+    std::cout << "Log Colors: " <<
+        lynx::Get(&m_referenceValues[3 * i + 0]) << " " <<
+        lynx::Get(&m_referenceValues[3 * i + 1]) << " " <<
+        lynx::Get(&m_referenceValues[3 * i + 2]) << std::endl;
+  }
 }
 
 void MeshCostFunction::AllocateSharingValues()

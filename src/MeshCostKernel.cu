@@ -21,6 +21,7 @@ __global__ void EvaluateRKernel(const unsigned int* plist,
     const float iq = references[3 * q + channel];
     const float sp = logf(shading[3 * p + channel] + epsilon);
     const float sq = logf(shading[3 * q + channel] + epsilon);
+
     residuals[threadIndex] = w * ((ip - sp) - (iq - sq));
   }
 }
@@ -46,13 +47,16 @@ __global__ void EvaluateJKernel(const unsigned int* plist,
     const float w = weights[pairIndex];
     const float Sp = shading[3 * p + channel] + epsilon;
     const float Sq = shading[3 * q + channel] + epsilon;
-    const float cp = coeffs[3 * voxelIndex * vertexCount + 3 * p + channel];
-    const float cq = coeffs[3 * voxelIndex * vertexCount + 3 * q + channel];
+    const float cp = -coeffs[3 * voxelIndex * vertexCount + 3 * p + channel];
+    const float cq = -coeffs[3 * voxelIndex * vertexCount + 3 * q + channel];
 
     const unsigned int jacobIndex =
         3 * (voxelIndex * launchPairCount + pairIndex) + channel;
 
-    jacobians[jacobIndex] = w * ((cp / Sp) - (cq / Sq));
+    jacobians[jacobIndex] = -w * ((cp / Sp) - (cq / Sq));
+
+    // printf("%d: (%d %d) (%f) (%f %f) (%f %f)\n", threadIndex,
+    //        p, q, w, cp, cq, Sp, Sq);
   }
 }
 

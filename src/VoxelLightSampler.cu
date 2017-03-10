@@ -105,6 +105,9 @@ TORCH_DEVICE void SampleVoxel(const float3& origin, uint& seed,
   const float b = sqrt(a);
   const float t = -od - b;
 
+  // if (fabs(a) < 1E-8) rtPrintf("on or inside voxel\n");
+  // rtPrintf("t: %f, a: %f, od: %f, b: %f\n", t, a, od, b);
+
   const float3 xp = x + t * -direction;
   const float3 norm = normalize(xp - c);
   const float cosTheta = dot(norm, direction);
@@ -156,7 +159,8 @@ RT_CALLABLE_PROGRAM void Sample(torch::LightSample& sample)
 
   if (isnan(sample.direction.x))
   {
-    rtPrintf("NANS!!!\n");
+    rtPrintf("NANS: %f - %f %f %f - %f %f %f\n", pointPdf, point.x, point.y, point.z,
+        sample.origin.x, sample.origin.y, sample.origin.z);
   }
 
   const bool visible = torch::IsVisible(sample);
