@@ -1,5 +1,6 @@
 #include <torch/MeshCostFunction.h>
 
+#include <algorithm>
 #include <climits>
 
 #include <torch/Context.h>
@@ -95,6 +96,7 @@ lynx::Matrix* MeshCostFunction::CreateJacobianMatrix()
 void MeshCostFunction::Evaluate(const float* const* parameters,
     float* residuals)
 {
+  ClearJacobian();
   PrepareEvaluation();
 
   const size_t rows = m_mesh->GetVertexCount();
@@ -117,7 +119,12 @@ void MeshCostFunction::Evaluate(size_t offset, size_t size,
 void MeshCostFunction::Evaluate(const float* const* parameters,
     float* residuals, float* gradient)
 {
+  std::cout << "Evaluating..." << std::endl;
+
+  ClearJacobian();
   PrepareEvaluation();
+
+  std::cout << "Computing residuals..." << std::endl;
 
   const size_t rows = m_mesh->GetVertexCount();
   const size_t cols = m_light->GetVoxelCount();
@@ -221,6 +228,8 @@ void MeshCostFunction::Evaluate(const float* const* parameters,
   // std::cout << "Jacobian:" << std::endl;
   // std::cout << std::endl;
 
+  std::cout << "Computing jacobian..." << std::endl;
+
   size_t offset = 0;
   const size_t maxEval = 1000;
   const size_t residualCount = m_adjacencyCount;
@@ -296,7 +305,7 @@ void MeshCostFunction::Evaluate(const float* const* parameters,
 
   // std::cout << std::endl;
 
-  // ClearJacobian();
+  ClearJacobian();
 }
 
 void MeshCostFunction::ClearJacobian()
@@ -313,6 +322,13 @@ void MeshCostFunction::PrepareEvaluation()
 
   if (!m_lightCoeffValues)
   {
+    std::vector<Spectrum> rvalues(m_light->GetVoxelCount());
+    optix::Buffer radiance = m_light->GetRadianceBuffer();
+    Spectrum* device = reinterpret_cast<Spectrum*>(radiance->map());
+    std::copy(device, device + rvalues.size(), rvalues.data());
+    radiance->unmap();
+    m_light->SetRadiance(rvalues);
+
     ComputeLightCoefficients();
   }
 
@@ -320,6 +336,8 @@ void MeshCostFunction::PrepareEvaluation()
   {
     AllocateJacobians();
   }
+
+  std::cout << "Done preparing." << std::endl;
 }
 
 void MeshCostFunction::ComputeAdjacenies()
@@ -365,6 +383,7 @@ void MeshCostFunction::ComputeAdjacenies()
 
     const float3 position = make_float3(vp.x, vp.y, vp.z);
     octree.GetVertices(p + 1, position, m_maxNeighborDistance, neighbors);
+    std::random_shuffle(neighbors.begin(), neighbors.end());
 
     Spectrum totalColor;
     float totalWeight = 0;
@@ -447,6 +466,8 @@ void MeshCostFunction::ComputeLightCoefficients()
 
   const size_t launchSize = m_mesh->GetVertexCount();
 
+  std::cout << "Launching...." << std::endl;
+
   std::shared_ptr<Context> context = m_light->GetContext();
   m_program["iteration"]->setUint(m_iterations++);
   context->GetVariable("shadingCoeffsOnly")->setUint(true);
@@ -454,6 +475,8 @@ void MeshCostFunction::ComputeLightCoefficients()
   context->Launch(m_programId, launchSize);
   context->GetVariable("computeVoxelDerivs")->setUint(false);
   context->GetVariable("shadingCoeffsOnly")->setUint(false);
+
+  std::cout << "Finished." << std::endl;
 
   CUdeviceptr pointer = m_lightCoeffs->getDevicePointer(0);
   m_lightCoeffValues = reinterpret_cast<float*>(pointer);

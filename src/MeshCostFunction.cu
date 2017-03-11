@@ -45,7 +45,8 @@ RT_PROGRAM void Capture()
 
 RT_PROGRAM void ClosestHit()
 {
-  const float throughput = 1.0f / (sampleCount * M_PIf);
+  // const float throughput = 1.0f / (sampleCount * M_PIf);
+  const float throughput = 1.0f / M_PIf;
 
   torch::LightSample sample;
   sample.origin = vertices[launchIndex];

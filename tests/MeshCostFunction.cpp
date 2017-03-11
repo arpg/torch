@@ -289,6 +289,10 @@ TEST(MeshCostFunction, Gradient)
   problem.CheckGradients();
 }
 
+
+
+
+
 TEST(MeshCostFunction, Optimization)
 {
   std::vector<Spectrum> albedos;
@@ -377,10 +381,9 @@ TEST(MeshCostFunction, Optimization)
   std::shared_ptr<VoxelLight> light;
   light = scene->CreateVoxelLight();
   light->SetPosition(0, 0, -3);
-  // light->SetDimensions(9, 9, 9);
-  light->SetDimensions(3, 3, 3);
+  light->SetDimensions(9, 9, 9);
   light->SetVoxelSize(1.0);
-  light->SetRadiance(0.01, 0.01, 0.01);
+  light->SetRadiance(1, 1, 1);
   light->SetRadiance(0, Spectrum::FromRGB(100, 100, 100));
   scene->Add(light);
 
@@ -409,7 +412,8 @@ TEST(MeshCostFunction, Optimization)
   material->LoadAlbedos();
 
   // light->SetRadiance(0.01, 0.01, 0.01);
-  light->SetRadiance(1000, 1000, 1000);
+  light->SetRadiance(0.001, 0.001, 0.001);
+  // light->SetRadiance(0, Spectrum::FromRGB(95, 95, 95));
   light->GetContext()->Compile();
 
   // light->SetRadiance(0, Spectrum::FromRGB(10, 10, 10));
@@ -454,10 +458,10 @@ TEST(MeshCostFunction, Optimization)
 
   MeshCostFunction* costFunction;
   costFunction = new MeshCostFunction(light, geometry, material);
-  costFunction->SetMaxNeighborCount(20);
-  costFunction->SetMaxNeighborDistance(4.0f);
+  costFunction->SetMaxNeighborCount(25);
+  costFunction->SetMaxNeighborDistance(5.0f);
   costFunction->SetSimilarityThreshold(0.0f);
-  costFunction->SetLightSampleCount(1000);
+  costFunction->SetLightSampleCount(8196);
   problem.AddResidualBlock(costFunction, nullptr, values);
 
   // float cost;
@@ -485,7 +489,7 @@ TEST(MeshCostFunction, Optimization)
 
   lynx::Solver::Options options;
   options.maxIterations = 1000000;
-  options.minCostChangeRate = 1E-6;
+  options.minCostChangeRate = 1E-8;
   options.verbose = true;
 
   lynx::Solver solver(&problem);
@@ -495,10 +499,41 @@ TEST(MeshCostFunction, Optimization)
   solver.Solve(&summary);
 
   std::cout << summary.BriefReport() << std::endl;
+  std::cout << std::endl;
+
+  for (size_t i = 0; i < light->GetVoxelCount(); ++i)
+  {
+    printf("Voxel Value %04u: ", uint(i));
+    printf("%12.8f ", lynx::Get(values + 3 * i + 0));
+    printf("%12.8f ", lynx::Get(values + 3 * i + 1));
+    printf("%12.8f\n", lynx::Get(values + 3 * i + 2));
+  }
 
   std::vector<Spectrum> rvalues(light->GetVoxelCount());
   optix::Buffer radiance = light->GetRadianceBuffer();
   Spectrum* device = reinterpret_cast<Spectrum*>(radiance->map());
+  std::copy(device, device + rvalues.size(), rvalues.data());
+  radiance->unmap();
+
+  light->SetRadiance(rvalues);
+  light->GetContext()->Compile();
+
+  // costFunction->ClearJacobian();
+  // solver.Solve(&summary);
+
+  // std::cout << summary.BriefReport() << std::endl;
+  // std::cout << std::endl;
+
+  // for (size_t i = 0; i < light->GetVoxelCount(); ++i)
+  // {
+  //   printf("Voxel Value %04u: ", uint(i));
+  //   printf("%12.8f ", lynx::Get(values + 3 * i + 0));
+  //   printf("%12.8f ", lynx::Get(values + 3 * i + 1));
+  //   printf("%12.8f\n", lynx::Get(values + 3 * i + 2));
+  // }
+
+  radiance = light->GetRadianceBuffer();
+  device = reinterpret_cast<Spectrum*>(radiance->map());
   std::copy(device, device + rvalues.size(), rvalues.data());
   radiance->unmap();
 
@@ -567,10 +602,10 @@ TEST(MeshCostFunction, Optimization)
 
   // for (size_t i = 0; i < light->GetVoxelCount(); ++i)
   // {
-  //   std::cout << "Voxel Value " << i << ": ";
-  //   std::cout << lynx::Get(values + 3 * i + 0) << " ";
-  //   std::cout << lynx::Get(values + 3 * i + 1) << " ";
-  //   std::cout << lynx::Get(values + 3 * i + 2) << std::endl;
+  //   printf("Voxel Value %04u: ", uint(i));
+  //   printf("%12.8f ", lynx::Get(values + 3 * i + 0));
+  //   printf("%12.8f ", lynx::Get(values + 3 * i + 1));
+  //   printf("%12.8f\n", lynx::Get(values + 3 * i + 2));
   // }
 
   // ASSERT_TRUE(summary.solutionUsable && summary.finalCost < 1E-6);
