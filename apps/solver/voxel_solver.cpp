@@ -22,8 +22,8 @@ DEFINE_bool(verbose, false, "verbose output of optimization progress");
 DEFINE_int32(max_iters, 1, "max number of iterations");
 DEFINE_double(min_light_change, 1E-5, "minimum change rate for light params");
 DEFINE_double(min_albedo_change, 1E-5, "minimum change rate for albedo params");
-DEFINE_string(out_parameters, "out_light.txt", "file to write light params");
-DEFINE_string(out_image, "out_image.png", "file to write final render");
+DEFINE_string(out_light, "out_light.txt", "file to write light parameters");
+DEFINE_string(out_image_prefix, "out_image_", "file prefix for final renders");
 DEFINE_bool(use_act, false, "use activation cost regulizer");
 DEFINE_double(inner_act, 1.0, "inner log scale for activation cost");
 DEFINE_double(outer_act, 1.0, "outer log scale for activation cost");
@@ -104,7 +104,7 @@ void ReadPoses(std::vector<Sophus::SE3f>& poses)
 
 void WriteLightParameters()
 {
-  std::ofstream fout;
+  std::ofstream fout(FLAGS_out_light);
   const uint3 dims = light->GetDimensions();
 
   std::vector<float3> host(light->GetVoxelCount());
@@ -365,7 +365,17 @@ void SolveProblem(int argc, char** argv)
     SolveLightProblem();
   }
 
+  LOG(INFO) << "Saving lighting parameters...";
   WriteLightParameters();
+
+  LOG(INFO) << "Rendering final results...";
+  Image image;
+
+  for (size_t i = 0; i < cameras.size(); ++i)
+  {
+    cameras[i]->Capture(image);
+    image.Save(FLAGS_out_image_prefix + std::to_string(i) + ".png");
+  }
 }
 
 int main(int argc, char** argv)
