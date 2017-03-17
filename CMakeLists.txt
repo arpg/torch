@@ -126,6 +126,7 @@ set(CPP_HEADERS
   ${CPP_HEADER_DIR}/SceneLightSampler.h
   ${CPP_HEADER_DIR}/SceneLoader.h
   ${CPP_HEADER_DIR}/ShadingRemover.h
+  ${CPP_HEADER_DIR}/ShadowRemover.h
   ${CPP_HEADER_DIR}/SingleGeometry.h
   ${CPP_HEADER_DIR}/SparseMatrix.h
   ${CPP_HEADER_DIR}/Spectrum.h
@@ -190,6 +191,7 @@ set(CPP_SOURCES
   ${CPP_SOURCE_DIR}/SceneLightSampler.cpp
   ${CPP_SOURCE_DIR}/SceneLoader.cpp
   ${CPP_SOURCE_DIR}/ShadingRemover.cpp
+  ${CPP_SOURCE_DIR}/ShadowRemover.cpp
   ${CPP_SOURCE_DIR}/SingleGeometry.cpp
   ${CPP_SOURCE_DIR}/SparseMatrix.cpp
   ${CPP_SOURCE_DIR}/Spectrum.cpp

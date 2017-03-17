@@ -74,7 +74,13 @@ void VoxelCostFunction::Evaluate(size_t offset, size_t size,
 void VoxelCostFunction::Evaluate(const float* const* parameters,
     float* residuals, float* gradient)
 {
-  TORCH_THROW("not implemented");
+  PrepareEvaluation();
+  const size_t rows = GetResidualCount() / 3;
+  const size_t cols = GetParameterCount() / 3;
+  lynx::Matrix3C jacobian(m_jacobianValues, rows, cols);
+  jacobian.RightMultiply(parameters[0], residuals);
+  lynx::Add(m_referenceValues, residuals, residuals, GetResidualCount());
+  jacobian.LeftMultiply(residuals, gradient);
 }
 
 void VoxelCostFunction::ClearJacobian()

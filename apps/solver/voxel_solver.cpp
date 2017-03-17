@@ -103,7 +103,7 @@ void ReadPoses(std::vector<Sophus::SE3f>& poses)
 
 void BuildScene(int argc, char** argv)
 {
-  LOG(INFO) << "Building scene..." << std::endl;
+  LOG(INFO) << "Building scene...";
 
   scene = std::make_shared<Scene>();
 
@@ -123,7 +123,7 @@ void BuildScene(int argc, char** argv)
   light->SetRadiance(1E-8, 1E-8, 1E-8);
   scene->Add(light);
 
-  LOG(INFO) << "Building keyframes..." << std::endl;
+  LOG(INFO) << "Building keyframes...";
 
   std::vector<Sophus::SE3f> poses;
   ReadPoses(poses);
@@ -144,13 +144,23 @@ void BuildScene(int argc, char** argv)
     cameras[i]->SetSampleCount(FLAGS_samples);
     cameras[i]->SetTransform(poses[i]);
 
+    cameras[i]->SetOrientation(-0.1876, 0.020051, -0.00564309, 0.982025);
+    cameras[i]->SetPosition(-0.0138542, -0.325955, 0.276384);
+
+    Image tempImage;
+    cameras[i]->CaptureNormals(tempImage);
+    tempImage.Save("normal_" + std::to_string(i) + ".png");
+
+    cameras[i]->CaptureAlbedo(tempImage);
+    tempImage.Save("albedo_" + std::to_string(i) + ".png");
+
     keyframes[i] = std::make_shared<Keyframe>(cameras[i], image);
   }
 }
 
 void CreateLightProblem()
 {
-  LOG(INFO) << "Creating light problem..." << std::endl;
+  LOG(INFO) << "Creating light problem...";
 
   const size_t paramCount = 3 * light->GetVoxelCount();
   optix::Buffer buffer = light->GetRadianceBuffer();
@@ -183,7 +193,7 @@ void CreateLightProblem()
 
 void CreateAlbedoProblem()
 {
-  LOG(INFO) << "Creating albedo problem..." << std::endl;
+  LOG(INFO) << "Creating albedo problem...";
 
   const size_t paramCount = 3 * material->GetAlbedoCount();
   optix::Buffer buffer = material->GetAlbedoBuffer();
@@ -216,9 +226,7 @@ void CreateAlbedoProblem()
 
 void SolveLightProblem()
 {
-  LOG(INFO) << "Solving light problem..." << std::endl;
-
-  lightCostFunction->ClearJacobian();
+  LOG(INFO) << "Solving light problem...";
 
   lynx::Solver::Options options;
   options.maxIterations = 50000;
@@ -231,7 +239,7 @@ void SolveLightProblem()
   lynx::Solver::Summary summary;
   solver.Solve(&summary);
 
-  LOG(INFO) << summary.BriefReport() << std::endl;
+  LOG(INFO) << std::endl << summary.BriefReport();
 
   const size_t count = lightProblem->GetParameterBlockSize(0);
   std::vector<Spectrum> radiance(count / 3);
@@ -241,7 +249,9 @@ void SolveLightProblem()
   LYNX_CHECK_CUDA(cudaMemcpy(radiance.data(), lightValues, bytes, type));
   light->SetRadiance(radiance);
 
-  LOG(INFO) << "Rendering new light estimate..." << std::endl;
+  lightCostFunction->ClearJacobian();
+
+  LOG(INFO) << "Rendering new light estimate...";
 
   Image image;
 
@@ -256,7 +266,7 @@ void SolveLightProblem()
 
 void SolveAlbedoProblem()
 {
-  LOG(INFO) << "Solving albedo problem..." << std::endl;
+  LOG(INFO) << "Solving albedo problem...";
 
   albedoCostFunction->ClearJacobian();
 
@@ -271,7 +281,7 @@ void SolveAlbedoProblem()
   lynx::Solver::Summary summary;
   solver.Solve(&summary);
 
-  LOG(INFO) << summary.BriefReport() << std::endl;
+  LOG(INFO) << summary.BriefReport();
 
   const size_t count = albedoProblem->GetParameterBlockSize(0);
   std::vector<Spectrum> albedos(count / 3);
@@ -281,7 +291,7 @@ void SolveAlbedoProblem()
   LYNX_CHECK_CUDA(cudaMemcpy(albedos.data(), albedoValues, bytes, type));
   material->SetAlbedos(albedos);
 
-  LOG(INFO) << "Rendering new albedo estimate..." << std::endl;
+  LOG(INFO) << "Rendering new albedo estimate...";
 
   Image image;
 
@@ -297,19 +307,17 @@ void SolveAlbedoProblem()
 void SolveProblem(int argc, char** argv)
 {
   BuildScene(argc, argv);
-  CreateAlbedoProblem();
+  // CreateAlbedoProblem();
   CreateLightProblem();
 
   for (iteration = 0; iteration < FLAGS_max_iters; ++iteration)
   {
-    LOG(INFO) << "Starting iteration " << iteration << "..." << std::endl;
-    SolveAlbedoProblem();
+    LOG(INFO) << "Starting iteration " << iteration << "...";
+    // SolveAlbedoProblem();
     SolveLightProblem();
   }
 
-  LOG(INFO) << "Writing final mesh estimate..." << std::endl;
-  MeshWriter writer(mesh, material);
-  writer.Write(FLAGS_out_mesh);
+  // TODO: write voxel parameters to file
 }
 
 int main(int argc, char** argv)
@@ -322,6 +330,6 @@ int main(int argc, char** argv)
   const clock_t stop = clock();
   const double time = double(stop - start) / CLOCKS_PER_SEC;
 
-  LOG(INFO) << "Elapsed time: " << time << std::endl;
+  LOG(INFO) << "Elapsed time: " << time;
   return 0;
 }

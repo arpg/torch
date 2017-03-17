@@ -33,6 +33,8 @@ class Camera : public Node
 
     void CaptureLighting(Image& image);
 
+    void CaptureNormals(Image& image);
+
     void CaptureMask(Image& image);
 
     void PreBuildScene() override;

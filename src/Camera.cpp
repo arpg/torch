@@ -95,6 +95,14 @@ void Camera::CaptureLighting(Image& image)
   CopyBuffer(image);
 }
 
+void Camera::CaptureNormals(Image& image)
+{
+  m_context->GetVariable("normalOnly")->setUint(true);
+  m_context->Launch(m_programId, m_imageSize);
+  m_context->GetVariable("normalOnly")->setUint(false);
+  CopyBuffer(image);
+}
+
 void Camera::CaptureMask(Image& image)
 {
   m_context->Launch(m_depthProgramId, m_imageSize);

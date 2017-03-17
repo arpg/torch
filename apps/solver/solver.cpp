@@ -43,8 +43,8 @@ void BuildScene()
 
   // mesh = scene->CreateMesh("/home/mike/Desktop/Datasets/PurpleRoomCorner02/painted_mesh.ply");
   // std::shared_ptr<Material> temp = scene->CreateMaterial("/home/mike/Desktop/Datasets/PurpleRoomCorner02/painted_mesh.ply");
-  mesh = scene->CreateMesh("/home/mike/Desktop/out_mesh_small.ply");
-  std::shared_ptr<Material> temp = scene->CreateMaterial("/home/mike/Desktop/out_mesh_small.ply");
+  mesh = scene->CreateMesh("/home/mike/Desktop/albedo_mesh.ply");
+  std::shared_ptr<Material> temp = scene->CreateMaterial("/home/mike/Desktop/albedo_mesh.ply");
   material = std::static_pointer_cast<MatteMaterial>(temp);
 
   std::shared_ptr<Primitive> primitive;
@@ -54,7 +54,7 @@ void BuildScene()
   scene->Add(primitive);
 
   light = scene->CreateEnvironmentLight();
-  light->SetRowCount(21);
+  light->SetRowCount(13);
   // light->SetRadiance(0.001, 0.001, 0.001);
   // light->SetRadiance(67 , Spectrum::FromRGB(2.75, 2.75, 2.75));
   light->SetRadiance(1E-5, 1E-5, 1E-5);
@@ -62,15 +62,18 @@ void BuildScene()
 
   cameras.resize(1);
 
-  const float scale = 4;
+  const float scale = 1;
   cameras[0] = scene->CreateCamera();
   cameras[0]->SetImageSize(640 / scale, 480 / scale);
   cameras[0]->SetFocalLength(535.7239 / scale, 536.2900 / scale);
   cameras[0]->SetCenterPoint(320.2685 / scale, 240.2924 / scale);
   // cameras[0]->SetOrientation(-0.00242877, -0.0601033, -0.0349038, 0.997579);
   // cameras[0]->SetPosition(0.0761918, 0.124095, 0.00571185);
-  cameras[0]->SetOrientation(-0.000125662, 0.0251924, -0.00142194, 0.999682);
-  cameras[0]->SetPosition(-0.00808962, 0.0115375, -0.0037175);
+  // cameras[0]->SetOrientation(-0.000125662, 0.0251924, -0.00142194, 0.999682);
+  // cameras[0]->SetPosition(-0.00808962, 0.0115375, -0.0037175);
+  // cameras[0]->SetOrientation(0.020051, -0.00564309, 0.982025, -0.1876);
+  cameras[0]->SetOrientation(-0.1876, 0.020051, -0.00564309, 0.982025);
+  cameras[0]->SetPosition(-0.0138542, -0.325955, 0.276384);
   cameras[0]->SetSampleCount(5);
 
   // const float scale = 1;
@@ -125,7 +128,8 @@ void BuildScene()
     // image->Save("reference_" + std::to_string(i) + ".png");
     // image->Load("/home/mike/Desktop/Datasets/PurpleRoomCorner02/clean/image_rgb_00160.ppm");
     // image->Load("/home/mike/Desktop/image_rgb_00160.ppm");
-    image->Load("/home/mike/Desktop/image_rgb_00019.ppm");
+    // image->Load("/home/mike/Desktop/image_rgb_00019.ppm");
+    image->Load("/home/mike/Desktop/image_rgb_00721.ppm");
 
     keyframes[i] = std::make_shared<Keyframe>(camera, image);
   }
@@ -170,8 +174,8 @@ void CreateLightProblem()
   ActivationCostFunction* actCostFunction;
   actCostFunction = new ActivationCostFunction(light);
   actCostFunction->SetBias(1.0);
-  actCostFunction->SetInnerScale(1.0);
-  actCostFunction->SetOuterScale(1.0);
+  actCostFunction->SetInnerScale(100.0);
+  actCostFunction->SetOuterScale(10.0);
   lightProblem->AddResidualBlock(actCostFunction, nullptr, lightValues);
 }
 
@@ -245,6 +249,11 @@ void SolveLightProblem()
 
     image.Save("light_estimate_" + std::to_string(i) + "_" +
         std::to_string(iteration) + ".png");
+
+    cameras[i]->Capture(image);
+
+    image.Save("color_estimate_" + std::to_string(i) + "_" +
+        std::to_string(iteration) + ".png");
   }
 }
 
@@ -291,7 +300,7 @@ void SolveAlbedoProblem()
 void SolveProblem()
 {
   BuildScene();
-  CreateAlbedoProblem();
+  // CreateAlbedoProblem();
   CreateLightProblem();
 
   int i = 0;
@@ -299,26 +308,26 @@ void SolveProblem()
   for (iteration = 0; iteration < 20; ++iteration)
   {
     std::cout << "Starting iteration " << iteration << "..." << std::endl;
-    SolveAlbedoProblem();
+    // SolveAlbedoProblem();
     SolveLightProblem();
 
-    if (iteration == 0)
-    {
-      ++iteration; SolveLightProblem();
-      ++iteration; SolveLightProblem();
-      ++iteration; SolveLightProblem();
-    }
+    // if (iteration == 0)
+    // {
+    //   ++iteration; SolveLightProblem();
+    //   ++iteration; SolveLightProblem();
+    //   ++iteration; SolveLightProblem();
+    // }
 
-    refCostFunction->SetWeight(2.0);
+    // refCostFunction->SetWeight(2.0);
 
-    if (iteration % 5 == 0)
-    {
-      std::cout << "Writing final mesh estimate..." << std::endl;
-      MeshWriter writer(mesh, material);
-      writer.Write("mesh_estimate_" + std::to_string(iteration) + ".ply");
-    }
+    // if (iteration % 5 == 0)
+    // {
+    //   std::cout << "Writing final mesh estimate..." << std::endl;
+    //   MeshWriter writer(mesh, material);
+    //   writer.Write("mesh_estimate_" + std::to_string(iteration) + ".ply");
+    // }
 
-    albedoProblem->AddResidualBlock(albedoCostFunction, nullptr, albedoValues);
+    // albedoProblem->AddResidualBlock(albedoCostFunction, nullptr, albedoValues);
 
     ++i;
   }

@@ -45,6 +45,7 @@ set(TEST_CPP_SOURCES
   ${TEST_CPP_SOURCE_DIR}/Octree.cpp
   ${TEST_CPP_SOURCE_DIR}/ReflectanceCostFunction.cpp
   ${TEST_CPP_SOURCE_DIR}/Sampling.cpp
+  ${TEST_CPP_SOURCE_DIR}/ShadowRemover.cpp
   ${TEST_CPP_SOURCE_DIR}/Transform.cpp
   ${TEST_CPP_SOURCE_DIR}/VoxelCostFunction.cpp
 )

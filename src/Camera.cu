@@ -11,6 +11,7 @@ rtDeclareVariable(uint2, imageSize, rtLaunchDim, );
 rtDeclareVariable(rtObject, sceneRoot, , );
 rtDeclareVariable(float, sceneEpsilon, , );
 
+rtDeclareVariable(unsigned int, normalOnly, , );
 rtDeclareVariable(unsigned int, albedoOnly, , );
 rtDeclareVariable(unsigned int, sampleCount, , );
 rtDeclareVariable(unsigned int, maxDepth, , );
@@ -21,8 +22,14 @@ rtBuffer<float, 2> depthBuffer;
 static __inline__ __device__
 void GetDirection(float3& direction, unsigned int& seed, unsigned int i)
 {
-  const float xo = floorf(i / sampleCount) / sampleCount + torch::randf(seed) / sampleCount;
-  const float yo = float(i % sampleCount) / sampleCount + torch::randf(seed) / sampleCount;
+  float xo = floorf(i / sampleCount) / sampleCount + torch::randf(seed) / sampleCount;
+  float yo = float(i % sampleCount) / sampleCount + torch::randf(seed) / sampleCount;
+
+  if (normalOnly)
+  {
+    xo = 0.5f;
+    yo = 0.5f;
+  }
 
   const float2 size = make_float2(imageSize);
   const float2 pixel = make_float2(pixelIndex) + make_float2(xo, yo);
@@ -67,6 +74,11 @@ RT_PROGRAM void Capture()
     data.bounce.throughput = make_float3(0, 0, 0);
     data.throughput = make_float3(1.0f / totalSamples);
 
+    if (normalOnly)
+    {
+      data.throughput = make_float3(1, 1, 1);
+    }
+
     for (unsigned int depth = 0; depth < maxDepth; ++depth)
     {
       data.depth = depth;
@@ -75,7 +87,7 @@ RT_PROGRAM void Capture()
       InitializeRay(ray);
       seed = data.seed;
 
-      if (albedoOnly)
+      if (albedoOnly || normalOnly)
       {
         break;
       }
@@ -106,6 +118,11 @@ RT_PROGRAM void Capture()
       data.bounce.origin = make_float3(0, 0, 0);
       data.bounce.direction = make_float3(0, 0, 0);
       data.bounce.throughput = make_float3(0, 0, 0);
+    }
+
+    if (normalOnly)
+    {
+      break;
     }
   }
 
@@ -139,7 +156,7 @@ RT_PROGRAM void CaptureDepth()
 
 RT_PROGRAM void CaptureMask()
 {
-  const int pad = 2;
+  const int pad = 4;
   float depth = depthBuffer[pixelIndex];
   float minDepth = FLT_MAX;
   float maxDepth = FLT_MIN;

@@ -82,7 +82,12 @@ void ActivationCostFunction::Evaluate(size_t offset, size_t size,
 void ActivationCostFunction::Evaluate(const float* const* parameters,
     float* residuals, float* gradient)
 {
-  TORCH_THROW("not implemeneted");
+  const size_t size = GetResidualCount();
+  const float* params = parameters[0];
+  float* J = m_jacobian->GetValues();
+  float* r = residuals;
+  torch::Evaluate(params, r, J, size, m_bias, m_innerScale, m_outerScale);
+  m_jacobian->LeftMultiply(residuals, gradient);
 }
 
 void ActivationCostFunction::Initialize()
@@ -91,6 +96,7 @@ void ActivationCostFunction::Initialize()
   lynx::CostFunction::m_residualCount = count;
   lynx::CostFunction::m_parameterBlockSizes.push_back(3 * count);
   lynx::CostFunction::m_maxEvaluationBlockSize = count;
+  m_jacobian = std::make_unique<lynx::BlockDiagonalMatrix>(1, 3, count);
 }
 
 } // namespace torch

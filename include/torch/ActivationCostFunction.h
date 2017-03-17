@@ -49,6 +49,8 @@ class ActivationCostFunction : public lynx::CostFunction
     float m_innerScale;
 
     float m_outerScale;
+
+    std::unique_ptr<lynx::BlockDiagonalMatrix> m_jacobian;
 };
 
 } // namespace torch

@@ -34,6 +34,7 @@ rtBuffer<torch::PixelSample> pixelSamples;
 rtDeclareVariable(unsigned int, albedoOnly, , );
 rtDeclareVariable(unsigned int, lightingOnly, , );
 rtDeclareVariable(unsigned int, shadingCoeffsOnly, , );
+rtDeclareVariable(unsigned int, normalOnly, , );
 
 TORCH_DEVICE float3 GetAlbedo()
 {
@@ -91,6 +92,12 @@ RT_PROGRAM void ClosestHit()
   if (albedoOnly)
   {
     rayData.radiance += (albedo * rayData.throughput);
+    return;
+  }
+
+  if (normalOnly)
+  {
+    rayData.radiance = (shadingNormal + 1.0f) / 2.0f;
     return;
   }
 
