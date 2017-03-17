@@ -22,7 +22,8 @@ DEFINE_bool(verbose, false, "verbose output of optimization progress");
 DEFINE_int32(max_iters, 1, "max number of iterations");
 DEFINE_double(min_light_change, 1E-5, "minimum change rate for light params");
 DEFINE_double(min_albedo_change, 1E-5, "minimum change rate for albedo params");
-DEFINE_string(out_mesh, "out_mesh.ply", "file to write final mesh");
+DEFINE_string(out_parameters, "out_light.txt", "file to write light params");
+DEFINE_string(out_image, "out_image.png", "file to write final render");
 DEFINE_bool(use_act, false, "use activation cost regulizer");
 DEFINE_double(inner_act, 1.0, "inner log scale for activation cost");
 DEFINE_double(outer_act, 1.0, "outer log scale for activation cost");
@@ -101,6 +102,28 @@ void ReadPoses(std::vector<Sophus::SE3f>& poses)
   fin.close();
 }
 
+void WriteLightParameters()
+{
+  std::ofstream fout;
+  const uint3 dims = light->GetDimensions();
+
+  std::vector<float3> host(light->GetVoxelCount());
+  optix::Buffer buffer = light->GetRadianceBuffer();
+  float3* device = reinterpret_cast<float3*>(buffer->map());
+  std::copy(device, device + host.size(), host.data());
+  buffer->unmap();
+
+  fout << "voxel" << std::endl;
+  fout << dims.x << " " << dims.y << " " << dims.z << std::endl;
+
+  for (const float3& radiance : host)
+  {
+    fout << radiance.x << " " << radiance.y << " " << radiance.z << std::endl;
+  }
+
+  fout.close();
+}
+
 void BuildScene(int argc, char** argv)
 {
   LOG(INFO) << "Building scene...";
@@ -151,7 +174,7 @@ void BuildScene(int argc, char** argv)
     // // sink01
     // cameras[i]->SetOrientation(-0.0481747, 0.00691056, -0.0414812, 0.997953);
     // cameras[i]->SetPosition(0.0237228, 0.0249558, -0.0143689);
-    
+
     // // kitchen01
     // // // image_rgb_00060
     // // cameras[i]->SetOrientation(-0.0262128, 0.0620964, 0.0213342, 0.997498);
@@ -342,7 +365,7 @@ void SolveProblem(int argc, char** argv)
     SolveLightProblem();
   }
 
-  // TODO: write voxel parameters to file
+  WriteLightParameters();
 }
 
 int main(int argc, char** argv)

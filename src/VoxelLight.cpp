@@ -49,6 +49,11 @@ void VoxelLight::SetRadiance(const std::vector<Spectrum>& radiance)
   m_context->MarkDirty();
 }
 
+uint3 VoxelLight::GetDimensions() const
+{
+  return m_gridDimensions;
+}
+
 void VoxelLight::SetDimensions(uint x, uint y, uint z)
 {
   m_gridDimensions = make_uint3(x, y, z);

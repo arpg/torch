@@ -24,6 +24,8 @@ class VoxelLight : public Light
 
     void SetRadiance(const std::vector<Spectrum>& radiance);
 
+    uint3 GetDimensions() const;
+
     void SetDimensions(uint x, uint y, uint z);
 
     void SetDimensions(uint dims);
