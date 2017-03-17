@@ -156,7 +156,7 @@ RT_PROGRAM void CaptureDepth()
 
 RT_PROGRAM void CaptureMask()
 {
-  const int pad = 4;
+  const int pad = 2;
   float depth = depthBuffer[pixelIndex];
   float minDepth = FLT_MAX;
   float maxDepth = FLT_MIN;

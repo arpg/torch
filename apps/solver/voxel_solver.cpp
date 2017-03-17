@@ -144,8 +144,33 @@ void BuildScene(int argc, char** argv)
     cameras[i]->SetSampleCount(FLAGS_samples);
     cameras[i]->SetTransform(poses[i]);
 
-    cameras[i]->SetOrientation(-0.1876, 0.020051, -0.00564309, 0.982025);
-    cameras[i]->SetPosition(-0.0138542, -0.325955, 0.276384);
+    // // corner04
+    // cameras[i]->SetOrientation(-0.1876, 0.020051, -0.00564309, 0.982025);
+    // cameras[i]->SetPosition(-0.0138542, -0.325955, 0.276384);
+
+    // // sink01
+    // cameras[i]->SetOrientation(-0.0481747, 0.00691056, -0.0414812, 0.997953);
+    // cameras[i]->SetPosition(0.0237228, 0.0249558, -0.0143689);
+    
+    // // kitchen01
+    // // // image_rgb_00060
+    // // cameras[i]->SetOrientation(-0.0262128, 0.0620964, 0.0213342, 0.997498);
+    // // cameras[i]->SetPosition(0.0173549, 0.0174267, -0.011409);
+    // // image_rgb_02016
+    // cameras[i]->SetOrientation(-0.0858785, -0.179851, -0.087353, 0.976037);
+    // cameras[i]->SetPosition(0.607607, -0.0107669, 0.232484);
+
+    // corner02
+    // // image_rgb_01010
+    // cameras[i]->SetOrientation(-0.00600349, 0.00614246, -0.0346581, 0.999362);
+    // cameras[i]->SetPosition(0.0896841, 0.372875, -0.532748);
+    // // image_rgb_00876
+    // cameras[i]->SetOrientation(-0.00870524, -0.0240282, -0.0542144, 0.998202);
+    // cameras[i]->SetPosition(0.127279, 0.321349, -0.281022);
+    // image_rgb_00862
+    cameras[i]->SetOrientation(-0.0256108, 0.034136, -0.0424451, 0.998187);
+    cameras[i]->SetPosition(0.198602, 0.315767, -0.219588);
+
 
     Image tempImage;
     cameras[i]->CaptureNormals(tempImage);
