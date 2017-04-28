@@ -31,5 +31,12 @@ RT_CALLABLE_PROGRAM void Sample(torch::LightSample& sample)
   sample.pdf *= geomSample.pdf;
   sample.seed = geomSample.seed;
 
+  rtPrintf("Dir: %f %f %f\n", sample.direction.x, sample.direction.y,
+      sample.direction.z);
+
+  // sample.radiance = make_float3(1, 1, 1);
+  // sample.direction = normalize(make_float3(0.5, 0, 1));
+  // sample.tmax = 0.2;
+
   if (!torch::IsVisible(sample)) sample.radiance = make_float3(0, 0, 0);
 }

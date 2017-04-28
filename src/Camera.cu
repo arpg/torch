@@ -136,6 +136,7 @@ RT_PROGRAM void CaptureDepth()
   unsigned int seed;
 
   seed = InitializeSeed();
+  seed += 17;
   depthBuffer[pixelIndex] = RT_DEFAULT_MAX;
   const unsigned int totalSamples = sampleCount * sampleCount;
 

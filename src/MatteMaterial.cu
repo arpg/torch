@@ -109,7 +109,10 @@ RT_PROGRAM void ClosestHit()
     if (sample.radiance.x > 0 || sample.radiance.y > 0 || sample.radiance.z > 0)
     {
       const float3 albedo = GetAlbedo();
-      const float theta = dot(shadingNormal, sample.direction);
+      // const float theta = dot(shadingNormal, sample.direction);
+      const float theta = fabs(dot(shadingNormal, sample.direction));
+      // const float theta = dot(-shadingNormal, sample.direction);
+      // const float theta = 1.0;
       const float3 throughput = (rayData.throughput * sample.radiance * theta / sample.pdf) / (lightSamples * M_PIf);
 
       if (lightingOnly)
@@ -134,6 +137,8 @@ RT_PROGRAM void ClosestHit()
     }
   }
 
+  // return; // TODO: delete
+
   if (lightingOnly && shadingCoeffsOnly)
   {
     rayData.bounce.direction = make_float3(0, 0, 0);
@@ -150,7 +155,8 @@ RT_PROGRAM void ClosestHit()
     float theta = dot(shadingNormal, brdfSample.direction);
     rayData.bounce.origin = sample.origin;
     rayData.bounce.direction = brdfSample.direction;
-    rayData.bounce.throughput = theta * rayData.throughput * brdfSample.throughput / brdfSample.pdf;
+    // rayData.bounce.throughput = theta * rayData.throughput * brdfSample.throughput / brdfSample.pdf;
+    rayData.bounce.throughput = 0.5 * theta * rayData.throughput * brdfSample.throughput / brdfSample.pdf;
   }
 }
 

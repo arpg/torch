@@ -10,13 +10,15 @@ int main(int argc, char** argv)
   std::shared_ptr<Scene> scene;
   scene = std::make_shared<Scene>();
 
+  const std::string mesh_file =
+      "/home/mike/Documents/Blender/bunny_box_painted.ply";
 
   std::shared_ptr<Mesh> geometry;
-  geometry = scene->CreateMesh("../shark.ply");
+  geometry = scene->CreateMesh(mesh_file);
   geometry->SetScale(1, 1, 1);
 
   std::shared_ptr<Material> material;
-  material = scene->CreateMaterial("../shark.ply");
+  material = scene->CreateMaterial(mesh_file);
 
   std::shared_ptr<MatteMaterial> matteMaterial;
   matteMaterial = std::static_pointer_cast<MatteMaterial>(material);
@@ -27,39 +29,53 @@ int main(int argc, char** argv)
   primitive->SetMaterial(material);
   scene->Add(primitive);
 
-  std::shared_ptr<EnvironmentLight> light;
-  light = scene->CreateEnvironmentLight();
-  light->SetRowCount(21);
-  light->SetRadiance(0.001, 0.001, 0.001);
-  light->SetRadiance(67 , Spectrum::FromRGB(4.0, 4.0, 4.0));
+  std::shared_ptr<Sphere> sphere;
+  sphere = scene->CreateSphere();
+  sphere->SetScale(0.2);
+
+  std::shared_ptr<AreaLight> light;
+  light = scene->CreateAreaLight();
+  // light->SetPosition(0, 0, 0);
+  light->SetPosition(-0.1, -0.075, 0.35);
+  light->SetRadiance(0.75, 0.75, 0.75);
+  light->SetGeometry(sphere);
   scene->Add(light);
 
   std::shared_ptr<Camera> camera;
   camera = scene->CreateCamera();
-  camera->SetOrientation(0, 0, 0);
-  camera->SetPosition(0, 0, 0);
+  camera->SetOrientation(-0.15, 0.9 * M_PIf, M_PIf);
+  camera->SetPosition(-0.1, -0.075, 0.35);
   camera->SetImageSize(640, 480);
-  camera->SetFocalLength(320, 320);
+  camera->SetFocalLength(450, 450);
   camera->SetCenterPoint(320, 240);
   camera->SetSampleCount(4);
 
-  std::cout << "Baking albedos..." << std::endl;
-
-  AlbedoBaker baker(scene);
-  baker.SetSampleCount(16);
-  baker.Bake(matteMaterial, geometry);
-
-  std::cout << "Saving mesh..." << std::endl;
-
-  matteMaterial->LoadAlbedos();
-  MeshWriter writer(geometry, matteMaterial);
-  writer.Write("baked_mesh.ply");
-
-  std::cout << "Rendering results..." << std::endl;
+  std::cout << "Rendering original albedos..." << std::endl;
 
   Image image;
   camera->CaptureAlbedo(image);
-  image.Save("result.png");
+  // camera->CaptureNormals(image);
+  camera->CaptureLighting(image);
+  // camera->Capture(image);
+  image.Save("original_albedos.png");
+
+  // std::cout << "Baking albedos..." << std::endl;
+
+  // AlbedoBaker baker(scene);
+  // baker.SetSampleCount(16);
+  // baker.Bake(matteMaterial, geometry);
+
+  // std::cout << "Saving mesh..." << std::endl;
+
+  // matteMaterial->LoadAlbedos();
+  // MeshWriter writer(geometry, matteMaterial);
+  // writer.Write("baked_mesh.ply");
+
+  // std::cout << "Rendering results..." << std::endl;
+
+  // Image image;
+  // camera->CaptureAlbedo(image);
+  // image.Save("result.png");
 
   std::cout << "Success" << std::endl;
   return 0;
